@@ -4,6 +4,7 @@ import './App.css';
 import {createTheme, CssBaseline, ThemeProvider} from "@mui/material";
 import Layout from "./components/layout/Layout";
 import MainPage from "./pages/MainPage";
+import LayoutAuthenticated from './components/layout/LayoutAuthenticated';
 
 const darkTheme = createTheme({
   palette: {
@@ -21,9 +22,9 @@ function App() {
   return (
       <ThemeProvider theme={darkTheme}>
         <CssBaseline>
-          <Layout>
+          <LayoutAuthenticated>
             <MainPage/>
-          </Layout>
+          </LayoutAuthenticated>
         </CssBaseline>
       </ThemeProvider>
   );
