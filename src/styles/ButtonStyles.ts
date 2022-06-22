@@ -5,9 +5,7 @@ const buttonStyles = {
     },
     "&.MuiButton-outlined":{
         color : "primary.main",
-
     },
-
 }
 
 export default buttonStyles;

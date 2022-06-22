@@ -6,9 +6,7 @@ export default function LayoutAuthenticated(props :any) {
         <NavbarAuthenticated/>
         <main
             style={{
-                height: "100vh",
-                width: "100%",
-                justifyContent: "center",
+                padding: '70px 140px'
             }}
         >
             {props.children}

@@ -6,11 +6,11 @@ export default function Layout(props :any) {
 
             <Navbar/>
             <main
-                style={{
-                    height: "100vh",
-                    width: "100%",
-                    justifyContent: "center",
-                }}
+                // style={{
+                //     height: "100vh",
+                //     width: "100%",
+                //     justifyContent: "center",
+                // }}
             >
                 {props.children}
             </main>
