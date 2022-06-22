@@ -1,6 +1,8 @@
+import { Add, ArrowForward, ArrowRight, Cached, Favorite } from "@mui/icons-material";
 import {
   Box,
   Container,
+  Fab,
   FormControl,
   Grid,
   InputLabel,
@@ -9,6 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { color } from "@mui/system";
+import buttonStyles from "../styles/ButtonStyles";
 
 const TransferPage = () => {
   return (
@@ -57,7 +60,15 @@ const TransferPage = () => {
           <Typography variant="h2" fontWeight="200">
             15.750,89 PLN
           </Typography>
-          <FormControl variant="standard" sx={{ m: 1, minWidth: 120, marginTop: "60px" }}>
+          <FormControl
+            variant="standard"
+            sx={{
+              m: 1,
+              minWidth: 120,
+              marginTop: "60px",
+              marginBottom: "60px",
+            }}
+          >
             <InputLabel id="demo-simple-select-standard-label">
               Select subaccount
             </InputLabel>
@@ -75,6 +86,74 @@ const TransferPage = () => {
               <MenuItem value={30}>Thirty</MenuItem>
             </Select>
           </FormControl>
+        <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            rowGap: "40px"
+        }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between"
+            }}
+          >
+            <Fab
+              color="primary"
+              variant="extended"
+              aria-label="transfer"
+              size="large"
+              sx={buttonStyles}
+            >
+              <Box sx={{ display: "flex" }}>
+                <Add />
+                add money
+              </Box>
+            </Fab>
+            <Fab
+              color="error"
+              variant="extended"
+              aria-label="transfer"
+              size="large"
+              sx={buttonStyles}
+            >
+              <Box sx={{ display: "flex" }}>
+                <ArrowForward sx={{ justifySelf: 'flex-start' }}/>
+                Transfer
+              </Box>
+            </Fab>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between"
+            }}
+          >
+            <Fab
+              color="primary"
+              variant="extended"
+              aria-label="transfer"
+              size="large"
+              sx={buttonStyles}
+            >
+              <Box sx={{ display: "flex" }}>
+                <Cached />
+                Exchange
+              </Box>
+            </Fab>
+            <Fab
+              color="success"
+              variant="extended"
+              aria-label="transfer"
+              size="large"
+              sx={buttonStyles}
+            >
+              <Box sx={{ display: "flex" }}>
+                <Favorite />
+                Add Friend
+              </Box>
+            </Fab>
+          </Box>
+        </Box>
         </Box>
       </Grid>
       <Grid item xs={6}></Grid>

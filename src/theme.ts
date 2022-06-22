@@ -9,5 +9,8 @@ export const darkTheme = createTheme({
     primary: {
       main: "#007AFF",
     },
+    // error: {
+      
+    // }
   },
 });
