@@ -31,7 +31,7 @@ export default function NavbarAuthenticated() {
               color="inherit"
             >
               <Badge badgeContent={4} color="error">
-                <NotificationsIcon />
+                <NotificationsIcon fontSize="inherit"/>
               </Badge>
             </IconButton>
 
@@ -40,14 +40,14 @@ export default function NavbarAuthenticated() {
               aria-label="show 4 new mails"
               color="inherit"
             >
-              <Avatar sx={{ bgcolor: "primary.main" }}>MT</Avatar>
+              <Avatar  sx={{ bgcolor: "primary.main", width: 34, height: 34 }}><Typography color="secondary.light" sx={{ fontSize: '15px' }}>MT</Typography></Avatar>
             </IconButton>
 
             <IconButton
               size="large"
               color="inherit"
             >
-              <LogoutIcon />
+              <LogoutIcon fontSize="inherit"/>
             </IconButton>
           </Box>
         </Toolbar>
