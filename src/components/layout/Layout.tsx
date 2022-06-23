@@ -1,3 +1,4 @@
+import { Container } from "@mui/material";
 import Navbar from "./Navbar";
 
 export default function Layout(props :any) {
@@ -12,7 +13,9 @@ export default function Layout(props :any) {
                 //     justifyContent: "center",
                 // }}
             >
-                {props.children}
+                <Container>
+                    {props.children}
+                </Container>
             </main>
         </div>
 

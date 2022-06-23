@@ -8,7 +8,7 @@ const buttonStyles = {
     },
     "&.MuiFab-root": {
         color: "#DFEAF5",
-        width: "180px",
+        width: "182px",
         fontWeight: 500,
         fontSize: "20px",
         lineHeight: "26px",
