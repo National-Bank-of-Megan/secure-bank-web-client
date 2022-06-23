@@ -54,7 +54,7 @@ export default function NavbarAuthenticated() {
       </AppBar>
     
         
-        <Paper  sx={{bgcolor: 'dark.background.paper' }}>
+        <Paper  sx={{bgcolor: 'background.paper' }}>
       <Tabs value={value} onChange={handleChange} variant="fullWidth" >
     //   todo stworzyc slownik z nazwa i linkiem do strony zamiast recznie
         <Tab label="Transfers" />

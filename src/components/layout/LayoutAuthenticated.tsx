@@ -1,17 +1,16 @@
-import NavbarAuthenticated from './NavbarAuthenticated'
-export default function LayoutAuthenticated(props :any) {
-    return(
-        <div className="vh-100">
-
-        <NavbarAuthenticated/>
-        <main
-            style={{
-                padding: '70px 200px'
-            }}
-        >
-            {props.children}
-        </main>
-    </div>
-
-    )
-};
+import NavbarAuthenticated from "./NavbarAuthenticated";
+export default function LayoutAuthenticated(props: any) {
+  return (
+    <>
+      <NavbarAuthenticated />
+      <main
+        style={{
+          height: "100vh",
+          padding: '70px 180px'
+        }}
+      >
+        {props.children}
+      </main>
+    </>
+  );
+}

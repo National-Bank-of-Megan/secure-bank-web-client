@@ -1,7 +1,9 @@
 const cardStyles = {
     "&.MuiCard-root": {
-        color: "#007AFF"
+        color: "background.paper"
     }
+
 }
+
 
 export default cardStyles;

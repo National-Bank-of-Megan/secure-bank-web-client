@@ -6,6 +6,8 @@ import LayoutAuthenticated from "./components/layout/LayoutAuthenticated";
 import { darkTheme } from "./theme";
 import { Route, Routes } from "react-router-dom";
 import TransferPage from "./pages/TransfersPage";
+import { CurrencyExchange } from "@mui/icons-material";
+import CurrencyExchangePage from "./pages/CurrencyExchangePage";
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/transfers" element={<TransferPage />} />
+            <Route path="/exchange" element={<CurrencyExchangePage/>}/>
           </Routes>
         </LayoutAuthenticated>
       </CssBaseline>
