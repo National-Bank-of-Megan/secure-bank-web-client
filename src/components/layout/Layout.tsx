@@ -8,7 +8,6 @@ export default function Layout(props :any) {
             <Navbar/>
             <main
              style={{
-                height: "100vh",
                 padding: '70px 200px'
               }}
             >

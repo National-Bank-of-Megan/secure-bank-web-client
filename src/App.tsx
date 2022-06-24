@@ -8,6 +8,7 @@ import { Route, Routes } from "react-router-dom";
 import TransferPage from "./pages/TransfersPage";
 import { CurrencyExchange } from "@mui/icons-material";
 import CurrencyExchangePage from "./pages/CurrencyExchangePage";
+import HistoryPage from "./pages/HistoryPage";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/transfers" element={<TransferPage />} />
             <Route path="/exchange" element={<CurrencyExchangePage/>}/>
+            <Route path="/history" element={<HistoryPage />} />
           </Routes>
         </LayoutAuthenticated>
       </CssBaseline>
