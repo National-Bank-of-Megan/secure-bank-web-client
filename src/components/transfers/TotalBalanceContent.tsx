@@ -231,8 +231,8 @@ const TotalBalanceContent = () => {
                     sx={{
                       position: 'absolute',
                       right: '0%',
-                      '&:focus': {
-                        outline: 'none',                                                                   
+                      "& .MuiSelect-select:focus": {
+                        background: "none !important",                                                                   
                       }
                     }}
                   >
