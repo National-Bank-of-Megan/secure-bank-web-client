@@ -10,9 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import buttonStyles from "../../styles/ButtonStyles";
+import {useState} from "react";
+
 
 const TotalBalanceContent = () => {
-  return (
+
+    return (
     <>
       <Typography variant="h2" color="primary.main">
         Total balance
@@ -86,6 +89,7 @@ const TotalBalanceContent = () => {
               <ArrowForward sx={{ mr: 1 }} />
               Transfer
             </Fab>
+
           </Box>
           <Box
             sx={{

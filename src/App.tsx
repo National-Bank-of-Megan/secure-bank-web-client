@@ -9,6 +9,7 @@ import TransferPage from "./pages/TransfersPage";
 import { CurrencyExchange } from "@mui/icons-material";
 import CurrencyExchangePage from "./pages/CurrencyExchangePage";
 import HistoryPage from "./pages/HistoryPage";
+import AccountPage from "./pages/AccountPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
             <Route path="/transfers" element={<TransferPage />} />
             <Route path="/exchange" element={<CurrencyExchangePage/>}/>
             <Route path="/history" element={<HistoryPage />} />
+            <Route path="/account" element={<AccountPage/>}/>
           </Routes>
         </LayoutAuthenticated>
       </CssBaseline>
