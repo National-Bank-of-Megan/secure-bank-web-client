@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Drawer,
   Fab,
   FormControl,
   FormHelperText,
@@ -28,31 +29,32 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import buttonStyles from "../../styles/ButtonStyles";
 
 const currencies = [
   {
-    value: 'USD',
-    label: '$',
+    value: "USD",
+    label: "$",
   },
   {
-    value: 'EUR',
-    label: '€',
+    value: "EUR",
+    label: "€",
   },
   {
-    value: 'BTC',
-    label: '฿',
+    value: "BTC",
+    label: "฿",
   },
   {
-    value: 'JPY',
-    label: '¥',
+    value: "JPY",
+    label: "¥",
   },
 ];
 
 const TotalBalanceContent = () => {
   const [open, setOpen] = useState(false);
-  const [currency, setCurrency] = useState('EUR');
+  const [currency, setCurrency] = useState("EUR");
+  const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCurrency(event.target.value);
@@ -64,7 +66,17 @@ const TotalBalanceContent = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setFriendsDrawerOpen(false);
   };
+
+  const toggleDrawer = () => {
+    console.log('yikes')
+    setFriendsDrawerOpen(!friendsDrawerOpen);
+  };
+
+  const handleDrawerClose = (event: object) => {
+    
+  }
 
   return (
     <>
@@ -165,7 +177,7 @@ const TotalBalanceContent = () => {
         </Box>
       </Box>
 
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md"> {/* żeby można było drawer zamknąć kliknięciem, to zrobić 2 staty i na nich robić operacje logiczne z onClick na dialog, albo też z onClick ale jakoś inaczej */}
         <Paper
           sx={{
             bgcolor: "background.paper",
@@ -199,7 +211,7 @@ const TotalBalanceContent = () => {
                 <Input
                   endAdornment={
                     <InputAdornment position="end">
-                      <IconButton onClick={alert}>
+                      <IconButton id="drawerButton" onClick={toggleDrawer}>
                         <People />
                       </IconButton>
                     </InputAdornment>
@@ -212,16 +224,19 @@ const TotalBalanceContent = () => {
                 <Input fullWidth />
               </FormControl>
               <FormControl fullWidth variant="standard">
-                
-                <Box sx={{
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  position: 'relative'
-                }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "flex-end",
+                    position: "relative",
+                  }}
+                >
                   <InputLabel>Amount</InputLabel>
-                  <Input sx={{
-                    width: '100%'
-                  }}/>
+                  <Input
+                    sx={{
+                      width: "100%",
+                    }}
+                  />
                   <TextField
                     select
                     value={currency}
@@ -229,11 +244,12 @@ const TotalBalanceContent = () => {
                     variant="standard"
                     InputProps={{ disableUnderline: true }}
                     sx={{
-                      position: 'absolute',
-                      right: '0%',
+                      position: "absolute",
+                      width: "7.5%",
+                      right: "0%",
                       "& .MuiSelect-select:focus": {
-                        background: "none !important",                                                                   
-                      }
+                        background: "none",
+                      },
                     }}
                   >
                     {currencies.map((option) => (
@@ -277,10 +293,14 @@ const TotalBalanceContent = () => {
             </DialogActions>
           </Box>
         </Paper>
+        <Drawer
+          anchor="right"
+          open={friendsDrawerOpen}
+          onClose={() => setFriendsDrawerOpen(false)}
+        >
+          <Typography>blabla</Typography>
+        </Drawer>
       </Dialog>
-      {/* <Input
-            endAdornment={<InputAdornment position="end">kg</InputAdornment>}
-          /> */}
     </>
   );
 };
