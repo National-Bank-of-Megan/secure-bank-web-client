@@ -17,6 +17,7 @@ import {
   DialogTitle,
   Fab,
   FormControl,
+  FormHelperText,
   IconButton,
   Input,
   InputAdornment,
@@ -30,8 +31,32 @@ import {
 import { useState } from "react";
 import buttonStyles from "../../styles/ButtonStyles";
 
+const currencies = [
+  {
+    value: 'USD',
+    label: '$',
+  },
+  {
+    value: 'EUR',
+    label: '€',
+  },
+  {
+    value: 'BTC',
+    label: '฿',
+  },
+  {
+    value: 'JPY',
+    label: '¥',
+  },
+];
+
 const TotalBalanceContent = () => {
   const [open, setOpen] = useState(false);
+  const [currency, setCurrency] = useState('EUR');
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCurrency(event.target.value);
+  };
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -65,15 +90,8 @@ const TotalBalanceContent = () => {
             marginBottom: "88px",
           }}
         >
-          <InputLabel id="demo-simple-select-standard-label">
-            Select subaccount
-          </InputLabel>
-          <Select
-            labelId="demo-simple-select-standard-label"
-            id="demo-simple-select-standard"
-            value="age"
-            label="Age"
-          >
+          <InputLabel>Select subaccount</InputLabel>
+          <Select value="age" label="Age">
             <MenuItem value="$ 1200.99">
               <em>None</em>
             </MenuItem>
@@ -150,26 +168,32 @@ const TotalBalanceContent = () => {
       <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
         <Paper
           sx={{
-            bgcolor: "background.paper"
+            bgcolor: "background.paper",
           }}
         >
-          <Box sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            padding: "35px 0",
-            rowGap: "15px 40px"
-          }}>
-            <Typography variant="h2" color="primary">
-              New transfer
-            </Typography>
-            <DialogContent sx={{
-              width: '55%',
+          <Box
+            sx={{
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              rowGap: "15px"
-            }}>
+              padding: "35px 0",
+              rowGap: "15px 40px",
+            }}
+          >
+            <Typography variant="h2" color="primary">
+              New transfer
+            </Typography>
+            <DialogContent
+              sx={{
+                width: "55%",
+                height: "350px",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                rowGap: "15px",
+              }}
+            >
               <FormControl fullWidth variant="standard">
                 <InputLabel>Receiver</InputLabel>
                 <Input
@@ -185,29 +209,69 @@ const TotalBalanceContent = () => {
               </FormControl>
               <FormControl fullWidth variant="standard">
                 <InputLabel>Title</InputLabel>
-                <Input
-                  fullWidth
-                />
+                <Input fullWidth />
               </FormControl>
               <FormControl fullWidth variant="standard">
-                <InputLabel>Receiver</InputLabel>
-                <Input
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton onClick={alert}>
-                        <People />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  fullWidth
-                />
+                
+                <Box sx={{
+                  display: 'flex',
+                  alignItems: 'flex-end',
+                  position: 'relative'
+                }}>
+                  <InputLabel>Amount</InputLabel>
+                  <Input sx={{
+                    width: '100%'
+                  }}/>
+                  <TextField
+                    select
+                    value={currency}
+                    onChange={handleChange}
+                    variant="standard"
+                    InputProps={{ disableUnderline: true }}
+                    sx={{
+                      position: 'absolute',
+                      right: '0%',
+                      '&:focus': {
+                        outline: 'none',                                                                   
+                      }
+                    }}
+                  >
+                    {currencies.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Box>
+                <Typography
+                  color="text.secondary"
+                  sx={{
+                    fontSize: "12px",
+                    marginTop: "10px",
+                  }}
+                >
+                  Currency balance after transfer: 320,84 ${" "}
+                </Typography>
+                <Typography
+                  color="text.secondary"
+                  sx={{
+                    fontSize: "12px",
+                  }}
+                >
+                  Total balance after transfer: 15.253,51 PLN
+                </Typography>
               </FormControl>
             </DialogContent>
             <DialogActions>
-              <Button variant="contained" size="large" onClick={handleClose} sx={{
-                margin: '30px 0',
-                width: '250px'
-              }}>
+              <Button
+                variant="contained"
+                size="large"
+                onClick={handleClose}
+                sx={{
+                  margin: "0 0 30px",
+                  width: "250px",
+                }}
+              >
                 Transfer money
               </Button>
             </DialogActions>
