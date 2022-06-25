@@ -2,6 +2,7 @@ import {Box, Grid, Typography} from "@mui/material";
 import CurrencyExchangeForm from "../components/currency-exchange/CurrencyExchangeForm";
 import ExchangeRatesTable from "../components/currency-exchange/ExchangeRatesTable";
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import React from "react";
 
 const CurrencyExchangePage = () => {
     return (
@@ -10,13 +11,19 @@ const CurrencyExchangePage = () => {
             container
             sx={{
                 justifyContent: "space-between",
-                alignItems: 'center'
+                alignItems: 'center',
+
             }}
         >
-            <Grid item xs={6} gap={5}>
+            <Grid item xs={12}>
+                <Typography variant="h2" color="primary.main" sx={{marginBottom:'50px'}} >
+                    Sell PLN
+                </Typography>
+            </Grid>
+            <Grid item xs={6}>
                 <CurrencyExchangeForm/>
             </Grid>
-            <Grid item xs={6} style={{backgroundColor: "pink", justifyContent: 'end'}}>
+            <Grid item xs={6} style={{justifyContent: 'end'}}>
                 <ExchangeRatesTable />
             </Grid>
 

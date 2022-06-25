@@ -17,13 +17,42 @@ import React from "react";
 import exchangeCurrencyCardStyles from "../../styles/exchangeCurrencyCardStyles";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import NumberFormat, {InputAttributes} from "react-number-format";
 
+interface CustomProps {
+    onChange: (event: { target: { name: string; value: string } }) => void;
+    name: string;
+}
+
+const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
+    CustomProps>(function NumberFormatCustom(props, ref) {
+    const {onChange, ...other} = props;
+
+    return (
+        <NumberFormat
+            {...other}
+            getInputRef={ref}
+            onValueChange={(values) => {
+                onChange({
+                    target: {
+                        name: props.name,
+                        value: values.value
+                    }
+                });
+            }}
+            thousandSeparator
+            isNumericString
+            prefix="+$"
+        />
+    );
+});
 
 export default function CurrencyExchangeForm() {
-    const [age, setAge] = React.useState("PLN");
+    const [values, setValues] = React.useState('');
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value as string);
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setValues(event.target.value);
     };
 
     const exchangeCard = () => {
@@ -33,13 +62,14 @@ export default function CurrencyExchangeForm() {
                 <CardContent
                     sx={{
                         display: "flex",
-                        justifyContent: "space-evenly",
+                        justifyContent: "space-between",
+                        alignItems: 'center'
                     }}
                 >
                     <Box
                         sx={{
                             display: "flex",
-                            flexDirection: "column",
+                            flexDirection: "column"
                         }}
                     >
                         <FormControl fullWidth variant="standard">
@@ -50,8 +80,7 @@ export default function CurrencyExchangeForm() {
                                 size="medium"
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                value={age}
-                                onChange={handleChange}
+                                value="PLN"
                             >
                                 <MenuItem value={"PLN"}>PLN</MenuItem>
                                 <MenuItem value={"CHF"}>CHF</MenuItem>
@@ -66,27 +95,28 @@ export default function CurrencyExchangeForm() {
                             May 21, 2022
                         </Typography>
                     </Box>
-                    <Stack
+
+                    <TextField
                         sx={{
-                            direction: "column",
-                            justifyContent: "center"
+                            "& .MuiInputBase-root": {
+                                "& input": {
+                                    textAlign: "right"
+                                }
+                            }
                         }}
-                    >
-                        <TextField
-                            id="standard-basic"
-                            variant="standard"
-                            type="number"
-                            defaultValue="13.98"
-                            size="small"
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start">+</InputAdornment>
-                                ),
-                                disableUnderline: true,
-                                style: {fontSize: 40},
-                            }}
-                        />
-                    </Stack>
+                        id="standard-basic"
+                        variant="standard"
+                        value={values}
+                        placeholder="13.98"
+                        onChange={handleChange}
+                        size="medium"
+                        InputProps={{
+                            inputComponent: NumberFormatCustom as any,
+                            disableUnderline: true,
+                            style: {fontSize: 40},
+                        }}
+                    />
+
                 </CardContent>
             </Card>
         )
@@ -94,19 +124,18 @@ export default function CurrencyExchangeForm() {
 
     return (
         <>
-            <Typography variant="h2" color="primary.main" sx={{marginBottom:'50px'}} >
-                Sell PLN
-            </Typography>
             <Box gap={2} sx={{display: 'flex', flexDirection: 'column'}}>
                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}} gap={1}>
                     <TrendingUpIcon sx={{color: "primary.main"}}/>
                     <Typography variant="h5" color="primary.main">PLN = CHF 0.02244</Typography>
                 </Box>
-                {exchangeCard()}
-                {/*<Avatar sx={{bgcolor: "background.paper"}}>*/}
-                {/*    <ArrowDownwardIcon sx={{color: "primary.main"}}/>*/}
-                {/*</Avatar>*/}
-                {exchangeCard()}
+                <Stack spacing={2}>
+                    {exchangeCard()}
+                    <Avatar sx={{backgroundColor: 'grey', margin: 'auto'}}>
+                        <ArrowDownwardIcon sx={{color: "primary.main"}}/>
+                    </Avatar>
+                    {exchangeCard()}
+                </Stack>
                 <Stack spacing={0.1}>
                     <FormHelperText>
                         PLN balance after transfer: 15.253,51 PLN
@@ -115,7 +144,7 @@ export default function CurrencyExchangeForm() {
                         CHF balance after transfer: 323,51 CHF
                     </FormHelperText>
                 </Stack>
-                <Button variant="contained" size="large" sx={{width:'480px'}}>
+                <Button variant="contained" size="large" sx={{width: '480px'}}>
                     Exchange
                 </Button>
 

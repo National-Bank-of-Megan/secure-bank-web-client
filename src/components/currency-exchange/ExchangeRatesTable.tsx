@@ -1,80 +1,60 @@
 import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import {useState} from "react";
-import {Pagination, TableFooter, TablePagination} from "@mui/material";
-
-function createCurrencyRates(
-    currency: string,
-    sellingRate: number,
-    buyingRate: number
-) {
-    return {currency, sellingRate, buyingRate};
-}
+import {DataGrid, GridColDef, GridRowsProp} from '@mui/x-data-grid';
+import {useDemoData} from '@mui/x-data-grid-generator';
 
 const ExchangeRatesTable = () => {
-    const [page, setPage] = useState(2);
-    const exchangeRatesTableData = [
-        createCurrencyRates('PLN', 4.3512, 4.3512),
-        createCurrencyRates('EUR', 4.3512, 4.3512),
-        createCurrencyRates('USD', 4.3512, 4.3512),
-        createCurrencyRates('CHF', 4.3512, 4.3512),
-        createCurrencyRates('GBP', 4.3512, 4.3512)
+    const [currentCurrency, setCurrentCurrency] = useState('PLN')
+
+    const data: GridRowsProp = [
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
+        {id: 'PLN', col1: "PLN", col2: 4.4567, col3: 4.4456},
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
+        {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456}
     ];
 
-    const handleChangePage = (
-        event: React.MouseEvent<HTMLButtonElement> | null,
-        newPage: number,
-    ) => {
-        setPage(newPage);
-    };
+
+    const columns: GridColDef[] = [
+        {field: 'col1', headerName: 'Currency',flex :1},
+        {field: 'col2', headerName: 'Sell [' + currentCurrency + ']',flex :1},
+        {field: 'col3', headerName: 'Buy [' + currentCurrency + ']',flex :1}
+    ];
 
     return (
-        <TableContainer component={Paper} sx={{bgcolor:'background.default'}}>
-            <Table sx={{minWidth: 600}} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center">Currency</TableCell>
-                        <TableCell align="center">Buy [PLN]</TableCell>
-                        <TableCell align="center">Sell [PLN]</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {exchangeRatesTableData.map((currency) => (
-                        <TableRow
-                            key={currency.currency}
-                            sx={{'&:last-child td, &:last-child th': {border: 0}}}
-                        >
-                            <TableCell component="th" scope="row" align="center">
-                                {currency.currency}
-                            </TableCell>
-                            <TableCell align="center">{currency.buyingRate}</TableCell>
-                            <TableCell align="center">{currency.sellingRate}</TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-                <TableFooter>
-                    <TablePagination count={1} page={1} onPageChange={() => {
-                    }} rowsPerPage={5} sx={{
-                        ".MuiTablePagination-toolbar": {
-                            backgroundColor: "rgba(100,100,100,0.5)"
-                        },
-                        ".MuiTablePagination-selectLabel, .MuiTablePagination-input": {
-                          visibility:'false'
-                        }
-                    }}/>
-                </TableFooter>
-
-            </Table>
+        <div style={{height: 400, width: '100%'}}>
+            <DataGrid
+                {...data}
+                rows={data} columns={columns}
+                initialState={{
+                    pagination: {
+                        page: 1,
+                    },
+                }}
+                pageSize={5}
+                rowsPerPageOptions={[5]}
+                pagination
+                sx={{
+                    border: 'none',
+                    '& .MuiDataGrid-cell:hover': {
+                        color: 'primary.main',
+                    },
+                    '.MuiDataGrid-columnSeparator': {
+                        visibility: 'hidden',
+                    }
+                }}
 
 
-        </TableContainer>
-    );
+            />
+
+
+        </div>
+    )
 }
 
 export default ExchangeRatesTable;
