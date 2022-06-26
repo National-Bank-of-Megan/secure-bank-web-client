@@ -3,6 +3,7 @@ import {
   ArrowForward,
   Cached,
   Favorite,
+  MoveToInbox,
   People,
   Visibility,
   VisibilityOff,
@@ -15,6 +16,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Divider,
   Drawer,
   Fab,
   FormControl,
@@ -23,6 +25,11 @@ import {
   Input,
   InputAdornment,
   InputLabel,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   MenuItem,
   Paper,
   Select,
@@ -30,53 +37,18 @@ import {
   Typography,
 } from "@mui/material";
 import { MouseEventHandler, useState } from "react";
+import FriendAccountData from "../../models/friendAccount";
 import buttonStyles from "../../styles/ButtonStyles";
-
-const currencies = [
-  {
-    value: "USD",
-    label: "$",
-  },
-  {
-    value: "EUR",
-    label: "€",
-  },
-  {
-    value: "BTC",
-    label: "฿",
-  },
-  {
-    value: "JPY",
-    label: "¥",
-  },
-];
+import FriendAccount from "./FriendAccount";
+import MyContactsDrawer from "./MyContactsDrawer";
+import TransferDialog from "./TransferDialog";
 
 const TotalBalanceContent = () => {
-  const [open, setOpen] = useState(false);
-  const [currency, setCurrency] = useState("EUR");
-  const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
+  const [openTransferDialog, setOpenTransferDialog] = useState(false);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrency(event.target.value);
+  const handleDialogOpen = () => {
+    setOpenTransferDialog(true);
   };
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-    setFriendsDrawerOpen(false);
-  };
-
-  const toggleDrawer = () => {
-    console.log('yikes')
-    setFriendsDrawerOpen(!friendsDrawerOpen);
-  };
-
-  const handleDrawerClose = (event: object) => {
-    
-  }
 
   return (
     <>
@@ -141,7 +113,7 @@ const TotalBalanceContent = () => {
               aria-label="transfer"
               size="large"
               sx={buttonStyles}
-              onClick={handleClickOpen}
+              onClick={handleDialogOpen}
             >
               <ArrowForward sx={{ mr: 1 }} />
               Transfer
@@ -177,130 +149,10 @@ const TotalBalanceContent = () => {
         </Box>
       </Box>
 
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md"> {/* żeby można było drawer zamknąć kliknięciem, to zrobić 2 staty i na nich robić operacje logiczne z onClick na dialog, albo też z onClick ale jakoś inaczej */}
-        <Paper
-          sx={{
-            bgcolor: "background.paper",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              padding: "35px 0",
-              rowGap: "15px 40px",
-            }}
-          >
-            <Typography variant="h2" color="primary">
-              New transfer
-            </Typography>
-            <DialogContent
-              sx={{
-                width: "55%",
-                height: "350px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                rowGap: "15px",
-              }}
-            >
-              <FormControl fullWidth variant="standard">
-                <InputLabel>Receiver</InputLabel>
-                <Input
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton id="drawerButton" onClick={toggleDrawer}>
-                        <People />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  fullWidth
-                />
-              </FormControl>
-              <FormControl fullWidth variant="standard">
-                <InputLabel>Title</InputLabel>
-                <Input fullWidth />
-              </FormControl>
-              <FormControl fullWidth variant="standard">
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "flex-end",
-                    position: "relative",
-                  }}
-                >
-                  <InputLabel>Amount</InputLabel>
-                  <Input
-                    sx={{
-                      width: "100%",
-                    }}
-                  />
-                  <TextField
-                    select
-                    value={currency}
-                    onChange={handleChange}
-                    variant="standard"
-                    InputProps={{ disableUnderline: true }}
-                    sx={{
-                      position: "absolute",
-                      width: "7.5%",
-                      right: "0%",
-                      "& .MuiSelect-select:focus": {
-                        background: "none",
-                      },
-                    }}
-                  >
-                    {currencies.map((option) => (
-                      <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Box>
-                <Typography
-                  color="text.secondary"
-                  sx={{
-                    fontSize: "12px",
-                    marginTop: "10px",
-                  }}
-                >
-                  Currency balance after transfer: 320,84 ${" "}
-                </Typography>
-                <Typography
-                  color="text.secondary"
-                  sx={{
-                    fontSize: "12px",
-                  }}
-                >
-                  Total balance after transfer: 15.253,51 PLN
-                </Typography>
-              </FormControl>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                variant="contained"
-                size="large"
-                onClick={handleClose}
-                sx={{
-                  margin: "0 0 30px",
-                  width: "250px",
-                }}
-              >
-                Transfer money
-              </Button>
-            </DialogActions>
-          </Box>
-        </Paper>
-        <Drawer
-          anchor="right"
-          open={friendsDrawerOpen}
-          onClose={() => setFriendsDrawerOpen(false)}
-        >
-          <Typography>blabla</Typography>
-        </Drawer>
-      </Dialog>
+      <TransferDialog
+        openTransferDialog={openTransferDialog}
+        setOpenTransferDialog={setOpenTransferDialog}
+      />
     </>
   );
 };
