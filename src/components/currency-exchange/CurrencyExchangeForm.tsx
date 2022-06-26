@@ -129,13 +129,19 @@ export default function CurrencyExchangeForm() {
                     <TrendingUpIcon sx={{color: "primary.main"}}/>
                     <Typography variant="h5" color="primary.main">PLN = CHF 0.02244</Typography>
                 </Box>
-                <Stack spacing={2}>
-                    {exchangeCard()}
-                    <Avatar sx={{backgroundColor: 'grey', margin: 'auto'}}>
+                <Box>
+                    <Avatar sx={{
+                        backgroundColor: 'grey',justifyContent:'center'
+                    }}>
                         <ArrowDownwardIcon sx={{color: "primary.main"}}/>
                     </Avatar>
+                <Stack spacing={2} sx={{backgroundColor:'pink'}}>
+                    {exchangeCard()}
+
                     {exchangeCard()}
                 </Stack>
+                </Box>
+
                 <Stack spacing={0.1}>
                     <FormHelperText>
                         PLN balance after transfer: 15.253,51 PLN

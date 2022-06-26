@@ -10,6 +10,7 @@ import { CurrencyExchange } from "@mui/icons-material";
 import CurrencyExchangePage from "./pages/CurrencyExchangePage";
 import HistoryPage from "./pages/HistoryPage";
 import AccountPage from "./pages/AccountPage";
+import DevicesPage from "./pages/DevicesPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/exchange" element={<CurrencyExchangePage/>}/>
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/account" element={<AccountPage/>}/>
+            <Route path="/devices" element={<DevicesPage/>}/>
           </Routes>
         </LayoutAuthenticated>
       </CssBaseline>
