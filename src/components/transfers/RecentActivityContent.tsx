@@ -4,11 +4,7 @@ import Transaction from "./Transaction";
 const RecentActivityContent = () => {
   return (
     <>
-      <Box
-        sx={{
-          // marginLeft: "205px",
-        }}
-      >
+      <Box>
         <Typography
           variant="h3"
           color="primary.main"

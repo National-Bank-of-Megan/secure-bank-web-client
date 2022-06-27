@@ -1,126 +1,40 @@
-import {
-    Avatar,
-    Box, Button,
-    Card,
-    CardContent, FormHelperText,
-    InputAdornment, Paper,
-    Stack,
-    TextField,
-    Typography,
-} from "@mui/material";
-import cardStyles from "../../styles/CardStyles";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, {SelectChangeEvent} from "@mui/material/Select";
-import React from "react";
-import exchangeCurrencyCardStyles from "../../styles/exchangeCurrencyCardStyles";
+import {Avatar, Box, Button, FormHelperText, Stack, Typography,} from "@mui/material";
+import React, {useState} from "react";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import NumberFormat, {InputAttributes} from "react-number-format";
+import CurrencyExchangeCard from "./CurrencyExchangeCard";
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+// import CurrencyExchangeCard from "./CurrencyExchangeCard";
 
-interface CustomProps {
-    onChange: (event: { target: { name: string; value: string } }) => void;
-    name: string;
-}
-
-const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
-    CustomProps>(function NumberFormatCustom(props, ref) {
-    const {onChange, ...other} = props;
-
-    return (
-        <NumberFormat
-            {...other}
-            getInputRef={ref}
-            onValueChange={(values) => {
-                onChange({
-                    target: {
-                        name: props.name,
-                        value: values.value
-                    }
-                });
-            }}
-            thousandSeparator
-            isNumericString
-            prefix="+$"
-        />
-    );
-});
 
 export default function CurrencyExchangeForm() {
-    const [values, setValues] = React.useState('');
+
+    const conversionRate = 4
+    const [bought, setBought] = useState('')
+    const [sold, setSold] = useState('')
+    const [isSold, setIsSold] = useState(true)
 
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValues(event.target.value);
+        // setSold(event.target.value)
+        if (isSold) {
+            setSold(event.target.value)
+            let converted: number = parseFloat(sold) / conversionRate;
+            setBought(converted.toString())
+        }
     };
 
-    const exchangeCard = () => {
-        return (
-            <Card sx={exchangeCurrencyCardStyles}>
-
-                <CardContent
-                    sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: 'center'
-                    }}
-                >
-                    <Box
-                        sx={{
-                            display: "flex",
-                            flexDirection: "column"
-                        }}
-                    >
-                        <FormControl fullWidth variant="standard">
-                            <Select
-                                sx={{
-                                    fontSize: "34px",
-                                }}
-                                size="medium"
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                value="PLN"
-                            >
-                                <MenuItem value={"PLN"}>PLN</MenuItem>
-                                <MenuItem value={"CHF"}>CHF</MenuItem>
-                                <MenuItem value={"USD"}>USD</MenuItem>
-                            </Select>
-                        </FormControl>
-                        <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            sx={{marginTop: "20px"}}
-                        >
-                            May 21, 2022
-                        </Typography>
-                    </Box>
-
-                    <TextField
-                        sx={{
-                            "& .MuiInputBase-root": {
-                                "& input": {
-                                    textAlign: "right"
-                                }
-                            }
-                        }}
-                        id="standard-basic"
-                        variant="standard"
-                        value={values}
-                        placeholder="13.98"
-                        onChange={handleChange}
-                        size="medium"
-                        InputProps={{
-                            inputComponent: NumberFormatCustom as any,
-                            disableUnderline: true,
-                            style: {fontSize: 40},
-                        }}
-                    />
-
-                </CardContent>
-            </Card>
-        )
+    const exchangeChange = () => {
+        setIsSold(!isSold);
     }
+
+    const returnArrow = () => {
+        if (isSold) {
+            return <ArrowDownwardIcon sx={{color: "primary.main"}}/>
+        }
+        return <ArrowUpwardIcon sx={{color: "primary.main"}}/>
+    }
+
 
     return (
         <>
@@ -130,21 +44,26 @@ export default function CurrencyExchangeForm() {
                     <Typography variant="h5" color="primary.main">PLN = CHF 0.02244</Typography>
                 </Box>
                 <Box>
-                <Box sx={{width:'480px'}}>
-                    {exchangeCard()}
-                    <Avatar
+                    <Box sx={{width: '480px'}}>
+                        <CurrencyExchangeCard values={sold} handleChange={handleChange}/>
+                        <Avatar
+                            onClick={exchangeChange}
+                            sx={{
+                                bgcolor: 'background.paper',
+                                border: '1px solid primary',
+                                zIndex: '111111',
+                                position: 'relative',
+                                marginTop: '-14px',
+                                marginBottom: '-14px',
+                                marginLeft: '47%'
 
-                        sx={{
-                        bgcolor :'background.paper',border:'1px solid primary' ,zIndex:'111111', position:'relative',marginTop :'-14px', marginBottom :'-14px', marginLeft:'47%'
 
+                            }}>
+                            {returnArrow()}
+                        </Avatar>
 
-                    }}>
-
-                        <ArrowDownwardIcon sx={{color: "primary.main"}}/>
-                    </Avatar>
-
-                    {exchangeCard()}
-                </Box>
+                        <CurrencyExchangeCard values={sold} handleChange={handleChange}/>
+                    </Box>
                 </Box>
 
                 <Stack spacing={0.1}>

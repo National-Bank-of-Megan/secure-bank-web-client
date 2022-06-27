@@ -5,7 +5,7 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
-  OutlinedInput,
+  OutlinedInput, Pagination,
   Paper,
   Tab,
   Tabs,
@@ -21,6 +21,7 @@ const HistoryPage = () => {
     <>
       <HistoryNavigation />
       <OperationsList />
+      <Pagination count={10} color="primary" />
     </>
   );
 };
