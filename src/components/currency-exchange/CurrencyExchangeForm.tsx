@@ -3,7 +3,7 @@ import {
     Box, Button,
     Card,
     CardContent, FormHelperText,
-    InputAdornment,
+    InputAdornment, Paper,
     Stack,
     TextField,
     Typography,
@@ -130,16 +130,21 @@ export default function CurrencyExchangeForm() {
                     <Typography variant="h5" color="primary.main">PLN = CHF 0.02244</Typography>
                 </Box>
                 <Box>
-                    <Avatar sx={{
-                        backgroundColor: 'grey',justifyContent:'center'
+                <Box sx={{width:'480px'}}>
+                    {exchangeCard()}
+                    <Avatar
+
+                        sx={{
+                        bgcolor :'background.paper',border:'1px solid primary' ,zIndex:'111111', position:'relative',marginTop :'-14px', marginBottom :'-14px', marginLeft:'47%'
+
+
                     }}>
+
                         <ArrowDownwardIcon sx={{color: "primary.main"}}/>
                     </Avatar>
-                <Stack spacing={2} sx={{backgroundColor:'pink'}}>
-                    {exchangeCard()}
 
                     {exchangeCard()}
-                </Stack>
+                </Box>
                 </Box>
 
                 <Stack spacing={0.1}>
