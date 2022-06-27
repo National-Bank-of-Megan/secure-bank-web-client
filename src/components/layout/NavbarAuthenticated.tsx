@@ -68,11 +68,11 @@ export default function NavbarAuthenticated() {
             <Paper sx={{bgcolor: 'background.paper'}}>
                 <Tabs value={currentPath} onChange={handleChange} variant="fullWidth">
                     // todo stworzyc slownik z nazwa i linkiem do strony zamiast recznie
-                    <Tab label="Transfers" component={Link} to={`/transfers`}/>
-                    <Tab label="History" component={Link} to={`/history`}/>
-                    <Tab label="Currency" component={Link} to={`/exchange`}/>
-                    <Tab label="Devices" component={Link} to={`/devices`}/>
-                    <Tab label="Account" component={Link} to={`/account`}/>
+                    <Tab label="Transfers"/>
+                    <Tab label="History"/>
+                    <Tab label="Currency"/>
+                    <Tab label="Devices"/>
+                    <Tab label="Account"/>
                 </Tabs>
             </Paper>
         </Box>
