@@ -9,9 +9,11 @@ import { MenuItem } from "@mui/material";
 import { Badge } from "@mui/material";
 import MailIcon from "@mui/icons-material/Mail";
 import Tab from '@mui/material/Tab';
+import {useNavigate , Link} from "react-router-dom";
 
 export default function NavbarAuthenticated() {
     const [value, setValue] = React.useState(0);
+    // const navigate = useNavigate();
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
       setValue(newValue);
@@ -57,11 +59,11 @@ export default function NavbarAuthenticated() {
         <Paper  sx={{bgcolor: 'background.paper' }}>
       <Tabs value={value} onChange={handleChange} variant="fullWidth" >
     //   todo stworzyc slownik z nazwa i linkiem do strony zamiast recznie
-        <Tab label="Transfers" />
-        <Tab label="History" />
-        <Tab label="Currency" />
-        <Tab label="Devices" />
-        <Tab label="Account" />
+        <Tab label="Transfers" component={Link} to={`/transfers`} />
+        <Tab label="History" component={Link} to={`/history`}  />
+        <Tab label="Currency" component={Link} to={`/exchange`}  />
+        <Tab label="Devices" component={Link} to={`/devices`}  />
+        <Tab label="Account" component={Link} to={`/account`}  />
       </Tabs>
       </Paper>
     </Box>
