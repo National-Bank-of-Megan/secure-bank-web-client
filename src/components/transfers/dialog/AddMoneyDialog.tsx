@@ -1,46 +1,44 @@
 import { People } from "@mui/icons-material";
-import { Dialog, Paper, Box, Typography, DialogContent, FormControl, InputLabel, Input, InputAdornment, IconButton, DialogActions, Button, MenuItem, TextField } from "@mui/material";
-import { useState } from "react";
-import MyContactsDrawer from "./MyContactsDrawer";
+import {
+  Dialog,
+  Paper,
+  Box,
+  Typography,
+  DialogContent,
+  FormControl,
+  InputLabel,
+  Input,
+  InputAdornment,
+  IconButton,
+  TextField,
+  MenuItem,
+  DialogActions,
+  Button,
+} from "@mui/material";
+import MyContactsDrawer from "../MyContactsDrawer";
+import { currencies } from "../TotalBalanceContent";
 
-const currencies = [
-  {
-    value: "USD",
-    label: "$",
-  },
-  {
-    value: "EUR",
-    label: "€",
-  },
-  {
-    value: "BTC",
-    label: "฿",
-  },
-  {
-    value: "JPY",
-    label: "¥",
-  },
-];
-
-const TransferDialog: React.FC<{ openTransferDialog: boolean, setOpenTransferDialog: (isOpen: boolean) => void }> = (props) => {
-  const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
-  const [currency, setCurrency] = useState("EUR");
-
-  const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrency(event.target.value);
-  };
+const AddMoneyDialog: React.FC<{
+  openAddMoneyDialog: boolean;
+  setOpenAddMoneyDialog: (isOpen: boolean) => void;
+  currency: string;
+  setCurrency: (currency: string) => void; }> = (props) => {
 
   const handleDialogClose = () => {
-    props.setOpenTransferDialog(false);
-    setFriendsDrawerOpen(false);
+    props.setOpenAddMoneyDialog(false);
   };
 
-  const toggleDrawer = () => {
-    setFriendsDrawerOpen(!friendsDrawerOpen);
+  const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    props.setCurrency(event.target.value);
   };
 
-    return (
-      <Dialog open={props.openTransferDialog} onClose={handleDialogClose} fullWidth maxWidth="md">
+  return (
+    <Dialog
+      open={props.openAddMoneyDialog}
+      onClose={handleDialogClose}
+      fullWidth
+      maxWidth="sm"
+    >
       <Paper
         sx={{
           bgcolor: "background.paper",
@@ -56,12 +54,12 @@ const TransferDialog: React.FC<{ openTransferDialog: boolean, setOpenTransferDia
           }}
         >
           <Typography variant="h2" color="primary">
-            New transfer
+            Add Money
           </Typography>
           <DialogContent
             sx={{
               width: "55%",
-              height: "350px",
+              padding: "65px 5px",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
@@ -69,23 +67,6 @@ const TransferDialog: React.FC<{ openTransferDialog: boolean, setOpenTransferDia
               rowGap: "15px",
             }}
           >
-            <FormControl fullWidth variant="standard">
-              <InputLabel>Receiver</InputLabel>
-              <Input
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton id="drawerButton" onClick={toggleDrawer}>
-                      <People />
-                    </IconButton>
-                  </InputAdornment>
-                }
-                fullWidth
-              />
-            </FormControl>
-            <FormControl fullWidth variant="standard">
-              <InputLabel>Title</InputLabel>
-              <Input fullWidth />
-            </FormControl>
             <FormControl fullWidth variant="standard">
               <Box
                 sx={{
@@ -102,13 +83,13 @@ const TransferDialog: React.FC<{ openTransferDialog: boolean, setOpenTransferDia
                 />
                 <TextField
                   select
-                  value={currency}
+                  value={props.currency}
                   onChange={handleCurrencyChange}
                   variant="standard"
                   InputProps={{ disableUnderline: true }}
                   sx={{
                     position: "absolute",
-                    width: "7.5%",
+                    width: "11.5%",
                     right: "0%",
                     "& .MuiSelect-select:focus": {
                       background: "none",
@@ -129,7 +110,7 @@ const TransferDialog: React.FC<{ openTransferDialog: boolean, setOpenTransferDia
                   marginTop: "10px",
                 }}
               >
-                Currency balance after transfer: 320,84 ${" "}
+                Currency balance after money load: 320,84 $
               </Typography>
               <Typography
                 color="text.secondary"
@@ -137,7 +118,7 @@ const TransferDialog: React.FC<{ openTransferDialog: boolean, setOpenTransferDia
                   fontSize: "12px",
                 }}
               >
-                Total balance after transfer: 15.253,51 PLN
+                Total balance after money load: 15.253,51 PLN
               </Typography>
             </FormControl>
           </DialogContent>
@@ -151,14 +132,13 @@ const TransferDialog: React.FC<{ openTransferDialog: boolean, setOpenTransferDia
                 width: "250px",
               }}
             >
-              Transfer money
+              Add money
             </Button>
           </DialogActions>
         </Box>
-        <MyContactsDrawer friendsDrawerOpen={friendsDrawerOpen} setFriendsDrawerOpen={setFriendsDrawerOpen}/>
       </Paper>
     </Dialog>
-    );
-}
+  );
+};
 
-export default TransferDialog;
+export default AddMoneyDialog;

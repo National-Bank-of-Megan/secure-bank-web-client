@@ -41,13 +41,46 @@ import FriendAccountData from "../../models/friendAccount";
 import buttonStyles from "../../styles/ButtonStyles";
 import FriendAccount from "./FriendAccount";
 import MyContactsDrawer from "./MyContactsDrawer";
-import TransferDialog from "./TransferDialog";
+import TransferDialog from "./dialog/TransferDialog";
+import AddMoneyDialog from "./dialog/AddMoneyDialog";
+import AddFriendDialog from "./dialog/AddFriendDialog";
+
+export const currencies = [
+  {
+    value: "USD",
+    label: "$",
+  },
+  {
+    value: "EUR",
+    label: "€",
+  },
+  {
+    value: "BTC",
+    label: "฿",
+  },
+  {
+    value: "JPY",
+    label: "¥",
+  },
+];
 
 const TotalBalanceContent = () => {
   const [openTransferDialog, setOpenTransferDialog] = useState(false);
+  const [openAddMoneyDialog, setOpenAddMoneyDialog] = useState(false);
+  const [openAddFriendDialog, setOpenAddFriendDialog] = useState(false);
 
-  const handleDialogOpen = () => {
+  const [currency, setCurrency] = useState("EUR");
+  
+  const handleTransferDialogOpen = () => {
     setOpenTransferDialog(true);
+  };
+
+  const handleAddMoneyDialogOpen = () => {
+    setOpenAddMoneyDialog(true);
+  };
+
+  const handleAddFriendDialogOpen = () => {
+    setOpenAddFriendDialog(true);
   };
 
   return (
@@ -103,6 +136,7 @@ const TotalBalanceContent = () => {
               aria-label="transfer"
               size="large"
               sx={buttonStyles}
+              onClick={handleAddMoneyDialogOpen}
             >
               <Add sx={{ mr: 1 }} />
               Add money
@@ -113,7 +147,7 @@ const TotalBalanceContent = () => {
               aria-label="transfer"
               size="large"
               sx={buttonStyles}
-              onClick={handleDialogOpen}
+              onClick={handleTransferDialogOpen}
             >
               <ArrowForward sx={{ mr: 1 }} />
               Transfer
@@ -141,6 +175,7 @@ const TotalBalanceContent = () => {
               aria-label="transfer"
               size="large"
               sx={buttonStyles}
+              onClick={handleAddFriendDialogOpen}
             >
               <Favorite sx={{ mr: 1 }} />
               Add Friend
@@ -152,6 +187,18 @@ const TotalBalanceContent = () => {
       <TransferDialog
         openTransferDialog={openTransferDialog}
         setOpenTransferDialog={setOpenTransferDialog}
+        currency={currency}
+        setCurrency={setCurrency}
+      />
+      <AddMoneyDialog
+        openAddMoneyDialog={openAddMoneyDialog}
+        setOpenAddMoneyDialog={setOpenAddMoneyDialog}
+        currency={currency}
+        setCurrency={setCurrency}
+      />
+      <AddFriendDialog
+        openAddFriendDialog={openAddFriendDialog}
+        setOpenAddFriendDialog={setOpenAddFriendDialog}
       />
     </>
   );
