@@ -1,7 +1,9 @@
 import { Box } from "@mui/material";
 import TransactionDetailed from "../transfers/TransactionDetailed";
+import React from "react";
+import {DetailedTransactionProps} from "./custom-props/DetailedTransactionProps";
 
-const OperationsList = () => {
+const OperationsList: React.FC<{ history: DetailedTransactionProps[] }> = ({history}) => {
   return (
     <Box
       sx={{
@@ -10,11 +12,12 @@ const OperationsList = () => {
         rowGap: "18px",
       }}
     >
-      <TransactionDetailed />
-      <TransactionDetailed />
-      <TransactionDetailed />
-      <TransactionDetailed />
-      <TransactionDetailed />
+        {
+            history.map(item=>{
+                return <TransactionDetailed item={item}/>
+            })
+        }
+
     </Box>
   );
 };

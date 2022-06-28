@@ -1,6 +1,14 @@
 import { Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
+import {TransactionProps} from "../history/custom-props/TransactionProps";
+import React from "react";
 
-const Transaction = () => {
+const Transaction: React.FC<{item: TransactionProps}> = ({item}) => {
+
+    const getChar=()=>{
+        if(item.amount>0) return '+'
+        else return ''
+
+    }
   return (
     <Card>
       <CardContent>
@@ -9,13 +17,13 @@ const Transaction = () => {
             justifyContent: 'space-between'
         }}>
         <Box>
-            <Typography variant="h5">Spotify subscription</Typography>
-            <Typography variant="body2" color="text.secondary">May 21, 2022</Typography>
+            <Typography variant="h5">{item.title}</Typography>
+            <Typography variant="body2" color="text.secondary">{item.date.toLocaleDateString("en-US")}</Typography>
         </Box>
         <Box sx={{
             alignSelf: 'center'
         }}>
-            <Typography variant="body1" color="text.primary">-20.00 PLN</Typography>
+            <Typography variant="body1" color="text.primary">    {getChar()+item.amount.toFixed(2)+' '+item.currency}</Typography>
         </Box>
         </Box>
       </CardContent>

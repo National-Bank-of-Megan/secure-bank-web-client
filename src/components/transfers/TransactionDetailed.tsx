@@ -7,8 +7,16 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {DetailedTransactionProps} from "../history/custom-props/DetailedTransactionProps";
+import React from "react";
 
-const TransactionDetailed = () => {
+const TransactionDetailed: React.FC<{ item: DetailedTransactionProps }> = ({item}) => {
+
+    const getChar=()=>{
+        if(item.amount>0) return '+'
+        else return ''
+
+    }
   return (
     <Accordion
       disableGutters
@@ -32,7 +40,7 @@ const TransactionDetailed = () => {
           <Box>
             <Typography variant="h5">Spotify subscription</Typography>
             <Typography variant="body2" color="text.secondary">
-              May 21, 2022
+                {item.date.toLocaleDateString("en-US")}
             </Typography>
           </Box>
           <Box
@@ -42,7 +50,7 @@ const TransactionDetailed = () => {
             }}
           >
             <Typography variant="body1" color="text.primary">
-              -20.00 PLN
+                {getChar()+item.amount.toFixed(2)}
             </Typography>
           </Box>
         </Box>
@@ -87,19 +95,19 @@ const TransactionDetailed = () => {
               rowGap: "20px"
             }}>
             <Typography>
-              Completed
+                {item.status}
             </Typography>
             <Typography>
-              -PLN 54.87
+                {getChar()+item.amount.toFixed(2)+' '+item.currency}
             </Typography>
             <Typography>
-            14 1234 5678 1234 4567
+                {item.receiver}
             </Typography>
             <Typography>
-            May 21, 2022
+                {item.date.toDateString()}
             </Typography>
             <Typography>
-            PLN 1090.67
+                {item.accountCurrency +' '+item.balanceAfterTransfer.toFixed(2)}
             </Typography>
           </Box>
         </Box>
