@@ -18,7 +18,7 @@ const Transaction: React.FC<{item: TransactionProps}> = ({item}) => {
         }}>
         <Box>
             <Typography variant="h5">{item.title}</Typography>
-            <Typography variant="body2" color="text.secondary">{item.date.toLocaleDateString("en-US")}</Typography>
+            <Typography variant="body2" color="text.secondary">{item.date.toLocaleDateString('en-us', { year:"numeric",day :"numeric", month:"short"})}</Typography>
         </Box>
         <Box sx={{
             alignSelf: 'center'

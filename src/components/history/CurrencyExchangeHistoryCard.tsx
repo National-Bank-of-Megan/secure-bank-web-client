@@ -14,7 +14,7 @@ const CurrencyExchangeHistoryCard: React.FC<{ item: ExchangeProps }> = ({item}) 
                     <Box>
                         <Typography variant="h5"
                                     color="success.main">{'+' + item.boughtCurrency + ' ' + item.bought.toFixed(2)}</Typography>
-                        <Typography variant="body2" color="text.secondary">{item.date.toString()}</Typography>
+                        <Typography variant="body2" color="text.secondary">  { item.date.toLocaleDateString('en-us', { year:"numeric",day :"numeric", month:"short"})}</Typography>
                     </Box>
                     <Box sx={{
                         alignSelf: 'center'

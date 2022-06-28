@@ -40,7 +40,7 @@ const TransactionDetailed: React.FC<{ item: DetailedTransactionProps }> = ({item
           <Box>
             <Typography variant="h5">Spotify subscription</Typography>
             <Typography variant="body2" color="text.secondary">
-                {item.date.toLocaleDateString("en-US")}
+                { item.date.toLocaleDateString('en-us', { year:"numeric",day :"numeric", month:"short"})}
             </Typography>
           </Box>
           <Box
@@ -104,7 +104,7 @@ const TransactionDetailed: React.FC<{ item: DetailedTransactionProps }> = ({item
                 {item.receiver}
             </Typography>
             <Typography>
-                {item.date.toDateString()}
+                { item.date.toLocaleDateString('en-us', { year:"numeric",day :"numeric", month:"short"})}
             </Typography>
             <Typography>
                 {item.accountCurrency +' '+item.balanceAfterTransfer.toFixed(2)}
