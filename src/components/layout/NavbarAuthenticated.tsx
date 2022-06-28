@@ -73,7 +73,7 @@ export default function NavbarAuthenticated() {
                             }}
                             transformOrigin={{
                                 vertical: 'top',
-                                horizontal: 'center',
+                                horizontal: 'right',
                             }}
                             PaperProps={{
                                 style: { 
@@ -82,6 +82,7 @@ export default function NavbarAuthenticated() {
                                 },
                             }}
                             sx={{
+                                marginLeft: '50px',
                                 '*::-webkit-scrollbar': {
                                     width: '0.4em'
                                     },
