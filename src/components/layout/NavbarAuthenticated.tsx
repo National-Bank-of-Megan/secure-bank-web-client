@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {AppBar, Box, Button, Paper, Tabs, Toolbar, Typography} from "@mui/material";
+import {AppBar, Box, Button, Paper, Popover, Tabs, Toolbar, Typography} from "@mui/material";
 import {Avatar} from "@mui/material";
 import {deepOrange} from "@mui/material/colors";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -10,12 +10,15 @@ import {Badge} from "@mui/material";
 import MailIcon from "@mui/icons-material/Mail";
 import Tab from '@mui/material/Tab';
 import {useNavigate, Link, useLocation} from "react-router-dom";
+import NotificationsListPopover from "../notofications/NotificationListPopover";
 
 export default function NavbarAuthenticated() {
     const {pathname} = useLocation();
     const [currentPath, setCurrentPath] = useState(0);
+    const [notificationsPopover, setNotificationsPopover] = React.useState<HTMLButtonElement | null>(null);
+
     const navigate = useNavigate();
-    const paths = useMemo(() => ["/transfers", "/history", "/exchange", "/devices", "/account"], []);
+    const paths = useMemo(() => ["/transfers", "/history", "/exchange", "/devices", "/account", "/notifications"], []);
 
     useEffect(() => {
         const value = paths.indexOf(pathname);
@@ -26,6 +29,16 @@ export default function NavbarAuthenticated() {
         setCurrentPath(newValue);
         navigate(paths[newValue]);
     };
+
+    const handleNotificationsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setNotificationsPopover(event.currentTarget);
+    };
+    
+    const handleNotificationsClose = () => {
+        setNotificationsPopover(null);
+    };
+    
+    const open = Boolean(notificationsPopover);
 
     return (
         <Box sx={{flexGrow: 1}}>
@@ -39,11 +52,51 @@ export default function NavbarAuthenticated() {
                             size="large"
                             aria-label="show 4 new mails"
                             color="inherit"
+                            // component={Link} to="/notifications"
+                            onClick={handleNotificationsClick}
                         >
                             <Badge badgeContent={4} color="error">
-                                <NotificationsIcon fontSize="inherit"/>
+                                <NotificationsIcon 
+                                    fontSize="inherit"
+                                />
                             </Badge>
                         </IconButton>
+
+                        <Popover
+                            id='simple-popover'
+                            open={open}
+                            anchorEl={notificationsPopover}
+                            onClose={handleNotificationsClose}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
+                            PaperProps={{
+                                style: { 
+                                    width: '480px',
+                                    height: '500px'
+                                },
+                            }}
+                            sx={{
+                                '*::-webkit-scrollbar': {
+                                    width: '0.4em'
+                                    },
+                                    '*::-webkit-scrollbar-track': {
+                                    '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
+                                    },
+                                    '*::-webkit-scrollbar-thumb': {
+                                        backgroundColor: 'rgba(0,0,0,.1)',
+                                        outline: '1px solid #1E1E1E'
+                                    }
+                            }}
+
+                        >
+                            <NotificationsListPopover />
+                        </Popover>
 
                         <IconButton
                             size="large"
