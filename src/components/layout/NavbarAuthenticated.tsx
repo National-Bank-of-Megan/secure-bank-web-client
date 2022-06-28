@@ -18,7 +18,7 @@ export default function NavbarAuthenticated() {
     const [notificationsPopover, setNotificationsPopover] = React.useState<HTMLButtonElement | null>(null);
 
     const navigate = useNavigate();
-    const paths = useMemo(() => ["/transfers", "/history", "/exchange", "/devices", "/account", "/notifications"], []);
+    const paths = useMemo(() => ["/transfers", "/history", "/exchange", "/devices", "/account"], []);
 
     useEffect(() => {
         const value = paths.indexOf(pathname);
@@ -73,7 +73,7 @@ export default function NavbarAuthenticated() {
                             }}
                             transformOrigin={{
                                 vertical: 'top',
-                                horizontal: 'right',
+                                horizontal: 'center',
                             }}
                             PaperProps={{
                                 style: { 
