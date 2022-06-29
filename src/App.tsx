@@ -11,6 +11,7 @@ import CurrencyExchangePage from "./pages/CurrencyExchangePage";
 import HistoryPage from "./pages/HistoryPage";
 import AccountPage from "./pages/AccountPage";
 import DevicesPage from "./pages/DevicesPage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <LayoutAuthenticated>
           <Routes>
             <Route path="/" element={<MainPage />} />
+            <Route path="/login" element={<LoginPage/>}/>
             <Route path="/transfers" element={<TransferPage />} />
             <Route path="/exchange" element={<CurrencyExchangePage/>}/>
             <Route path="/history" element={<HistoryPage />} />
