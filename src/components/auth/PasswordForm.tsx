@@ -1,4 +1,12 @@
-import { Box, Button, OutlinedInput, Paper, Stack, Typography } from "@mui/material";
+import { StackedLineChartOutlined } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  OutlinedInput,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useState, createRef, useEffect } from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 
@@ -38,56 +46,85 @@ const PasswordForm = () => {
 
   return (
     <form>
-        <Box sx={{
-            width: "1060px",
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}>
-      <Paper
+      <Box
         sx={{
-          bgcolor: "background.paper",
+          width: "1060px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          marginTop: "100px",
         }}
       >
-        <Stack
+        <Paper
           sx={{
-            justifyContent: "center",
-            alignItems: "center",
-            rowGap: "40px",
-            padding: "30px",
+            bgcolor: "background.paper",
           }}
         >
-          <Typography variant="h3" textAlign="center" color="primary">
-            Password
-          </Typography>
           <Stack
-            direction="row"
             sx={{
-              textAlign: "center",
-              columnGap: "5px",
+              justifyContent: "center",
+              alignItems: "center",
+              rowGap: "40px",
+              padding: "30px",
+              boxShadow: 3,
             }}
           >
-            {inputRefsArray.map((ref, index) => {
-              return (
-                <PasswordCharacterInput
-                  active={true}
-                  index={index}
-                  setLetters={setLetters}
-                  inputRef={ref}
-                />
-              );
-            })}
+            <Typography variant="h3" textAlign="center" color="primary">
+              Log in
+            </Typography>
+            <Box>
+              {" "}
+              <Typography
+                color="text.secondary"
+                sx={{
+                  fontSize: "14px",
+                  marginBottom: "5px",
+                }}
+              >
+                Provide your password
+              </Typography>
+              <Stack
+                direction="row"
+                sx={{
+                  textAlign: "center",
+                  columnGap: "5px",
+                }}
+              >
+                {inputRefsArray.map((ref, index) => {
+                  return (
+                    <PasswordCharacterInput
+                      active={true}
+                      index={index}
+                      setLetters={setLetters}
+                      inputRef={ref}
+                    />
+                  );
+                })}
+              </Stack>
+            </Box>
+            <Stack
+              direction="row"
+              sx={{
+                width: "100%"
+              }}
+            >
+              <Button variant="contained" color="secondary" size="medium" sx={{
+                width: "100px",
+                color: "white"
+              }}>
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                size="large"
+                sx={{
+                  width: "250px",
+                }}
+              >
+                Login
+              </Button>
+            </Stack>
           </Stack>
-          <Button
-            variant="contained"
-            size="large"
-            sx={{
-              width: "250px",
-            }}
-          >
-            Login
-          </Button>
-        </Stack>
-      </Paper>
+        </Paper>
       </Box>
     </form>
   );
