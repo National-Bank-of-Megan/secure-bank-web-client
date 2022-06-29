@@ -1,11 +1,10 @@
-import { Box, Typography } from "@mui/material";
-import LoginForm from "../components/auth/LoginForm";
+import { Box } from "@mui/material";
+import PasswordForm from "../components/auth/PasswordForm";
 
 const LoginPage = () => {
     return (
         <Box>
-            <Typography variant="h3" textAlign="center" color="primary">Login in</Typography>
-            <LoginForm />  
+            <PasswordForm />  
         </Box>
     );
 }
