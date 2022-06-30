@@ -1,10 +1,10 @@
 import { Box } from "@mui/material";
-import PasswordForm from "../components/auth/PasswordForm";
+import LoginForm from "../components/auth/LoginForm";
 
 const LoginPage = () => {
     return (
         <Box>
-            <PasswordForm />  
+            <LoginForm />  
         </Box>
     );
 }

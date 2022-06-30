@@ -2,6 +2,7 @@ import { StackedLineChartOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
+  Grid,
   OutlinedInput,
   Paper,
   Stack,
@@ -10,7 +11,7 @@ import {
 import { useState, createRef, useEffect } from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 
-const PasswordForm = () => {
+const PasswordForm: React.FC<{ toggleForms: () => void }> = (props) => {
   const numerOfInputs = 20;
 
   const [inputRefsArray] = useState(() =>
@@ -101,13 +102,16 @@ const PasswordForm = () => {
                 })}
               </Stack>
             </Box>
-            <Stack
-              direction="row"
+            <Box              
               sx={{
+                display: 'flex',
+                justifyContent: "space-between",
                 width: "100%"
               }}
             >
-              <Button variant="contained" color="secondary" size="medium" sx={{
+              <Button variant="contained" color="secondary" size="medium" 
+              onClick={props.toggleForms}
+              sx={{
                 width: "100px",
                 color: "white"
               }}>
@@ -117,12 +121,13 @@ const PasswordForm = () => {
                 variant="contained"
                 size="large"
                 sx={{
-                  width: "250px",
+                  width: "350px",
                 }}
               >
                 Login
               </Button>
-            </Stack>
+              <Box width="100px"></Box>
+            </Box>
           </Stack>
         </Paper>
       </Box>
