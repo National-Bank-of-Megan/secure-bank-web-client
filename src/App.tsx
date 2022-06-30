@@ -12,6 +12,7 @@ import HistoryPage from "./pages/HistoryPage";
 import AccountPage from "./pages/AccountPage";
 import DevicesPage from "./pages/DevicesPage";
 import LoginPage from "./pages/LoginPage";
+import RegistrationPage from "./pages/RegistrationPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Routes>
             <Route path="/" element={<MainPage />} />
             <Route path="/login" element={<LoginPage/>}/>
+            <Route path="/signup" element={<RegistrationPage/>}/>
             <Route path="/transfers" element={<TransferPage />} />
             <Route path="/exchange" element={<CurrencyExchangePage/>}/>
             <Route path="/history" element={<HistoryPage />} />
