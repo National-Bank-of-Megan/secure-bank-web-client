@@ -38,7 +38,7 @@ const TransactionDetailed: React.FC<{ item: DetailedTransactionProps }> = ({item
           }}
         >
           <Box>
-            <Typography variant="h5">Spotify subscription</Typography>
+            <Typography variant="h5">{item.title}</Typography>
             <Typography variant="body2" color="text.secondary">
                 { item.date.toLocaleDateString('en-us', { year:"numeric",day :"numeric", month:"short"})}
             </Typography>
