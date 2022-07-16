@@ -1,5 +1,4 @@
-import { MoveToInbox } from "@mui/icons-material";
-import { Divider, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import {Divider, ListItem, ListItemButton, ListItemText} from "@mui/material";
 import FriendAccountData from "../../models/friendAccount";
 
 const FriendAccount: React.FC<{ friendAccount: FriendAccountData }> = (props) => {

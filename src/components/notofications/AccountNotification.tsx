@@ -1,5 +1,4 @@
-import { CompareArrows } from "@mui/icons-material";
-import { Box, SvgIconProps, Typography } from "@mui/material";
+import {Box, SvgIconProps, Typography} from "@mui/material";
 
 const AccountNotification: React.FC<{ icon: React.ReactElement<SvgIconProps> }> = (props) => {
     return (

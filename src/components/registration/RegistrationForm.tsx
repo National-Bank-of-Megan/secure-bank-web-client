@@ -1,4 +1,3 @@
-
 import IdentificationForm from "./IdentificationForm";
 
 const RegistrationForm = () => {

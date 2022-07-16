@@ -1,4 +1,4 @@
-import {Divider,  Stack, Typography} from "@mui/material";
+import {Divider, Stack, Typography} from "@mui/material";
 
 const DevicesPageInformation =()=>{
     return(

@@ -2,7 +2,6 @@ import {Box, Typography} from "@mui/material";
 import Transaction from "./Transaction";
 import {TransactionProps} from "../history/custom-props/TransactionProps";
 import React from "react";
-import {ExchangeProps} from "../history/custom-props/ExchangeProps";
 
 const RecentActivityContent : React.FC<{ recent: TransactionProps[] }> = ({recent}) => {
 

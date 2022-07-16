@@ -1,15 +1,6 @@
 import {ArrowDropDown} from "@mui/icons-material";
-import {
-    Paper,
-    Tabs,
-    Tab,
-    Box,
-    FormControl,
-    OutlinedInput,
-    Button, TabsActions,
-} from "@mui/material";
+import {Box, Button, FormControl, OutlinedInput, Paper, Tab, Tabs,} from "@mui/material";
 import React from "react";
-import {jsx} from "@emotion/react";
 
 
 //todo poprawic typ handleBrowsingChange

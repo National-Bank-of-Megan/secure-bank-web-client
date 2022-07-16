@@ -1,4 +1,4 @@
-import { Dialog, Paper, Box, Typography, DialogContent } from "@mui/material";
+import {Box, Dialog, DialogContent, Paper, Typography} from "@mui/material";
 
 const DefaultDialog: React.FC<{
   open: boolean;

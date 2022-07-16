@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, CardHeader, Typography } from "@mui/material";
+import {Box, Card, CardContent, Typography} from "@mui/material";
 import {TransactionProps} from "../history/custom-props/TransactionProps";
 import React from "react";
 

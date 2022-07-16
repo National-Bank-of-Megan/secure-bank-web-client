@@ -1,7 +1,6 @@
-import {Box, Grid, Typography} from "@mui/material";
+import {Grid, Typography} from "@mui/material";
 import CurrencyExchangeForm from "../components/currency-exchange/CurrencyExchangeForm";
 import ExchangeRatesTable from "../components/currency-exchange/ExchangeRatesTable";
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import React from "react";
 
 const CurrencyExchangePage = () => {

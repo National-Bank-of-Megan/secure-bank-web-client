@@ -1,12 +1,5 @@
-import {
-  AppBar,
-  Box,
-  Button,
-  Toolbar,
-  Typography,
-} from "@mui/material";
+import {AppBar, Box, Button, Toolbar, Typography,} from "@mui/material";
 import buttonStyles from "../../styles/ButtonStyles";
-
 
 
 export default function Navbar() {

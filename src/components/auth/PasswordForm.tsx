@@ -1,14 +1,5 @@
-import { StackedLineChartOutlined } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Grid,
-  OutlinedInput,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { useState, createRef, useEffect } from "react";
+import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
+import {createRef, useEffect, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 
 const PasswordForm: React.FC<{ toggleForms: () => void }> = (props) => {

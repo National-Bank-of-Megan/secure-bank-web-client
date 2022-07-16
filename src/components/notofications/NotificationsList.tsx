@@ -1,5 +1,5 @@
-import { CompareArrows, Security } from "@mui/icons-material";
-import { Box, Container, Typography } from "@mui/material";
+import {CompareArrows, Security} from "@mui/icons-material";
+import {Container} from "@mui/material";
 import AccountNotification from "./AccountNotification";
 
 const NotificationsList = () => {

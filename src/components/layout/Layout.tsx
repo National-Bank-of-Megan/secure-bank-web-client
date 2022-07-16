@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import {Container} from "@mui/material";
 import Navbar from "./Navbar";
 
 export default function Layout(props :any) {

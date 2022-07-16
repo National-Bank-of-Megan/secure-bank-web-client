@@ -1,5 +1,4 @@
-import { Box, Drawer, List, Typography } from "@mui/material";
-import { useState } from "react";
+import {Box, Drawer, List, Typography} from "@mui/material";
 import FriendAccountData from "../../models/friendAccount";
 import FriendAccount from "./FriendAccount";
 

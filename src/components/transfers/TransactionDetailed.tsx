@@ -1,11 +1,4 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Divider,
-  Typography,
-} from "@mui/material";
+import {Accordion, AccordionDetails, AccordionSummary, Box, Divider, Typography,} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {DetailedTransactionProps} from "../history/custom-props/DetailedTransactionProps";
 import React from "react";

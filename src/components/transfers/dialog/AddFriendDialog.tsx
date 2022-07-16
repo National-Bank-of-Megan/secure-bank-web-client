@@ -1,22 +1,15 @@
-import { People } from "@mui/icons-material";
 import {
-  Dialog,
-  Paper,
-  Box,
-  Typography,
-  DialogContent,
-  FormControl,
-  InputLabel,
-  Input,
-  InputAdornment,
-  IconButton,
-  TextField,
-  MenuItem,
-  DialogActions,
-  Button,
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    FormControl,
+    Input,
+    InputLabel,
+    Paper,
+    Typography,
 } from "@mui/material";
-import MyContactsDrawer from "../MyContactsDrawer";
-import { currencies } from "../TotalBalanceContent";
 
 const AddFriendDialog: React.FC<{
   openAddFriendDialog: boolean;

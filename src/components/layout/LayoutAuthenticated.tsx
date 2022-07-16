@@ -1,4 +1,5 @@
 import NavbarAuthenticated from "./NavbarAuthenticated";
+
 export default function LayoutAuthenticated(props: any) {
   return (
     <>

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 import TransactionDetailed from "../transfers/TransactionDetailed";
 import React from "react";
 import {DetailedTransactionProps} from "./custom-props/DetailedTransactionProps";

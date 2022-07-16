@@ -1,6 +1,5 @@
-import { Stack, OutlinedInput, Typography } from "@mui/material";
-import { RefObject, SetStateAction, useRef } from "react";
-import { findDOMNode } from "react-dom";
+import {OutlinedInput, Stack, Typography} from "@mui/material";
+import {RefObject, SetStateAction} from "react";
 
 const PasswordCharacterInput: React.FC<{ index: number, active: boolean, setLetters: React.Dispatch<SetStateAction<string[]>>, inputRef: RefObject<HTMLInputElement> }> = (props) => {
 

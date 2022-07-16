@@ -1,4 +1,3 @@
-
 import DevicesPageInformation from "../components/devices/DevicesPageInformation";
 import {Grid} from "@mui/material";
 import DevicesTable from "../components/devices/DevicesTable";

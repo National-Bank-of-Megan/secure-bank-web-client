@@ -1,15 +1,10 @@
 import React, {useEffect, useMemo, useState} from "react";
-import {AppBar, Box, Button, Paper, Popover, Tabs, Toolbar, Typography} from "@mui/material";
-import {Avatar} from "@mui/material";
-import {deepOrange} from "@mui/material/colors";
+import {AppBar, Avatar, Badge, Box, Paper, Popover, Tabs, Toolbar, Typography} from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
-import {MenuItem} from "@mui/material";
-import {Badge} from "@mui/material";
-import MailIcon from "@mui/icons-material/Mail";
 import Tab from '@mui/material/Tab';
-import {useNavigate, Link, useLocation} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import NotificationsListPopover from "../notofications/NotificationListPopover";
 
 export default function NavbarAuthenticated() {

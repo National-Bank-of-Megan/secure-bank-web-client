@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import {Typography} from "@mui/material";
 import NotificationsList from "../components/notofications/NotificationsList";
 
 const NotificationsPage = () => {

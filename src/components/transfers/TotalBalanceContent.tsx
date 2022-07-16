@@ -1,46 +1,7 @@
-import {
-  Add,
-  ArrowForward,
-  Cached,
-  Favorite,
-  MoveToInbox,
-  People,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Divider,
-  Drawer,
-  Fab,
-  FormControl,
-  FormHelperText,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  Paper,
-  Select,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { MouseEventHandler, useState } from "react";
-import FriendAccountData from "../../models/friendAccount";
+import {Add, ArrowForward, Cached, Favorite,} from "@mui/icons-material";
+import {Box, Fab, FormControl, InputLabel, MenuItem, Select, Typography,} from "@mui/material";
+import {useState} from "react";
 import buttonStyles from "../../styles/ButtonStyles";
-import FriendAccount from "./FriendAccount";
-import MyContactsDrawer from "./MyContactsDrawer";
 import TransferDialog from "./dialog/TransferDialog";
 import AddMoneyDialog from "./dialog/AddMoneyDialog";
 import AddFriendDialog from "./dialog/AddFriendDialog";

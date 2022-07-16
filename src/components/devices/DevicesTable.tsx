@@ -1,8 +1,7 @@
-import {DataGrid, GridColDef, GridRowsProp} from '@mui/x-data-grid';
-import {randomCreatedDate, randomInt, randomUserName} from "@mui/x-data-grid-generator";
-import {Box, Button, Stack} from "@mui/material";
+import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import {randomCreatedDate, randomInt} from "@mui/x-data-grid-generator";
+import {Box, Button} from "@mui/material";
 import * as React from "react";
-import TableStyles from "../../styles/TableStyles";
 
 const DevicesTable = () => {
 

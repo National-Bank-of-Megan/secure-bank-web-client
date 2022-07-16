@@ -1,24 +1,23 @@
-import { People } from "@mui/icons-material";
+import {People} from "@mui/icons-material";
 import {
-  Dialog,
-  Paper,
-  Box,
-  Typography,
-  DialogContent,
-  FormControl,
-  InputLabel,
-  Input,
-  InputAdornment,
-  IconButton,
-  DialogActions,
-  Button,
-  MenuItem,
-  TextField,
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    FormControl,
+    IconButton,
+    Input,
+    InputAdornment,
+    InputLabel,
+    MenuItem,
+    Paper,
+    TextField,
+    Typography,
 } from "@mui/material";
-import { useState } from "react";
+import {useState} from "react";
 import MyContactsDrawer from "../MyContactsDrawer";
-import { currencies } from "../TotalBalanceContent";
-import DefaultDialog from "./DefaultDialog";
+import {currencies} from "../TotalBalanceContent";
 
 const TransferDialog: React.FC<{
   openTransferDialog: boolean;

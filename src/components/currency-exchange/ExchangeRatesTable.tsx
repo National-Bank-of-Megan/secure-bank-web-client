@@ -1,7 +1,6 @@
 import * as React from 'react';
-import {useState} from "react";
+import {useState} from 'react';
 import {DataGrid, GridColDef, GridRowsProp} from '@mui/x-data-grid';
-import {useDemoData} from '@mui/x-data-grid-generator';
 
 const ExchangeRatesTable = () => {
     const [currentCurrency, setCurrentCurrency] = useState('PLN')
