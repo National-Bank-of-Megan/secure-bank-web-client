@@ -1,5 +1,17 @@
-import {Button, FormHelperText, Grid, Paper, TextField, Typography} from "@mui/material";
-import React, {} from "react";
+import {
+    Alert,
+    Backdrop,
+    Button,
+    CircularProgress,
+    FormHelperText,
+    Grid,
+    Paper,
+    Snackbar,
+    TextField,
+    Typography
+} from "@mui/material";
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import React, {useEffect, useState} from "react";
 import useInput from "../../hook/use-input";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 
@@ -9,11 +21,13 @@ const isNotEmpty = (value: string) => value.trim() !== '';
 const isEmail = (email: string) => email.includes('@');
 const isValidPassword = (password: string) => {
     return (/\d/.test(password) && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[^A-Za-z0-9]/.test(password)
-            && password.length >= minPassLength && password.length <= maxPassLength);
+        && password.length >= minPassLength && password.length <= maxPassLength);
 }
 
 const IdentificationForm = () => {
     const {isLoading, error, sendRequest: registerRequest} = useFetch();
+    const [isRegistering, setIsRegistering] = useState<boolean>(false);
+    const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
 
     const {
         value: firstNameValue,
@@ -63,7 +77,7 @@ const IdentificationForm = () => {
 
     const setAllInputsError = () => {
         const setIsTouchedList = [setIsFirstNameTouched, setIsLastNameTouched, setIsEmailTouched,
-                                  setIsPasswordTouched, setIsConfirmPasswordTouched];
+            setIsPasswordTouched, setIsConfirmPasswordTouched];
 
         setIsTouchedList.forEach(setIsTouched => {
             setIsTouched(true);
@@ -72,10 +86,19 @@ const IdentificationForm = () => {
 
     const allInputsValid = () => {
         return firstNameValueIsValid && lastNameValueIsValid && emailValueIsValid &&
-               passwordValueIsValid && confirmPasswordValueIsValid;
+            passwordValueIsValid && confirmPasswordValueIsValid;
     }
 
+    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setIsErrorMessageOpen(false);
+    };
+
     const handleRegistration = (response: string) => {
+        setIsRegistering(false);
         console.log('registered account')
     }
 
@@ -85,9 +108,8 @@ const IdentificationForm = () => {
             setAllInputsError();
             return;
         }
-
         const registerRequestContent: RequestConfig = {
-            url: "/web/registration",
+            url: "/web/register",
             method: "POST",
             body: {
                 'firstName': firstNameValue,
@@ -100,103 +122,127 @@ const IdentificationForm = () => {
             }
         };
 
+        setIsErrorMessageOpen(false);
+        setIsRegistering(true);
         registerRequest(registerRequestContent, handleRegistration);
     }
 
+    useEffect(() => {
+        if (!!error) {
+            setIsErrorMessageOpen(true);
+            setIsRegistering(false);
+        }
+    }, [error])
+
     return (
-        <form onSubmit={signUpHandler}>
-        <Paper sx={{
-            marginLeft: "auto",
-            marginRight: "auto",
-            width: '800px'
-        }}>
-            <Grid container spacing={4} sx={{justifyContent: 'center', paddingBottom: 5, paddingTop: 5}}>
-                    <Grid item xs={12} sx={{textAlign: 'center'}}>
-                        <Typography variant="h3" color="primary">Register new account</Typography>
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            error={firstNameHasError}
-                            onChange={firstNameChangeHandler}
-                            onBlur={firstNameBlurHandler}
-                            value={firstNameValue}
-                            label="First name"
-                            size="medium"
-                            variant="standard"
-                            helperText={firstNameHasError ? "Field cannot be empty." : ''}
-                            fullWidth
-                        />
+        <>
+            <Backdrop
+                sx={{color: 'primary.main', zIndex: (theme) => theme.zIndex.drawer + 1}}
+                open={isRegistering}
+            >
+                <CircularProgress color="inherit"/>
+            </Backdrop>
+
+            <Snackbar open={isErrorMessageOpen} autoHideDuration={6000} onClose={handlePopUpClose}>
+                <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity="error" sx={{ width: '100%' }}>
+                    This email has already been taken.
+                </MuiAlert>
+            </Snackbar>
+
+            <form onSubmit={signUpHandler}>
+                <Paper sx={{
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    width: '800px'
+                }}>
+                    <Grid container spacing={4} sx={{justifyContent: 'center', paddingBottom: 5, paddingTop: 5}}>
+                        <Grid item xs={12} sx={{textAlign: 'center'}}>
+                            <Typography variant="h3" color="primary">Register new account</Typography>
+                        </Grid>
+                        <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
+                            <TextField
+                                error={firstNameHasError}
+                                onChange={firstNameChangeHandler}
+                                onBlur={firstNameBlurHandler}
+                                value={firstNameValue}
+                                label="First name"
+                                size="medium"
+                                variant="standard"
+                                helperText={firstNameHasError ? "Field cannot be empty." : ''}
+                                fullWidth
+                            />
+
+                        </Grid>
+                        <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
+                            <TextField
+                                error={lastNameHasError}
+                                onChange={lastNameChangeHandler}
+                                onBlur={lastNameBlurHandler}
+                                value={lastNameValue}
+                                label="Last name"
+                                size="medium"
+                                variant="standard"
+                                helperText={lastNameHasError ? "Field cannot be empty." : ''}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
+                            <TextField
+                                error={emailHasError}
+                                onChange={emailChangeHandler}
+                                onBlur={emailBlurHandler}
+                                value={emailValue}
+                                label="Email address"
+                                size="medium"
+                                variant="standard"
+                                helperText={emailHasError ? "Provide valid email." : ''}
+                                fullWidth
+                                type="email"
+                            />
+                        </Grid>
+                        {/*<Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>*/}
+                        {/*    <MuiPhoneNumber defaultCountry={'us'} onChange={() => {*/}
+                        {/*    }} fullWidth helperText="Make sure to provide correct phone number."/>*/}
+                        {/*</Grid>*/}
+                        <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
+                            <TextField
+                                error={passwordHasError}
+                                onChange={passwordChangeHandler}
+                                onBlur={passwordBlurHandler}
+                                value={passwordValue}
+                                label="Password"
+                                size="medium"
+                                variant="standard"
+                                fullWidth
+                                helperText={passwordHasError ? "Too weak password." : ''}
+                                type="password"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
+                            <TextField
+                                error={confirmPasswordHasError}
+                                onChange={confirmPasswordChangeHandler}
+                                onBlur={confirmPasswordBlurHandler}
+                                value={confirmPasswordValue}
+                                label="Confirm password"
+                                size="medium"
+                                variant="standard"
+                                fullWidth
+                                helperText={confirmPasswordHasError ? "Passwords do not match." : ''}
+                                type="password"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
+                            <Button type="submit" sx={{width: "350px"}} variant="contained" size="large">
+                                Sign up
+                            </Button>
+                        </Grid>
+
 
                     </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            error={lastNameHasError}
-                            onChange={lastNameChangeHandler}
-                            onBlur={lastNameBlurHandler}
-                            value={lastNameValue}
-                            label="Last name"
-                            size="medium"
-                            variant="standard"
-                            helperText={lastNameHasError ? "Field cannot be empty." : ''}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            error={emailHasError}
-                            onChange={emailChangeHandler}
-                            onBlur={emailBlurHandler}
-                            value={emailValue}
-                            label="Email address"
-                            size="medium"
-                            variant="standard"
-                            helperText={emailHasError ? "Provide valid email." : ''}
-                            fullWidth
-                            type="email"
-                        />
-                    </Grid>
-                    {/*<Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>*/}
-                    {/*    <MuiPhoneNumber defaultCountry={'us'} onChange={() => {*/}
-                    {/*    }} fullWidth helperText="Make sure to provide correct phone number."/>*/}
-                    {/*</Grid>*/}
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            error={passwordHasError}
-                            onChange={passwordChangeHandler}
-                            onBlur={passwordBlurHandler}
-                            value={passwordValue}
-                            label="Password"
-                            size="medium"
-                            variant="standard"
-                            fullWidth
-                            helperText={passwordHasError ? "Too weak password." : ''}
-                            type="password"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            error={confirmPasswordHasError}
-                            onChange={confirmPasswordChangeHandler}
-                            onBlur={confirmPasswordBlurHandler}
-                            value={confirmPasswordValue}
-                            label="Confirm password"
-                            size="medium"
-                            variant="standard"
-                            fullWidth
-                            helperText={confirmPasswordHasError ? "Passwords do not match." : ''}
-                            type="password"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <Button type="submit" sx={{width: "350px"}} variant="contained" size="large">
-                            Sign up
-                        </Button>
-                    </Grid>
-
-
-            </Grid>
-        </Paper>
-        </form>
+                </Paper>
+            </form>
+        </>
 
     )
 }
