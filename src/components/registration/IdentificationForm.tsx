@@ -154,7 +154,10 @@ const IdentificationForm = () => {
                 <CircularProgress color="inherit"/>
             </Backdrop>
 
-            <AlertSnackBar isOpen={isErrorMessageOpen} handleClose={handlePopUpClose} severity="error" />
+            <AlertSnackBar isOpen={isErrorMessageOpen}
+                           handleClose={handlePopUpClose}
+                           severity="error"
+                           description="This email has already been taken."/>
 
             <form onSubmit={signUpHandler}>
                 <Paper sx={{
