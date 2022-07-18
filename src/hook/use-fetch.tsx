@@ -36,11 +36,11 @@ const useFetch = () => {
             const response = await fetch(APIAddress, {
                 method: requestConfig.method ? requestConfig.method : 'GET',
                 headers: requestConfig.headers,
-                body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
+                body: requestConfig.method === 'GET' ? null :(requestConfig.body ? JSON.stringify(requestConfig.body) : null),
             });
 
             if (!response.ok) {
-                throw new FetchError(response.status, await response.text());
+                throw new FetchError(response.status,await response.text());
             }
 
             const responseText = await response.text();
