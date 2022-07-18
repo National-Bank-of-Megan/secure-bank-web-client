@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import buttonStyles from "../../styles/ButtonStyles";
 import cardStyles from "../../styles/CardStyles";
+import {Link} from "react-router-dom";
 
 const card = (
   <React.Fragment>
@@ -28,6 +29,7 @@ const card = (
         Join us !!!
       </Typography>
       <Button
+        component={Link} to="/signup"
         size="large"
         sx={buttonStyles}
         variant="outlined"

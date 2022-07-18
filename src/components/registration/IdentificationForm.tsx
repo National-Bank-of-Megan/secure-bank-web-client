@@ -14,6 +14,8 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import React, {useEffect, useState} from "react";
 import useInput from "../../hook/use-input";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
+import {useNavigate} from "react-router-dom";
+import AlertSnackBar from "../notofications/AlertSnackBar";
 
 const minPassLength = 10;
 const maxPassLength = 20;
@@ -24,10 +26,16 @@ const isValidPassword = (password: string) => {
         && password.length >= minPassLength && password.length <= maxPassLength);
 }
 
+export type SuccessfulRegistration = {
+    clientId: string;
+    qr: string;
+}
+
 const IdentificationForm = () => {
     const {isLoading, error, sendRequest: registerRequest} = useFetch();
     const [isRegistering, setIsRegistering] = useState<boolean>(false);
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
+    const navigate = useNavigate();
 
     const {
         value: firstNameValue,
@@ -97,9 +105,11 @@ const IdentificationForm = () => {
         setIsErrorMessageOpen(false);
     };
 
-    const handleRegistration = (response: string) => {
+    const handleRegistration = (response: SuccessfulRegistration) => {
         setIsRegistering(false);
-        console.log('registered account')
+        navigate('success', { replace: true, state: {
+            clientId: response['clientId'], qr: response['qr'] }
+        });
     }
 
     const signUpHandler = (event: React.FormEvent) => {
@@ -129,6 +139,7 @@ const IdentificationForm = () => {
 
     useEffect(() => {
         if (!!error) {
+            console.log(error.message);
             setIsErrorMessageOpen(true);
             setIsRegistering(false);
         }
@@ -143,11 +154,7 @@ const IdentificationForm = () => {
                 <CircularProgress color="inherit"/>
             </Backdrop>
 
-            <Snackbar open={isErrorMessageOpen} autoHideDuration={6000} onClose={handlePopUpClose}>
-                <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity="error" sx={{ width: '100%' }}>
-                    This email has already been taken.
-                </MuiAlert>
-            </Snackbar>
+            <AlertSnackBar isOpen={isErrorMessageOpen} handleClose={handlePopUpClose} severity="error" />
 
             <form onSubmit={signUpHandler}>
                 <Paper sx={{
