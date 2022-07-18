@@ -12,6 +12,7 @@ import DevicesPage from "./pages/DevicesPage";
 import LoginPage from "./pages/LoginPage";
 import RegistrationPage from "./pages/RegistrationPage";
 import {AuthContextProvider} from "./store/auth-context";
+import SuccessfulRegistrationPage from "./pages/SuccessfulRegistrationPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
               <Route path="/" element={<MainPage />} />
               <Route path="/login" element={<LoginPage/>}/>
               <Route path="/signup" element={<RegistrationPage/>}/>
+              <Route path="/signup/success" element={<SuccessfulRegistrationPage />}/>
               <Route path="/transfers" element={<TransferPage />} />
               <Route path="/exchange" element={<CurrencyExchangePage/>}/>
               <Route path="/history" element={<HistoryPage />} />
