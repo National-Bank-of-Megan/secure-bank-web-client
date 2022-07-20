@@ -13,6 +13,7 @@ import LoginPage from "./pages/LoginPage";
 import RegistrationPage from "./pages/RegistrationPage";
 import {AuthContextProvider} from "./store/auth-context";
 import SuccessfulRegistrationPage from "./pages/SuccessfulRegistrationPage";
+import DeviceVerificationPage from "./pages/DeviceVerificationPage";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Routes>
               <Route path="/" element={<MainPage />} />
               <Route path="/login" element={<LoginPage/>}/>
+              <Route path="/login/verify" element={<DeviceVerificationPage/>}/>
               <Route path="/signup" element={<RegistrationPage/>}/>
               <Route path="/signup/success" element={<SuccessfulRegistrationPage />}/>
               <Route path="/transfers" element={<TransferPage />} />

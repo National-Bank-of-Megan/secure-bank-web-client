@@ -68,7 +68,6 @@ const PasswordForm: React.FC<{ toggleForms: (psw: string) => void, data: Passwor
             setErrorMsg('Fill all cells')
             setIsErrorMessageOpen(true);
         } else {
-            alert(psw)
             const loginRequestContent: RequestConfig = {
                 url: "/web/login",
                 method: "POST",
@@ -155,10 +154,8 @@ const PasswordForm: React.FC<{ toggleForms: (psw: string) => void, data: Passwor
                                     return (
                                         <PasswordCharacterInput
                                             key={index}
-                                            // active={ref.current?.disabled}
                                             index={index}
                                             inputRef={ref}
-
                                         />
                                     );
                                 })}

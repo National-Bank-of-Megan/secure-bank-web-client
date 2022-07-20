@@ -12,18 +12,6 @@ const PasswordCharacterInput: React.FC<{ index: number,  inputRef: RefObject<HTM
                            inputProps={{
                                min: 0, maxLength: 1, style: {textAlign: 'center'}
                            }}
-
-                           // onChange={(e) => {
-                           //     if (!props.inputRef.current?.disabled) {
-                           //         const {value} = e.target;
-                           //         props.setLetters((letters) =>
-                           //             letters.map((letter, letterIndex) =>
-                           //                 letterIndex === props.index ? value : letter
-                           //             )
-                           //         );
-                           //     }
-                           // }}
-
             />
             <Typography>{props.index + 1}</Typography>
         </Stack>
