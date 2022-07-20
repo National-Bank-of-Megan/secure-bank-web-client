@@ -1,31 +1,74 @@
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import {Box, Button, Stack, Typography} from '@mui/material';
+import {Box, Button, Grid, IconButton, Stack, Typography} from '@mui/material';
 import {SuccessfulRegistration} from "./IdentificationForm";
-import React from "react";
+import React, {useState} from "react";
 import {Link} from "react-router-dom";
+import {ContentCopy} from "@mui/icons-material";
+import AlertSnackBar from "../notofications/AlertSnackBar";
 
 const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegistration }> = ({ registrationResponseData }) => {
 
+    const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+
+    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setIsAlertOpen(false);
+    };
+
+    const handleCopyClicked = () => {
+        navigator.clipboard.writeText(registrationResponseData.clientId);
+        setIsAlertOpen(true);
+    }
+
     return (
-        <Box marginTop="50px">
-            <Stack spacing={2} textAlign="center" sx={{
-                alignItems: 'center'
-            }}>
-                <CheckCircleOutlineIcon color="success" sx={{ fontSize: "64px" }} />
-                <Typography variant="body1">
-                    Successfully registered your account.
-                </Typography>
-                <Typography variant="body1">
-                    Your client id is
-                </Typography>
-                <Typography variant="h2" letterSpacing="0.2em" color="primary.main">
-                    {registrationResponseData.clientId}
-                </Typography>
-                <Button component={Link} to="/login" sx={{width: "350px"}} variant="contained" size="large">
-                    Log in
-                </Button>
-            </Stack>
-        </Box>
+        <>
+            <AlertSnackBar isOpen={isAlertOpen} handleClose={handlePopUpClose} severity="success" description="Copied!" />
+            <Grid container marginTop="50px" gap={-2}>
+                <Grid item xs={6} pl="50px">
+                    <Stack textAlign="center" height='100%' sx={{
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                    }}>
+                        <CheckCircleOutlineIcon color="success" sx={{ fontSize: "64px" }} />
+                        <Typography variant="body1">
+                            Successfully registered your account.
+                        </Typography>
+                        <Typography variant="body1">
+                            Your client id is
+                        </Typography>
+                        <Stack direction="row" alignItems="center">
+                            <Typography variant="h2" letterSpacing="0.1em" color="primary.main">
+                                {registrationResponseData.clientId}
+                            </Typography>
+                            <IconButton sx={{
+                                marginLeft: '-8px'
+                            }}>
+                                <ContentCopy color="primary" sx={{ fontSize: "25px" }} onClick={handleCopyClicked} />
+                            </IconButton>
+                        </Stack>
+                        <Button component={Link} to="/login" sx={{width: "350px"}} variant="contained" size="large">
+                            Log in
+                        </Button>
+                    </Stack>
+                </Grid>
+                <Grid item xs={6} pr="50px">
+                    <Stack spacing={2} textAlign="center" sx={{
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                    }}>
+                        <img src={registrationResponseData.qr} width="300px" height="300px" style={{
+                            borderRadius: '24px'
+                        }}/>
+                        <Typography variant="body1">
+                            Scan the above QR code in your Google Authenticator app.
+                        </Typography>
+                    </Stack>
+                </Grid>
+            </Grid>
+        </>
     );
 }
 

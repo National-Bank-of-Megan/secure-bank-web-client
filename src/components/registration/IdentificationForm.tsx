@@ -14,7 +14,7 @@ import MuiAlert, { AlertProps } from '@mui/material/Alert';
 import React, {useEffect, useState} from "react";
 import useInput from "../../hook/use-input";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 
 const minPassLength = 10;
@@ -159,12 +159,12 @@ const IdentificationForm = () => {
                            severity="error"
                            description="This email has already been taken."/>
 
-            <form onSubmit={signUpHandler}>
-                <Paper sx={{
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    width: '800px'
-                }}>
+            <form onSubmit={signUpHandler} style={{
+                marginLeft: "auto",
+                marginRight: "auto",
+                width: '800px'
+            }}>
+                <Paper>
                     <Grid container spacing={4} sx={{justifyContent: 'center', paddingBottom: 5, paddingTop: 5}}>
                         <Grid item xs={12} sx={{textAlign: 'center'}}>
                             <Typography variant="h3" color="primary">Register new account</Typography>
@@ -247,10 +247,9 @@ const IdentificationForm = () => {
                                 Sign up
                             </Button>
                         </Grid>
-
-
                     </Grid>
                 </Paper>
+                <Typography mt="5px">Already have an account? Log in <Link to='/login' style={{ color: '#007AFF'}}>here</Link>.</Typography>
             </form>
         </>
 
