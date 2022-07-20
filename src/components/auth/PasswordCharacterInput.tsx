@@ -1,27 +1,31 @@
 import {OutlinedInput, Stack, Typography} from "@mui/material";
 import {RefObject, SetStateAction} from "react";
 
-const PasswordCharacterInput: React.FC<{ index: number, active: boolean, setLetters: React.Dispatch<SetStateAction<string[]>>, inputRef: RefObject<HTMLInputElement> }> = (props) => {
+const PasswordCharacterInput: React.FC<{ index: number,  inputRef: RefObject<HTMLInputElement>}> = (props) => {
 
     return (
         <Stack sx={{
             justifyContent: 'center',
             rowGap: '5px'
         }}>
-            <OutlinedInput ref={props.inputRef} type="password" disabled={!props.active} inputProps={{
-                min: 0, maxLength: 1, style: { textAlign: 'center' }
-            }}
-            onChange={(e) => {
-                const { value } = e.target;
-                props.setLetters((letters) =>
-                  letters.map((letter, letterIndex) =>
-                    letterIndex === props.index ? value : letter
-                  )
-                );
-              }}
+            <OutlinedInput inputRef={props.inputRef} type="password" disabled={props.inputRef.current?.disabled}
+                           inputProps={{
+                               min: 0, maxLength: 1, style: {textAlign: 'center'}
+                           }}
+
+                           // onChange={(e) => {
+                           //     if (!props.inputRef.current?.disabled) {
+                           //         const {value} = e.target;
+                           //         props.setLetters((letters) =>
+                           //             letters.map((letter, letterIndex) =>
+                           //                 letterIndex === props.index ? value : letter
+                           //             )
+                           //         );
+                           //     }
+                           // }}
 
             />
-            <Typography>{props.index+1}</Typography>
+            <Typography>{props.index + 1}</Typography>
         </Stack>
     );
 }

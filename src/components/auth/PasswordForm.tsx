@@ -1,40 +1,97 @@
-import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
-import {createRef, useEffect, useState} from "react";
+import {Backdrop, Box, Button, CircularProgress, Paper, Snackbar, Stack, Typography,} from "@mui/material";
+import React, {createRef, useEffect, useRef, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
+import {PasswordCombination} from "./UsernameForm";
+import useInput from "../../hook/use-input";
+import MuiAlert from "@mui/material/Alert";
+import useFetch, {RequestConfig} from "../../hook/use-fetch";
+import {useNavigate} from "react-router-dom";
 
-const PasswordForm: React.FC<{ toggleForms: () => void, data: Object | null }> = (props) => {
+const PasswordForm: React.FC<{ toggleForms: (psw: string) => void, data: PasswordCombination | null }> = (props) => {
     const numerOfInputs = 20;
-
+    const navigate = useNavigate();
+    const isValid = (value: string) => value.trim().length === 6;
+    const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
+    const [errorMsg, setErrorMsg] = useState<string>('');
+    const [password] = useState<number[] | undefined>(props.data?.combination.split(' ').map((i) => parseInt(i)))
     const [inputRefsArray] = useState(() =>
         Array.from({length: numerOfInputs}, () => createRef<HTMLInputElement>())
     );
-    const [currentIndex, setCurrentIndex] = useState(0);
-
-    const [letters, setLetters] = useState(() =>
-        Array.from({length: numerOfInputs}, () => "")
-    );
+    const setCurrentIndex = useState<number>(password![0])[1];
+    const {isLoading, error, sendRequest: loginRequest} = useFetch();
 
     useEffect(() => {
-
-        if (inputRefsArray?.[0]?.current) {
-            inputRefsArray?.[0]?.current?.focus();
-            console.log("lol");
+        console.log(password)
+        if (!!error) {
+            setIsErrorMessageOpen(true);
+            setErrorMsg('Incorrect password');
+            return;
         }
-
+        inputRefsArray.forEach(
+            (ref) => {
+                ref.current!.disabled = true;
+            }
+        )
+        password?.forEach(
+            (char) => {
+                inputRefsArray[char].current!.disabled = false;
+            }
+        )
+        inputRefsArray[password![0]].current?.focus()
         window.addEventListener("keyup", handleKeyPress, false);
         return () => {
             window.removeEventListener("keyup", handleKeyPress);
         };
-    }, []);
+    }, [error]);
+
+    const getPassword = () => {
+        let psw: string = ''
+        password?.forEach(p => {
+            psw += inputRefsArray[p].current?.value;
+        })
+        return psw;
+    }
 
     const handleKeyPress = () => {
         setCurrentIndex((prevIndex) => {
-            const nextIndex = prevIndex < numerOfInputs - 1 ? prevIndex + 1 : 0;
-            const nextInput = inputRefsArray?.[nextIndex]?.current;
-            nextInput!.focus();
-            //   nextInput!.select();
-            return nextIndex;
+            let letterIndex = password!.indexOf(prevIndex)
+            const nextIndex = letterIndex < password!.length - 1 ? letterIndex + 1 : 0;
+            const nextInput = inputRefsArray?.[password![nextIndex]]?.current;
+            nextInput?.focus();
+            return password![nextIndex];
         });
+    };
+
+    const passwordSubmitHandler = () => {
+        const psw = getPassword();
+        if (!isValid(psw)) {
+            setErrorMsg('Fill all cells')
+            setIsErrorMessageOpen(true);
+        } else {
+            alert(psw)
+            const loginRequestContent: RequestConfig = {
+                url: "/web/login",
+                method: "POST",
+                body : {
+                    "clientId" : props.data?.clientId,
+                    "password" : psw
+
+                },
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+
+            loginRequest(loginRequestContent,()=> navigate('/transfers'));
+        }
+
+    }
+
+    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setIsErrorMessageOpen(false);
     };
 
     return (
@@ -47,6 +104,18 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: Object | null }> =
                     marginTop: "100px",
                 }}
             >
+                <Backdrop
+                    sx={{color: 'primary.main', zIndex: (theme) => theme.zIndex.drawer + 1}}
+                    open={isLoading}
+                >
+                    <CircularProgress color="inherit"/>
+                </Backdrop>
+                <Snackbar open={isErrorMessageOpen} autoHideDuration={6000} onClose={handlePopUpClose}>
+                    <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity="error"
+                              sx={{width: '100%'}}>
+                        {errorMsg}
+                    </MuiAlert>
+                </Snackbar>
                 <Paper
                     sx={{
                         bgcolor: "background.paper",
@@ -86,10 +155,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: Object | null }> =
                                     return (
                                         <PasswordCharacterInput
                                             key={index}
-                                            active={true}
+                                            // active={ref.current?.disabled}
                                             index={index}
-                                            setLetters={setLetters}
                                             inputRef={ref}
+
                                         />
                                     );
                                 })}
@@ -103,7 +172,6 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: Object | null }> =
                             }}
                         >
                             <Button variant="contained" color="secondary" size="medium"
-                                    onClick={props.toggleForms}
                                     sx={{
                                         width: "100px",
                                         color: "white"
@@ -113,6 +181,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: Object | null }> =
                             <Button
                                 variant="contained"
                                 size="large"
+                                onClick={passwordSubmitHandler}
                                 sx={{
                                     width: "350px",
                                 }}

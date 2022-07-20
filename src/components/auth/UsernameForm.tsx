@@ -4,7 +4,12 @@ import useInput from "../../hook/use-input";
 import React, {useEffect, useState} from "react";
 import MuiAlert from "@mui/material/Alert";
 
-const UsernameForm: React.FC<{ toggleForms: (data :Object) => void }> = (props) => {
+export interface PasswordCombination {
+    clientId: string,
+    combination: string
+}
+
+const UsernameForm: React.FC<{ toggleForms: (data :PasswordCombination) => void }> = (props) => {
     const isNotEmpty = (value: string) => value.trim() !== '';
     const {isLoading, error, sendRequest: getPasswordCombinationRequest} = useFetch();
     const [isGettingCombination, setIsGettingCombination] = useState<boolean>(false);
@@ -18,10 +23,8 @@ const UsernameForm: React.FC<{ toggleForms: (data :Object) => void }> = (props) 
         inputBlurHandler: clientIdBlurHandler
     } = useInput(isNotEmpty);
 
-    const handleGettingCombination = (response: string) => {
+    const handleGettingCombination = (response: PasswordCombination) => {
         setIsGettingCombination(false);
-        console.log('Gotten combination')
-        console.log(response)
         props.toggleForms(response);
     }
 
