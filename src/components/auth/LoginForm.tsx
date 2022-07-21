@@ -3,9 +3,11 @@ import PasswordForm from "./PasswordForm";
 import UsernameForm, {PasswordCombination} from "./UsernameForm";
 
 const LoginForm = () => {
-    const [loginKnownDeviceData , setLoginKnownDeviceData ] = useState<PasswordCombination | null>(null );
+    const [loginKnownDeviceData, setLoginKnownDeviceData ] = useState<PasswordCombination | null>(null );
     const [usernameFormVisible, setUsernameFormVisible] = useState(true);
     const [passwordFormVisible, setPasswordFormVisible] = useState(false);
+
+    const [clientId, setClientId] = useState<string>('');
 
     const toggleFormsVisibility = () => {
         setUsernameFormVisible(!usernameFormVisible);
@@ -15,9 +17,7 @@ const LoginForm = () => {
     //data = clientID, password letter combination
     const toggleToPasswordForm = (data: PasswordCombination) => {
         setLoginKnownDeviceData(data);
-        setUsernameFormVisible(!usernameFormVisible);
-        setPasswordFormVisible(!passwordFormVisible);
-
+        toggleFormsVisibility();
     }
 
     const submitPassword = (psw :string) =>{
@@ -26,8 +26,8 @@ const LoginForm = () => {
 
     return (
         <>
-            {usernameFormVisible && <UsernameForm toggleForms={toggleToPasswordForm}/>}
-            {passwordFormVisible && <PasswordForm data={loginKnownDeviceData} toggleForms={submitPassword}/>}
+            {usernameFormVisible && <UsernameForm toggleForms={toggleFormsVisibility} toggleToPasswordForm={toggleToPasswordForm} savedClientId={clientId} setSavedClientId={setClientId} />}
+            {passwordFormVisible && <PasswordForm data={loginKnownDeviceData} toggleForms={toggleFormsVisibility}/>}
         </>
     );
 };

@@ -12,7 +12,6 @@ export const darkTheme = createTheme({
     info: {
       main: "#e3f2fd"
     }
-   
       
     // }
   },

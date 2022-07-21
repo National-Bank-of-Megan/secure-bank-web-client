@@ -1,15 +1,16 @@
 import {Backdrop, Box, Button, CircularProgress, Paper, Snackbar, Stack, TextField, Typography,} from "@mui/material";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import useInput from "../../hook/use-input";
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import MuiAlert from "@mui/material/Alert";
+import AlertSnackBar from "../notofications/AlertSnackBar";
 
 export interface PasswordCombination {
     clientId: string,
     combination: string
 }
 
-const UsernameForm: React.FC<{ toggleForms: (data :PasswordCombination) => void }> = (props) => {
+const UsernameForm: React.FC<{ toggleForms: () => void, toggleToPasswordForm: (data :PasswordCombination) => void, savedClientId: string, setSavedClientId: Dispatch<SetStateAction<string>> }> = (props) => {
     const isNotEmpty = (value: string) => value.trim() !== '';
     const {isLoading, error, sendRequest: getPasswordCombinationRequest} = useFetch();
     const [isGettingCombination, setIsGettingCombination] = useState<boolean>(false);
@@ -21,11 +22,12 @@ const UsernameForm: React.FC<{ toggleForms: (data :PasswordCombination) => void 
         setIsTouched: setIsClientIdTouched,
         valueChangeHandler: clientIdChangeHandler,
         inputBlurHandler: clientIdBlurHandler
-    } = useInput(isNotEmpty);
+    } = useInput(isNotEmpty, props.savedClientId);
 
     const handleGettingCombination = (response: PasswordCombination) => {
         setIsGettingCombination(false);
-        props.toggleForms(response);
+        props.setSavedClientId(clientIdValue);
+        props.toggleToPasswordForm(response);
     }
 
     const handleNextClick = () => {
@@ -77,11 +79,10 @@ const UsernameForm: React.FC<{ toggleForms: (data :PasswordCombination) => void 
                 <CircularProgress color="inherit"/>
             </Backdrop>
 
-            <Snackbar open={isErrorMessageOpen} autoHideDuration={6000} onClose={handlePopUpClose}>
-                <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity="error" sx={{ width: '100%' }}>
-                    Invalid client ID
-                </MuiAlert>
-            </Snackbar>
+            <AlertSnackBar isOpen={isErrorMessageOpen}
+                           handleClose={handlePopUpClose}
+                           severity="error"
+                           description="Invalid client ID" />
             <Paper
                 sx={{
                     bgcolor: "background.paper",

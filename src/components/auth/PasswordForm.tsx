@@ -7,7 +7,7 @@ import MuiAlert from "@mui/material/Alert";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {useNavigate} from "react-router-dom";
 
-const PasswordForm: React.FC<{ toggleForms: (psw: string) => void, data: PasswordCombination | null }> = (props) => {
+const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombination | null }> = (props) => {
     const numerOfInputs = 20;
     const navigate = useNavigate();
     const isValid = (value: string) => value.trim().length === 6;
@@ -38,11 +38,12 @@ const PasswordForm: React.FC<{ toggleForms: (psw: string) => void, data: Passwor
             }
         )
         inputRefsArray[password![0]].current?.focus()
-        window.addEventListener("keyup", handleKeyPress, false);
+        window.addEventListener("keyup", (e) => handleKeyPress(e), false);
         return () => {
             window.removeEventListener("keyup", handleKeyPress);
         };
     }, [error]);
+
 
     const getPassword = () => {
         let psw: string = ''
@@ -52,14 +53,18 @@ const PasswordForm: React.FC<{ toggleForms: (psw: string) => void, data: Passwor
         return psw;
     }
 
-    const handleKeyPress = () => {
-        setCurrentIndex((prevIndex) => {
-            let letterIndex = password!.indexOf(prevIndex)
-            const nextIndex = letterIndex < password!.length - 1 ? letterIndex + 1 : 0;
-            const nextInput = inputRefsArray?.[password![nextIndex]]?.current;
-            nextInput?.focus();
-            return password![nextIndex];
-        });
+    const handleKeyPress = (e: KeyboardEvent) => {
+        if (!e.altKey || !e.shiftKey) {
+            setCurrentIndex((prevIndex) => {
+                let letterIndex = password!.indexOf(prevIndex)
+                let nextIndex = letterIndex < password!.length - 1 ? letterIndex + 1 : -1;
+                if (nextIndex !== -1) {
+                    const nextInput = inputRefsArray?.[password![nextIndex]]?.current;
+                    nextInput?.focus();
+                }
+                return password![nextIndex];
+            });
+        }
     };
 
     const passwordSubmitHandler = () => {
@@ -168,7 +173,7 @@ const PasswordForm: React.FC<{ toggleForms: (psw: string) => void, data: Passwor
                                 width: "100%"
                             }}
                         >
-                            <Button variant="contained" color="secondary" size="medium"
+                            <Button onClick={props.toggleForms} variant="contained" color="secondary" size="medium"
                                     sx={{
                                         width: "100px",
                                         color: "white"
