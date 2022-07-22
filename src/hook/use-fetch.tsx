@@ -29,6 +29,7 @@ const useFetch = () => {
 
         if (authCtx.isLoggedIn) {
             requestConfig.headers['Authorization'] = authCtx.authToken;
+
         }
         
         const APIAddress = REST_PATH + requestConfig.url;

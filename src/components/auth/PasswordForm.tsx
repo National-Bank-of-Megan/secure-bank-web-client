@@ -1,13 +1,17 @@
 import {Backdrop, Box, Button, CircularProgress, Paper, Snackbar, Stack, Typography,} from "@mui/material";
-import React, {createRef, useEffect, useRef, useState} from "react";
+import React, {createRef, useContext, useEffect, useRef, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {PasswordCombination} from "./UsernameForm";
 import useInput from "../../hook/use-input";
 import MuiAlert from "@mui/material/Alert";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {useNavigate} from "react-router-dom";
+import SuccessfulAuthentication from "../../models/successfulAuthentication";
+import authContext from "../../store/auth-context";
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombination | null }> = (props) => {
+    const authCtx = useContext(authContext);
+
     const numerOfInputs = 20;
     const navigate = useNavigate();
     const isValid = (value: string) => value.trim().length === 6;
@@ -25,6 +29,11 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         if (!!error) {
             setIsErrorMessageOpen(true);
             setErrorMsg('Incorrect password');
+            inputRefsArray.forEach(
+                (ref) => {
+                    ref.current!.value = "";
+                }
+            )
             return;
         }
         inputRefsArray.forEach(
@@ -67,6 +76,13 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         }
     };
 
+    const handleLogin = (response: SuccessfulAuthentication) => {
+        const authToken = response.authToken;
+        const refreshToken = response.refreshToken;
+        authCtx.login(authToken, refreshToken);
+        navigate('/transfers')
+    }
+
     const passwordSubmitHandler = () => {
         const psw = getPassword();
         if (!isValid(psw)) {
@@ -79,14 +95,13 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 body : {
                     "clientId" : props.data?.clientId,
                     "password" : psw
-
                 },
                 headers: {
                     'Content-Type': 'application/json'
                 }
             };
 
-            loginRequest(loginRequestContent,()=> navigate('/transfers'));
+            loginRequest(loginRequestContent, handleLogin);
         }
 
     }
