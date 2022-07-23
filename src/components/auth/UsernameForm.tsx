@@ -20,7 +20,7 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispa
         setIsTouched: setIsClientIdTouched,
         valueChangeHandler: clientIdChangeHandler,
         inputBlurHandler: clientIdBlurHandler
-    } = useInput(isNotEmpty,props.savedClientIdState.state);
+    } = useInput(isNotEmpty, props.savedClientIdState.state);
 
     const handleGettingCombinationSuccess = (response: PasswordCombinationType) => {
         setIsGettingCombination(false);

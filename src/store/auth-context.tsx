@@ -5,17 +5,23 @@ import JWT from "../models/jwt";
 type AuthContextObj = {
     authToken: string;
     refreshToken: string;
-    isLoggedIn: boolean;
-    login: (authToken: string, refreshToken: string) => void;
+    isLoggedIn: () => boolean;
+    login: (authToken: string, refreshToken: string) => void; // do not use at least for now
     logout: () => void;
+    removeAuthTokenIfExpired: () => boolean; // if expired or not exist return true
+    removeRefreshTokenIfExpired: () => boolean;
+    addAuthToken: (authToken: string) => void;
 }
 
 const AuthContext = React.createContext<AuthContextObj>({
     authToken: '',
     refreshToken: '',
-    isLoggedIn: false,
-    login: (authToken) => {},
-    logout: () => {}
+    isLoggedIn: () => false,
+    login: (authToken, refreshToken) => {},
+    logout: () => {},
+    removeAuthTokenIfExpired: () => false,
+    removeRefreshTokenIfExpired: () => false,
+    addAuthToken: (authToken) => {}
 });
 
 interface Props {
@@ -39,7 +45,28 @@ export const AuthContextProvider: React.FC<Props> = ({ children }) => {
         if (!!token && isTokenExpired(token)) {
             localStorage.removeItem(storageKey);
             setToken(null);
+            return true;
+        } else if (!token) {
+            return true;
         }
+        return false;
+    }
+
+    const addAuthToken = (authToken: string) => {
+        setAuthToken(authToken);
+        localStorage.setItem(authTokenKey, authToken);
+    }
+
+    const isLoggedIn = () => {
+        return !!authToken && isTokenExpired(authToken);
+    }
+
+    const removeAuthTokenIfExpired = () => {
+        return handleToken(authToken, setAuthToken, authTokenKey);
+    }
+
+    const removeRefreshTokenIfExpired = () => {
+        return handleToken(refreshToken, setRefreshToken, refreshTokenKey);
     }
 
     const isTokenExpired = (token: string) => {
@@ -57,22 +84,25 @@ export const AuthContextProvider: React.FC<Props> = ({ children }) => {
 
     const logoutHandler = () => {
         setAuthToken(null);
-        setRefreshToken(null)
+        setRefreshToken(null);
         localStorage.removeItem(authTokenKey);
         localStorage.removeItem(refreshTokenKey);
     }
 
-
-    handleToken(authToken, setAuthToken, authTokenKey);
-    handleToken(refreshToken, setRefreshToken, refreshTokenKey);
-    const userIsLoggedIn = !!authToken;
+    removeAuthTokenIfExpired();
+    removeRefreshTokenIfExpired();
+    const authTokenFullName = authToken ? authHeader + authToken : "";
+    const refreshTokenFullName = refreshToken ? authHeader + refreshToken : "";
 
     const contextValue = {
-        authToken: authHeader + authToken,
-        refreshToken: authHeader + refreshToken,
-        isLoggedIn: userIsLoggedIn,
+        authToken: authTokenFullName,
+        refreshToken: refreshTokenFullName,
+        isLoggedIn: isLoggedIn,
         login: loginHandler,
-        logout: logoutHandler
+        logout: logoutHandler,
+        removeAuthTokenIfExpired: removeAuthTokenIfExpired,
+        removeRefreshTokenIfExpired: removeRefreshTokenIfExpired,
+        addAuthToken: addAuthToken
     };
 
     return (

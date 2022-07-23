@@ -78,12 +78,12 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         }
     };
 
-    const handleLogin = (response: SuccessfulAuthentication) => {
+    const handleLogin = (response: any) => {
         //todo check whether new device
-        const authToken = response.authToken;
-        const refreshToken = response.refreshToken;
+        const authToken = response['access_token'];
+        const refreshToken = response['refresh_token'];
         authCtx.login(authToken, refreshToken);
-        navigate('/transfers')
+        navigate('/transfers', { replace: true })
     }
 
     const passwordSubmitHandler = () => {
