@@ -93,7 +93,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
             setIsErrorMessageOpen(true);
         } else {
             const loginRequestContent: RequestConfig = {
-                url: "/web/login",
+                url: "http://localhost:8080/api/web/login",
                 method: "POST",
                 body: {
                     "clientId": props.data?.clientId,

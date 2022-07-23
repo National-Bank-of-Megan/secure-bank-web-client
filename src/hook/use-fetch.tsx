@@ -63,7 +63,8 @@ const useFetch = () => {
                 navigate('/login');
             }
 
-            const APIAddress = REST_PATH + requestConfig.url;
+            //            const APIAddress = REST_PATH + requestConfig.url;
+            const APIAddress =requestConfig.url;
             const response = await fetch(APIAddress, {
                 method: requestConfig.method ? requestConfig.method : 'GET',
                 headers: requestConfig.headers,
