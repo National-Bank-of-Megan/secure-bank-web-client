@@ -1,9 +1,10 @@
 import {useState} from "react";
 import PasswordForm from "./PasswordForm";
-import UsernameForm, {PasswordCombination} from "./UsernameForm";
+import UsernameForm from "./UsernameForm";
+import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 
 const LoginForm = () => {
-    const [loginBasicData, setLoginBasicData ] = useState<PasswordCombination | null>(null );
+    const [loginBasicData, setLoginBasicData ] = useState<PasswordCombinationType | null>(null );
     const [usernameFormVisible, setUsernameFormVisible] = useState(true);
     const [passwordFormVisible, setPasswordFormVisible] = useState(false);
 

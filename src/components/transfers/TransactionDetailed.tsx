@@ -1,9 +1,9 @@
 import {Accordion, AccordionDetails, AccordionSummary, Box, Divider, Typography,} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {DetailedTransactionProps} from "../history/custom-props/DetailedTransactionProps";
+import {DetailedTransactionType} from "../../models/custom-types/DetailedTransactionType";
 import React from "react";
 
-const TransactionDetailed: React.FC<{ item: DetailedTransactionProps }> = ({item}) => {
+const TransactionDetailed: React.FC<{ item: DetailedTransactionType }> = ({item}) => {
 
     const getChar=()=>{
         if(item.amount>0) return '+'

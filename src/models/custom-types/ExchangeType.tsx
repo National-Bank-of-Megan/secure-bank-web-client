@@ -1,4 +1,4 @@
-export type ExchangeProps  =
+export type ExchangeType =
     {
         bought: number;
         boughtCurrency: string;

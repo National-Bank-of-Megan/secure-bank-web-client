@@ -1,13 +1,13 @@
 import {useLocation, useNavigate} from "react-router-dom";
 import RegistrationSuccess from "../components/registration/RegistrationSuccess";
-import {SuccessfulRegistration} from "../components/registration/IdentificationForm";
 import {useEffect} from "react";
+import {SuccessfulRegistrationType} from "../models/custom-types/SuccessfulRegistrationType";
 
 
 const SuccessfulRegistrationPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const registrationData = location.state as SuccessfulRegistration;
+    const registrationData = location.state as SuccessfulRegistrationType;
 
     useEffect(() => {
         if (!registrationData) {

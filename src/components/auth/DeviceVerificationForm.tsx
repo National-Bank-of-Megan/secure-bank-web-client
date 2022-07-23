@@ -5,15 +5,17 @@ import currencyExchangeHistoryCard from "../history/CurrencyExchangeHistoryCard"
 import {useNavigate, useSearchParams} from "react-router-dom";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import MuiAlert from "@mui/material/Alert";
+import Spinner from "../common/Spinner";
+import {isCodeValid} from "../../input-rules/is-code-valid";
+import {CODE_LENGTH} from "../../constants/Constants";
+import AlertSnackBar from "../notofications/AlertSnackBar";
 
 const DeviceVerificationForm = () => {
-    const digits = 6;
     const [digitsRefs] = useState(() =>
-        Array.from({length: digits}, () => createRef<HTMLInputElement>())
+        Array.from({length: CODE_LENGTH}, () => createRef<HTMLInputElement>())
     );
-    const isValid = (value: string) => value.trim().length === digits;
     const [currentIndex, setCurrentIndex] = useState<number>(0);
-    const [searchParams, setSearchParams] = useSearchParams();
+    const searchParams = useSearchParams()[0];
     const clientId = searchParams.get('clientId');
     //request
     const navigate = useNavigate();
@@ -60,7 +62,7 @@ const DeviceVerificationForm = () => {
 
     const submitHandler = () => {
         const code = getCode();
-        if (!isValid(code)) {
+        if (!isCodeValid(code)) {
             setErrorMsg('Fill all cells')
             setIsErrorMessageOpen(true);
             return;
@@ -80,13 +82,6 @@ const DeviceVerificationForm = () => {
         loginRequest(loginRequestContent, () => navigate('/transfers'));
     }
 
-    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setIsErrorMessageOpen(false);
-    };
-
     return <>
         <Box
             sx={{
@@ -96,24 +91,14 @@ const DeviceVerificationForm = () => {
                 marginTop: "100px",
             }}
         >
-            <Backdrop
-                sx={{color: 'primary.main', zIndex: (theme) => theme.zIndex.drawer + 1}}
-                open={isLoading}
-            >
-                <CircularProgress color="inherit"/>
-            </Backdrop>
-            <Snackbar open={isErrorMessageOpen} autoHideDuration={6000} onClose={handlePopUpClose}>
-                <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity="error"
-                          sx={{width: '100%'}}>
-                    {errorMsg}
-                </MuiAlert>
-            </Snackbar>
+            <Spinner isLoading={isLoading}/>
+            <AlertSnackBar message={errorMsg} severity={"error"}
+                           alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
             <Paper
                 sx={{
                     bgcolor: "background.paper",
                 }}
             >
-
                 <Stack
                     sx={{
                         justifyContent: "center",
@@ -162,11 +147,7 @@ const DeviceVerificationForm = () => {
                         Verify
                     </Button>
                 </Stack>
-
-
             </Paper>
-
-
         </Box>
     </>
 }

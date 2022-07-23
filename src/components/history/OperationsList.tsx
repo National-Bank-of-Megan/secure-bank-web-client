@@ -1,9 +1,9 @@
 import {Box} from "@mui/material";
 import TransactionDetailed from "../transfers/TransactionDetailed";
 import React from "react";
-import {DetailedTransactionProps} from "./custom-props/DetailedTransactionProps";
+import {DetailedTransactionType} from "../../models/custom-types/DetailedTransactionType";
 
-const OperationsList: React.FC<{ history: DetailedTransactionProps[] }> = ({history}) => {
+const OperationsList: React.FC<{ history: DetailedTransactionType[] }> = ({history}) => {
   return (
     <Box
       sx={{

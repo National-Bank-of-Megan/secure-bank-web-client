@@ -1,9 +1,9 @@
 import {Box, Card, CardContent, Typography} from "@mui/material";
 import React from "react";
-import {ExchangeProps} from "./custom-props/ExchangeProps";
+import {ExchangeType} from "../../models/custom-types/ExchangeType";
 
 
-const CurrencyExchangeHistoryCard: React.FC<{ item: ExchangeProps }> = ({item}) => {
+const CurrencyExchangeHistoryCard: React.FC<{ item: ExchangeType }> = ({item}) => {
 
     return (
         <Card>

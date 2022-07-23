@@ -1,9 +1,9 @@
 import {Box, Typography} from "@mui/material";
 import Transaction from "./Transaction";
-import {TransactionProps} from "../history/custom-props/TransactionProps";
+import {TransactionType} from "../../models/custom-types/TransactionType";
 import React from "react";
 
-const RecentActivityContent : React.FC<{ recent: TransactionProps[] }> = ({recent}) => {
+const RecentActivityContent : React.FC<{ recent: TransactionType[] }> = ({recent}) => {
 
     return (
         <>

@@ -1,12 +1,31 @@
-import React from "react";
+import React, {Dispatch, SetStateAction} from "react";
 import MuiAlert, {AlertColor} from "@mui/material/Alert";
 import {Snackbar} from "@mui/material";
 
-const AlertSnackBar: React.FC<{ isOpen: boolean, handleClose: () => void, severity: AlertColor, description: string }> = ({ isOpen, handleClose, severity, description }) => {
+// useState datatype
+interface IUseStateProps {
+    state: boolean;
+    setState?: Dispatch<SetStateAction<boolean>>;
+}
+
+const AlertSnackBar: React.FC<{ alertState: IUseStateProps, message: string, severity: AlertColor }> = ({
+                                                                                                            alertState,
+                                                                                                            message,
+                                                                                                            severity
+                                                                                                        }) => {
+
+    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        alertState.setState!(false);
+    };
+
     return (
-        <Snackbar open={isOpen} autoHideDuration={6000} onClose={handleClose}>
-            <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity={severity} sx={{ width: '100%' }}>
-                {description}
+        <Snackbar open={alertState.state} autoHideDuration={6000} onClose={handlePopUpClose}>
+            <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity={severity}
+                      sx={{width: '100%'}}>
+                {message}
             </MuiAlert>
         </Snackbar>
     );

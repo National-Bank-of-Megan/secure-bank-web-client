@@ -1,22 +1,13 @@
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import {Box, Button, Grid, IconButton, Stack, Typography} from '@mui/material';
-import {SuccessfulRegistration} from "./IdentificationForm";
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {ContentCopy} from "@mui/icons-material";
 import AlertSnackBar from "../notofications/AlertSnackBar";
+import {SuccessfulRegistrationType} from "../../models/custom-types/SuccessfulRegistrationType";
 
-const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegistration }> = ({ registrationResponseData }) => {
-
+const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegistrationType }> = ({ registrationResponseData }) => {
     const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
-
-    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setIsAlertOpen(false);
-    };
 
     const handleCopyClicked = () => {
         navigator.clipboard.writeText(registrationResponseData.clientId);
@@ -25,7 +16,7 @@ const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegist
 
     return (
         <>
-            <AlertSnackBar isOpen={isAlertOpen} handleClose={handlePopUpClose} severity="success" description="Copied!" />
+            <AlertSnackBar  alertState={{"state" :isAlertOpen, "setState" :setIsAlertOpen}} severity="success" message="Copied!" />
             <Grid container marginTop="50px" gap={-2}>
                 <Grid item xs={6} pl="50px">
                     <Stack textAlign="center" height='100%' sx={{

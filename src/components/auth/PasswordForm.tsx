@@ -1,7 +1,6 @@
 import {Backdrop, Box, Button, CircularProgress, Paper, Snackbar, Stack, Typography,} from "@mui/material";
 import React, {createRef, useContext, useEffect, useRef, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
-import {PasswordCombination} from "./UsernameForm";
 import useInput from "../../hook/use-input";
 import MuiAlert from "@mui/material/Alert";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
@@ -9,11 +8,12 @@ import {useNavigate} from "react-router-dom";
 import SuccessfulAuthentication from "../../models/successfulAuthentication";
 import authContext from "../../store/auth-context";
 import Spinner from "../common/Spinner";
-import ErrorNotification from "../common/ErrorNotification";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {PASSWORD_MAX_LENGTH} from "../../constants/Constants";
+import AlertSnackBar from "../notofications/AlertSnackBar";
+import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 
-const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombination | null }> = (props) => {
+const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
     const authCtx = useContext(authContext);
     const navigate = useNavigate();
     const {isLoading, error, sendRequest: loginRequest} = useFetch();
@@ -118,9 +118,8 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 }}
             >
                 <Spinner isLoading={isLoading}/>
-                <ErrorNotification errorState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}
-                                   errorMessage={errorMsg}/>
-
+                <AlertSnackBar message={errorMsg} severity="error"
+                               alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
                 <Paper
                     sx={{
                         bgcolor: "background.paper",

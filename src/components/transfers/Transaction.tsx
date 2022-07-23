@@ -1,8 +1,8 @@
 import {Box, Card, CardContent, Typography} from "@mui/material";
-import {TransactionProps} from "../history/custom-props/TransactionProps";
+import {TransactionType} from "../../models/custom-types/TransactionType";
 import React from "react";
 
-const Transaction: React.FC<{item: TransactionProps}> = ({item}) => {
+const Transaction: React.FC<{item: TransactionType}> = ({item}) => {
 
     const getChar=()=>{
         if(item.amount>0) return '+'

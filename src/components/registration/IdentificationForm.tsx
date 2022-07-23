@@ -20,11 +20,7 @@ import {isValidPassword} from "../../input-rules/is-valid-password";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
 import {isEmail} from "../../input-rules/is-email";
 import Spinner from "../common/Spinner";
-
-export type SuccessfulRegistration = {
-    clientId: string;
-    qr: string;
-}
+import {SuccessfulRegistrationType} from "../../models/custom-types/SuccessfulRegistrationType";
 
 const IdentificationForm = () => {
     const {isLoading, error, sendRequest: registerRequest} = useFetch();
@@ -92,15 +88,7 @@ const IdentificationForm = () => {
             passwordValueIsValid && confirmPasswordValueIsValid;
     }
 
-    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-
-        setIsErrorMessageOpen(false);
-    };
-
-    const handleRegistration = (response: SuccessfulRegistration) => {
+    const handleRegistration = (response: SuccessfulRegistrationType) => {
         setIsRegistering(false);
         navigate('success', { replace: true, state: {
             clientId: response['clientId'], qr: response['qr'] }
@@ -143,10 +131,9 @@ const IdentificationForm = () => {
     return (
         <>
            <Spinner isLoading={isRegistering || isLoading}/>
-            <AlertSnackBar isOpen={isErrorMessageOpen}
-                           handleClose={handlePopUpClose}
+            <AlertSnackBar alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}
                            severity="error"
-                           description="This email has already been taken."/>
+                           message="This email has already been taken."/>
 
             <form onSubmit={signUpHandler} style={{
                 marginLeft: "auto",

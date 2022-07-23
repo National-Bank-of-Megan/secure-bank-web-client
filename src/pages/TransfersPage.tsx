@@ -1,10 +1,10 @@
 import {Grid} from "@mui/material";
 import RecentActivityContent from "../components/transfers/RecentActivityContent";
 import TotalBalanceContent from "../components/transfers/TotalBalanceContent";
-import {TransactionProps} from "../components/history/custom-props/TransactionProps";
+import {TransactionType} from "../models/custom-types/TransactionType";
 
 const TransferPage = () => {
-  const recentTransfers :TransactionProps[] =[
+  const recentTransfers :TransactionType[] =[
     {title : 'Spotify', date :new Date(2022,0O5,12), amount : -20.00, currency :'PLN' },
     {title : 'Spotify', date :new Date(2022,0O5,12), amount : 20.00, currency :'PLN' },
     {title : 'Spotify', date :new Date(2022,0O5,12), amount : 20.00, currency :'PLN'},

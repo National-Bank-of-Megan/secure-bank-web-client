@@ -6,14 +6,9 @@ import MuiAlert from "@mui/material/Alert";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
 import Spinner from "../common/Spinner";
-import ErrorNotification from "../common/ErrorNotification";
+import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 
-export interface PasswordCombination {
-    clientId: string,
-    combination: string
-}
-
-const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispatch<SetStateAction<PasswordCombination | null>>}> = (props) => {
+const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispatch<SetStateAction<PasswordCombinationType | null>>}> = (props) => {
     const {isLoading, error, sendRequest: getPasswordCombinationRequest} = useFetch();
     const [isGettingCombination, setIsGettingCombination] = useState<boolean>(false);
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
@@ -26,7 +21,7 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispa
         inputBlurHandler: clientIdBlurHandler
     } = useInput(isNotEmpty);
 
-    const handleGettingCombinationSuccess = (response: PasswordCombination) => {
+    const handleGettingCombinationSuccess = (response: PasswordCombinationType) => {
         setIsGettingCombination(false);
         props.setLoginBasicData(response);
         props.toggleForms();
@@ -66,8 +61,9 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispa
             }}
         >
             <Spinner isLoading={isGettingCombination || isLoading}/>
-            <ErrorNotification errorState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}
-                               errorMessage={'Invalid client ID'}/>
+            <AlertSnackBar message="Invalid client ID"
+                           severity="error"
+                           alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
             <Paper
                 sx={{
                     bgcolor: "background.paper",
