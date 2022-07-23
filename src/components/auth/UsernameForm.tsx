@@ -7,8 +7,9 @@ import AlertSnackBar from "../notofications/AlertSnackBar";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
 import Spinner from "../common/Spinner";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
+import {UseStateType} from "../../models/custom-types/UseStateType";
 
-const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispatch<SetStateAction<PasswordCombinationType | null>>}> = (props) => {
+const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispatch<SetStateAction<PasswordCombinationType | null>>, savedClientIdState :UseStateType<string>}> = (props) => {
     const {isLoading, error, sendRequest: getPasswordCombinationRequest} = useFetch();
     const [isGettingCombination, setIsGettingCombination] = useState<boolean>(false);
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
@@ -19,10 +20,11 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispa
         setIsTouched: setIsClientIdTouched,
         valueChangeHandler: clientIdChangeHandler,
         inputBlurHandler: clientIdBlurHandler
-    } = useInput(isNotEmpty);
+    } = useInput(isNotEmpty,props.savedClientIdState.state);
 
     const handleGettingCombinationSuccess = (response: PasswordCombinationType) => {
         setIsGettingCombination(false);
+        props.savedClientIdState.setState(clientIdValue)
         props.setLoginBasicData(response);
         props.toggleForms();
     }

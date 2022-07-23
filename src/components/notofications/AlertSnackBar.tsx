@@ -1,14 +1,9 @@
 import React, {Dispatch, SetStateAction} from "react";
 import MuiAlert, {AlertColor} from "@mui/material/Alert";
 import {Snackbar} from "@mui/material";
+import {UseStateType} from "../../models/custom-types/UseStateType";
 
-// useState datatype
-interface IUseStateProps {
-    state: boolean;
-    setState?: Dispatch<SetStateAction<boolean>>;
-}
-
-const AlertSnackBar: React.FC<{ alertState: IUseStateProps, message: string, severity: AlertColor }> = ({
+const AlertSnackBar: React.FC<{ alertState: UseStateType<boolean>, message: string, severity: AlertColor }> = ({
                                                                                                             alertState,
                                                                                                             message,
                                                                                                             severity

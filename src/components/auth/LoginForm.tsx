@@ -7,6 +7,7 @@ const LoginForm = () => {
     const [loginBasicData, setLoginBasicData ] = useState<PasswordCombinationType | null>(null );
     const [usernameFormVisible, setUsernameFormVisible] = useState(true);
     const [passwordFormVisible, setPasswordFormVisible] = useState(false);
+    const [clientId, setClientId] = useState<string>('');
 
     const toggleFormsVisibility = () => {
         setUsernameFormVisible(!usernameFormVisible);
@@ -15,7 +16,9 @@ const LoginForm = () => {
 
     return (
         <>
-            {usernameFormVisible && <UsernameForm toggleForms={toggleFormsVisibility}  setLoginBasicData={setLoginBasicData}/>}
+            {usernameFormVisible && <UsernameForm toggleForms={toggleFormsVisibility}  setLoginBasicData={setLoginBasicData}
+                                                  savedClientIdState = {{"state" :clientId, "setState": setClientId}}
+            />}
             {passwordFormVisible && <PasswordForm data={loginBasicData} toggleForms={toggleFormsVisibility}/>}
         </>
     );

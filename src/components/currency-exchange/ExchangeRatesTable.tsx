@@ -1,9 +1,11 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {DataGrid, GridColDef, GridRowsProp} from '@mui/x-data-grid';
+import useFetchCurrencyRates from "../../hook/use-fetch-currency-rates";
 
 const ExchangeRatesTable = () => {
     const [currentCurrency, setCurrentCurrency] = useState('PLN')
+    useFetchCurrencyRates(currentCurrency)
 
     const data: GridRowsProp = [
         {id: 'USD', col1: "USD", col2: 4.4567, col3: 4.4456},
@@ -24,6 +26,7 @@ const ExchangeRatesTable = () => {
         {field: 'col2', headerName: 'Sell [' + currentCurrency + ']',flex :1},
         {field: 'col3', headerName: 'Buy [' + currentCurrency + ']',flex :1}
     ];
+
 
     return (
         <div style={{height: 400, width: '100%'}}>
