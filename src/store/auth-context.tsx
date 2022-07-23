@@ -6,7 +6,7 @@ type AuthContextObj = {
     authToken: string;
     refreshToken: string;
     isLoggedIn: () => boolean;
-    login: (authToken: string, refreshToken: string) => void; // do not use at least for now
+    login: (authToken: string, refreshToken: string) => void;
     logout: () => void;
     removeAuthTokenIfExpired: () => boolean; // if expired or not exist return true
     removeRefreshTokenIfExpired: () => boolean;
@@ -58,7 +58,7 @@ export const AuthContextProvider: React.FC<Props> = ({ children }) => {
     }
 
     const isLoggedIn = () => {
-        return !!authToken && isTokenExpired(authToken);
+        return !!authToken && !isTokenExpired(authToken);
     }
 
     const removeAuthTokenIfExpired = () => {
