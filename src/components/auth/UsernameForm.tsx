@@ -4,14 +4,16 @@ import useInput from "../../hook/use-input";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import MuiAlert from "@mui/material/Alert";
 import AlertSnackBar from "../notofications/AlertSnackBar";
+import {isNotEmpty} from "../../input-rules/is-not-empty";
+import Spinner from "../common/Spinner";
+import ErrorNotification from "../common/ErrorNotification";
 
 export interface PasswordCombination {
     clientId: string,
     combination: string
 }
 
-const UsernameForm: React.FC<{ toggleForms: () => void, toggleToPasswordForm: (data :PasswordCombination) => void, savedClientId: string, setSavedClientId: Dispatch<SetStateAction<string>> }> = (props) => {
-    const isNotEmpty = (value: string) => value.trim() !== '';
+const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispatch<SetStateAction<PasswordCombination | null>>}> = (props) => {
     const {isLoading, error, sendRequest: getPasswordCombinationRequest} = useFetch();
     const [isGettingCombination, setIsGettingCombination] = useState<boolean>(false);
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
@@ -22,46 +24,37 @@ const UsernameForm: React.FC<{ toggleForms: () => void, toggleToPasswordForm: (d
         setIsTouched: setIsClientIdTouched,
         valueChangeHandler: clientIdChangeHandler,
         inputBlurHandler: clientIdBlurHandler
-    } = useInput(isNotEmpty, props.savedClientId);
+    } = useInput(isNotEmpty);
 
-    const handleGettingCombination = (response: PasswordCombination) => {
+    const handleGettingCombinationSuccess = (response: PasswordCombination) => {
         setIsGettingCombination(false);
-        props.setSavedClientId(clientIdValue);
-        props.toggleToPasswordForm(response);
+        props.setLoginBasicData(response);
+        props.toggleForms();
     }
-
     const handleNextClick = () => {
-        if(!clientIdIsValid){
+        if (!clientIdIsValid) {
             setIsClientIdTouched(true);
             return
         }
         const getPasswordRandomCharsRequestContent: RequestConfig = {
             url: "/web/login/combination?clientId=" + clientIdValue,
             method: "GET",
-            body : {},
+            body: {},
             headers: {
-                // 'Content-Type': 'application/json'
+                'Content-Type': 'application/json'
             }
         };
         setIsErrorMessageOpen(false);
         setIsGettingCombination(true);
-        getPasswordCombinationRequest(getPasswordRandomCharsRequestContent,handleGettingCombination)
+        getPasswordCombinationRequest(getPasswordRandomCharsRequestContent, handleGettingCombinationSuccess)
     };
 
     useEffect(() => {
         if (!!error) {
             setIsErrorMessageOpen(true);
-            console.log(error)
             setIsGettingCombination(false);
         }
     }, [error])
-
-    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setIsErrorMessageOpen(false);
-    };
 
     return (
         <Box
@@ -72,17 +65,9 @@ const UsernameForm: React.FC<{ toggleForms: () => void, toggleToPasswordForm: (d
                 marginTop: "100px",
             }}
         >
-            <Backdrop
-                sx={{color: 'primary.main', zIndex: (theme) => theme.zIndex.drawer + 1}}
-                open={isGettingCombination}
-            >
-                <CircularProgress color="inherit"/>
-            </Backdrop>
-
-            <AlertSnackBar isOpen={isErrorMessageOpen}
-                           handleClose={handlePopUpClose}
-                           severity="error"
-                           description="Invalid client ID" />
+            <Spinner isLoading={isGettingCombination || isLoading}/>
+            <ErrorNotification errorState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}
+                               errorMessage={'Invalid client ID'}/>
             <Paper
                 sx={{
                     bgcolor: "background.paper",

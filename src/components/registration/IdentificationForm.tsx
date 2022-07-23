@@ -16,15 +16,10 @@ import useInput from "../../hook/use-input";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {Link, useNavigate} from "react-router-dom";
 import AlertSnackBar from "../notofications/AlertSnackBar";
-
-const minPassLength = 10;
-const maxPassLength = 20;
-const isNotEmpty = (value: string) => value.trim() !== '';
-const isEmail = (email: string) => email.includes('@');
-const isValidPassword = (password: string) => {
-    return (/\d/.test(password) && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[^A-Za-z0-9]/.test(password)
-        && password.length >= minPassLength && password.length <= maxPassLength);
-}
+import {isValidPassword} from "../../input-rules/is-valid-password";
+import {isNotEmpty} from "../../input-rules/is-not-empty";
+import {isEmail} from "../../input-rules/is-email";
+import Spinner from "../common/Spinner";
 
 export type SuccessfulRegistration = {
     clientId: string;
@@ -147,13 +142,7 @@ const IdentificationForm = () => {
 
     return (
         <>
-            <Backdrop
-                sx={{color: 'primary.main', zIndex: (theme) => theme.zIndex.drawer + 1}}
-                open={isRegistering}
-            >
-                <CircularProgress color="inherit"/>
-            </Backdrop>
-
+           <Spinner isLoading={isRegistering || isLoading}/>
             <AlertSnackBar isOpen={isErrorMessageOpen}
                            handleClose={handlePopUpClose}
                            severity="error"

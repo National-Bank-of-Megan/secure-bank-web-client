@@ -1,0 +1,1 @@
+export const isCodeValid = (value: string) => value.trim().length === 6;

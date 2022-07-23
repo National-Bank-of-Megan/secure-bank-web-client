@@ -8,24 +8,34 @@ import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {useNavigate} from "react-router-dom";
 import SuccessfulAuthentication from "../../models/successfulAuthentication";
 import authContext from "../../store/auth-context";
+import Spinner from "../common/Spinner";
+import ErrorNotification from "../common/ErrorNotification";
+import {isCodeValid} from "../../input-rules/is-code-valid";
+import {PASSWORD_MAX_LENGTH} from "../../constants/Constants";
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombination | null }> = (props) => {
     const authCtx = useContext(authContext);
-
-    const numerOfInputs = 20;
     const navigate = useNavigate();
-    const isValid = (value: string) => value.trim().length === 6;
+    const {isLoading, error, sendRequest: loginRequest} = useFetch();
+    //  error handlers
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string>('');
+    //data preparation
     const [password] = useState<number[] | undefined>(props.data?.combination.split(' ').map((i) => parseInt(i)))
     const [inputRefsArray] = useState(() =>
-        Array.from({length: numerOfInputs}, () => createRef<HTMLInputElement>())
+        Array.from({length: PASSWORD_MAX_LENGTH}, () => createRef<HTMLInputElement>())
     );
     const setCurrentIndex = useState<number>(password![0])[1];
-    const {isLoading, error, sendRequest: loginRequest} = useFetch();
+
+    const getPassword = () => {
+        let psw: string = ''
+        password?.forEach(p => {
+            psw += inputRefsArray[p].current?.value;
+        })
+        return psw;
+    }
 
     useEffect(() => {
-        console.log(password)
         if (!!error) {
             setIsErrorMessageOpen(true);
             setErrorMsg('Incorrect password');
@@ -46,21 +56,13 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 inputRefsArray[char].current!.disabled = false;
             }
         )
+
         inputRefsArray[password![0]].current?.focus()
         window.addEventListener("keyup", (e) => handleKeyPress(e), false);
         return () => {
             window.removeEventListener("keyup", handleKeyPress);
         };
     }, [error]);
-
-
-    const getPassword = () => {
-        let psw: string = ''
-        password?.forEach(p => {
-            psw += inputRefsArray[p].current?.value;
-        })
-        return psw;
-    }
 
     const handleKeyPress = (e: KeyboardEvent) => {
         if (!e.altKey || !e.shiftKey) {
@@ -77,6 +79,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
     };
 
     const handleLogin = (response: SuccessfulAuthentication) => {
+        //todo check whether new device
         const authToken = response.authToken;
         const refreshToken = response.refreshToken;
         authCtx.login(authToken, refreshToken);
@@ -85,33 +88,24 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
 
     const passwordSubmitHandler = () => {
         const psw = getPassword();
-        if (!isValid(psw)) {
+        if (!isCodeValid(psw)) {
             setErrorMsg('Fill all cells')
             setIsErrorMessageOpen(true);
         } else {
             const loginRequestContent: RequestConfig = {
                 url: "/web/login",
                 method: "POST",
-                body : {
-                    "clientId" : props.data?.clientId,
-                    "password" : psw
+                body: {
+                    "clientId": props.data?.clientId,
+                    "password": psw
                 },
                 headers: {
                     'Content-Type': 'application/json'
                 }
             };
-
             loginRequest(loginRequestContent, handleLogin);
         }
-
     }
-
-    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setIsErrorMessageOpen(false);
-    };
 
     return (
         <form>
@@ -123,18 +117,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                <Backdrop
-                    sx={{color: 'primary.main', zIndex: (theme) => theme.zIndex.drawer + 1}}
-                    open={isLoading}
-                >
-                    <CircularProgress color="inherit"/>
-                </Backdrop>
-                <Snackbar open={isErrorMessageOpen} autoHideDuration={6000} onClose={handlePopUpClose}>
-                    <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity="error"
-                              sx={{width: '100%'}}>
-                        {errorMsg}
-                    </MuiAlert>
-                </Snackbar>
+                <Spinner isLoading={isLoading}/>
+                <ErrorNotification errorState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}
+                                   errorMessage={errorMsg}/>
+
                 <Paper
                     sx={{
                         bgcolor: "background.paper",

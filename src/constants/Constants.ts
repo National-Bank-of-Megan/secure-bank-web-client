@@ -1,5 +1,9 @@
 const REST_PATH = 'http://127.0.0.1:8080/api'
+const PASSWORD_MAX_LENGTH = 20
+const PASSWORD_MIN_LENGTH = 10
 
 export {
-    REST_PATH
+    REST_PATH,
+    PASSWORD_MAX_LENGTH,
+    PASSWORD_MIN_LENGTH
 }
