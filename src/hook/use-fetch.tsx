@@ -51,6 +51,7 @@ const useFetch = () => {
         const authTokenExpired = authCtx.removeAuthTokenIfExpired();
         const refreshTokenExpired = authCtx.removeRefreshTokenIfExpired();
         const isLoggedIn = !authTokenExpired;
+        console.log("is user logged in? "+isLoggedIn)
 
         try {
             if (isLoggedIn) {
