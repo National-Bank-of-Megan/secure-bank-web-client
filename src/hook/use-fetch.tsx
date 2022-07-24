@@ -3,6 +3,7 @@ import AuthContext from "../store/auth-context";
 import {REST_PATH} from "../constants/Constants";
 import FetchError from "../models/fetchError";
 import {useNavigate} from "react-router-dom";
+import useRefreshToken from "./use-refresh";
 
 export type Headers = {
     [key: string]: any;
@@ -19,24 +20,8 @@ const useFetch = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<FetchError | null>(null);
     const authCtx = useContext(AuthContext);
+    const { requestAuthTokenWithRefreshToken } = useRefreshToken();
     const navigate = useNavigate();
-
-    const fetchAuthToken = useCallback(async (): Promise<string> => {
-        const APIAddress = REST_PATH + "/web/token/refresh";
-        const response = await fetch(APIAddress, {
-            method: 'GET',
-            headers: {
-                'Authorization': authCtx.refreshToken
-            }
-        });
-
-        if (!response.ok) {
-            throw new FetchError(response.status, await response.text());
-        }
-
-        const responseBody = await response.json();
-        return responseBody['access_token'];
-    }, [authCtx.refreshToken]);
 
     const sendRequest = useCallback(async <T,>(requestConfig: RequestConfig, applyData: (data: T) => void) => {
         setIsLoading(true);
@@ -56,9 +41,7 @@ const useFetch = () => {
             if (isLoggedIn) {
                 requestConfig.headers['Authorization'] = authCtx.authToken;
             } else if (!refreshTokenExpired) {
-                const fetchedAuthToken = await fetchAuthToken();
-                authCtx.addAuthToken(fetchedAuthToken);
-                requestConfig.headers['Authorization'] = fetchedAuthToken;
+                requestConfig.headers['Authorization'] = await requestAuthTokenWithRefreshToken();
             } else if (!(requestConfig.url.startsWith("/web/login") || requestConfig.url.startsWith("/web/register"))) {
                 navigate('/login');
             }
@@ -81,7 +64,7 @@ const useFetch = () => {
             setError(error as FetchError || new FetchError(500, "Something went wrong."));
         }
         setIsLoading(false);
-    }, [authCtx, fetchAuthToken, navigate]);
+    }, [authCtx, navigate]);
 
 
     return {
