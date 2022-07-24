@@ -58,6 +58,7 @@ export const AuthContextProvider: React.FC<Props> = ({ children }) => {
     }
 
     const isLoggedIn = () => {
+
         return !!authToken && !isTokenExpired(authToken);
     }
 
