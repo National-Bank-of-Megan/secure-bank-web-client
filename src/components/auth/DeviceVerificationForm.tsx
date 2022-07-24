@@ -123,16 +123,16 @@ const DeviceVerificationForm = () => {
                             columnGap: "5px"
                         }}
                     >
-                        {
-                            digitsRefs.map((ref, index) => {
-                                return <PasswordCharacterInput
-                                    key={index}
-                                    index={index}
-                                    inputRef={ref}
-
-                                />
-                            })
-                        }
+                        {/*{*/}
+                        {/*    digitsRefs.map((ref, index) => {*/}
+                        {/*        return <PasswordCharacterInput*/}
+                        {/*            key={index}*/}
+                        {/*            index={index}*/}
+                        {/*            inputRef={ref}*/}
+                        {/*            */}
+                        {/*        />*/}
+                        {/*    })*/}
+                        {/*}*/}
                     </Stack>
 
                     <Button
