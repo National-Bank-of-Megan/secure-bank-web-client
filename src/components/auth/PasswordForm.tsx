@@ -55,24 +55,40 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         )
 
         inputRefsArray[password![0]].current?.focus()
-        window.addEventListener("keyup", (e) => handleKeyPress(e), false);
-        return () => {
-            window.removeEventListener("keyup", handleKeyPress);
-        };
-    }, [error]);
+    }, [error, inputRefsArray, password]);
 
-    const handleKeyPress = (e: KeyboardEvent) => {
-        if (!e.altKey || !e.shiftKey) {
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        const pressedButton = e.key;
+        if (pressedButton.length === 1 && pressedButton.match(/^[0-9A-Za-z]+$/)) {
             setCurrentIndex((prevIndex) => {
                 let letterIndex = password!.indexOf(prevIndex)
-                let nextIndex = letterIndex < password!.length - 1 ? letterIndex + 1 : -1;
-                if (nextIndex !== -1) {
+                console.log(letterIndex);
+                let nextIndex = letterIndex < password!.length - 1 ? letterIndex + 1 : letterIndex;
+                console.log(nextIndex);
+                if (nextIndex < password!.length) {
                     const nextInput = inputRefsArray?.[password![nextIndex]]?.current;
                     nextInput?.focus();
                 }
                 return password![nextIndex];
             });
+        } else if (pressedButton === "Backspace") {
+            setCurrentIndex((currentIndex) => {
+                let letterIndex = password!.indexOf(currentIndex);
+                if (letterIndex === -1) {
+                    letterIndex = password!.length - 1;
+                }
+                console.log(letterIndex)
+                let prevIndex = letterIndex > 0 ? letterIndex - 1 : 0;
+                console.log(prevIndex)
+                const prevInput = inputRefsArray?.[password![prevIndex]]?.current;
+                prevInput?.focus();
+                return password![prevIndex];
+            });
         }
+    };
+
+    const handleFocus = (index: number) => {
+        setCurrentIndex(index);
     };
 
     const handleLogin = (response: any) => {
@@ -158,6 +174,8 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                                             key={index}
                                             index={index}
                                             inputRef={ref}
+                                            handleKeyPressed={handleKeyPress}
+                                            handleInputFocus={handleFocus}
                                         />
                                     );
                                 })}
