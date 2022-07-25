@@ -31,11 +31,11 @@ export default function Navbar() {
     const handleNotificationsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setNotificationsPopover(event.currentTarget);
     };
-    
+
     const handleNotificationsClose = () => {
         setNotificationsPopover(null);
     };
-    
+
     const open = Boolean(notificationsPopover);
 
     return (
@@ -54,7 +54,7 @@ export default function Navbar() {
                             onClick={handleNotificationsClick}
                         >
                             <Badge badgeContent={4} color="error">
-                                <NotificationsIcon 
+                                <NotificationsIcon
                                     fontSize="inherit"
                                 />
                             </Badge>
@@ -74,7 +74,7 @@ export default function Navbar() {
                                 horizontal: 'right',
                             }}
                             PaperProps={{
-                                style: { 
+                                style: {
                                     width: '480px',
                                     height: '500px'
                                 },
@@ -83,18 +83,18 @@ export default function Navbar() {
                                 marginLeft: '50px',
                                 '*::-webkit-scrollbar': {
                                     width: '0.4em'
-                                    },
-                                    '*::-webkit-scrollbar-track': {
+                                },
+                                '*::-webkit-scrollbar-track': {
                                     '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
-                                    },
-                                    '*::-webkit-scrollbar-thumb': {
-                                        backgroundColor: 'rgba(0,0,0,.1)',
-                                        outline: '1px solid #1E1E1E'
-                                    }
+                                },
+                                '*::-webkit-scrollbar-thumb': {
+                                    backgroundColor: 'rgba(0,0,0,.1)',
+                                    outline: '1px solid #1E1E1E'
+                                }
                             }}
 
                         >
-                            <NotificationsListPopover />
+                            <NotificationsListPopover/>
                         </Popover>
 
                         <IconButton

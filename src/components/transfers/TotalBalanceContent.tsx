@@ -7,162 +7,162 @@ import AddMoneyDialog from "./dialog/AddMoneyDialog";
 import AddFriendDialog from "./dialog/AddFriendDialog";
 
 export const currencies = [
-  {
-    value: "USD",
-    label: "$",
-  },
-  {
-    value: "EUR",
-    label: "€",
-  },
-  {
-    value: "BTC",
-    label: "฿",
-  },
-  {
-    value: "JPY",
-    label: "¥",
-  },
+    {
+        value: "USD",
+        label: "$",
+    },
+    {
+        value: "EUR",
+        label: "€",
+    },
+    {
+        value: "BTC",
+        label: "฿",
+    },
+    {
+        value: "JPY",
+        label: "¥",
+    },
 ];
 
 const TotalBalanceContent = () => {
-  const [openTransferDialog, setOpenTransferDialog] = useState(false);
-  const [openAddMoneyDialog, setOpenAddMoneyDialog] = useState(false);
-  const [openAddFriendDialog, setOpenAddFriendDialog] = useState(false);
+    const [openTransferDialog, setOpenTransferDialog] = useState(false);
+    const [openAddMoneyDialog, setOpenAddMoneyDialog] = useState(false);
+    const [openAddFriendDialog, setOpenAddFriendDialog] = useState(false);
 
-  const [currency, setCurrency] = useState("EUR");
-  
-  const handleTransferDialogOpen = () => {
-    setOpenTransferDialog(true);
-  };
+    const [currency, setCurrency] = useState("EUR");
 
-  const handleAddMoneyDialogOpen = () => {
-    setOpenAddMoneyDialog(true);
-  };
+    const handleTransferDialogOpen = () => {
+        setOpenTransferDialog(true);
+    };
 
-  const handleAddFriendDialogOpen = () => {
-    setOpenAddFriendDialog(true);
-  };
+    const handleAddMoneyDialogOpen = () => {
+        setOpenAddMoneyDialog(true);
+    };
 
-  return (
-    <>
-      <Typography variant="h2" color="primary.main">
-        Total balance
-      </Typography>
-      <Typography variant="h2" fontWeight="200" sx={{ mt: "10px" }}>
-        15.750,89 PLN
-      </Typography>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "380px",
-        }}
-      >
-        <FormControl
-          variant="standard"
-          sx={{
-            m: 1,
-            minWidth: 120,
-            marginTop: "88px",
-            marginBottom: "88px",
-          }}
-        >
-          <InputLabel>Select subaccount</InputLabel>
-          <Select value="age" label="Age">
-            <MenuItem value="$ 1200.99">
-              <em>None</em>
-            </MenuItem>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-        </FormControl>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            rowGap: "40px",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <Fab
-              color="primary"
-              variant="extended"
-              aria-label="transfer"
-              size="large"
-              sx={buttonStyles}
-              onClick={handleAddMoneyDialogOpen}
+    const handleAddFriendDialogOpen = () => {
+        setOpenAddFriendDialog(true);
+    };
+
+    return (
+        <>
+            <Typography variant="h2" color="primary.main">
+                Total balance
+            </Typography>
+            <Typography variant="h2" fontWeight="200" sx={{mt: "10px"}}>
+                15.750,89 PLN
+            </Typography>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    width: "380px",
+                }}
             >
-              <Add sx={{ mr: 1 }} />
-              Add money
-            </Fab>
-            <Fab
-              color="error"
-              variant="extended"
-              aria-label="transfer"
-              size="large"
-              sx={buttonStyles}
-              onClick={handleTransferDialogOpen}
-            >
-              <ArrowForward sx={{ mr: 1 }} />
-              Transfer
-            </Fab>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-            }}
-          >
-            <Fab
-              color="primary"
-              variant="extended"
-              aria-label="transfer"
-              size="large"
-              sx={buttonStyles}
-            >
-              <Cached sx={{ mr: 1 }} />
-              Exchange
-            </Fab>
-            <Fab
-              color="success"
-              variant="extended"
-              aria-label="transfer"
-              size="large"
-              sx={buttonStyles}
-              onClick={handleAddFriendDialogOpen}
-            >
-              <Favorite sx={{ mr: 1 }} />
-              Add Friend
-            </Fab>
-          </Box>
-        </Box>
-      </Box>
+                <FormControl
+                    variant="standard"
+                    sx={{
+                        m: 1,
+                        minWidth: 120,
+                        marginTop: "88px",
+                        marginBottom: "88px",
+                    }}
+                >
+                    <InputLabel>Select subaccount</InputLabel>
+                    <Select value="age" label="Age">
+                        <MenuItem value="$ 1200.99">
+                            <em>None</em>
+                        </MenuItem>
+                        <MenuItem value={10}>Ten</MenuItem>
+                        <MenuItem value={20}>Twenty</MenuItem>
+                        <MenuItem value={30}>Thirty</MenuItem>
+                    </Select>
+                </FormControl>
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        rowGap: "40px",
+                    }}
+                >
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Fab
+                            color="primary"
+                            variant="extended"
+                            aria-label="transfer"
+                            size="large"
+                            sx={buttonStyles}
+                            onClick={handleAddMoneyDialogOpen}
+                        >
+                            <Add sx={{mr: 1}}/>
+                            Add money
+                        </Fab>
+                        <Fab
+                            color="error"
+                            variant="extended"
+                            aria-label="transfer"
+                            size="large"
+                            sx={buttonStyles}
+                            onClick={handleTransferDialogOpen}
+                        >
+                            <ArrowForward sx={{mr: 1}}/>
+                            Transfer
+                        </Fab>
+                    </Box>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        <Fab
+                            color="primary"
+                            variant="extended"
+                            aria-label="transfer"
+                            size="large"
+                            sx={buttonStyles}
+                        >
+                            <Cached sx={{mr: 1}}/>
+                            Exchange
+                        </Fab>
+                        <Fab
+                            color="success"
+                            variant="extended"
+                            aria-label="transfer"
+                            size="large"
+                            sx={buttonStyles}
+                            onClick={handleAddFriendDialogOpen}
+                        >
+                            <Favorite sx={{mr: 1}}/>
+                            Add Friend
+                        </Fab>
+                    </Box>
+                </Box>
+            </Box>
 
-      <TransferDialog
-        openTransferDialog={openTransferDialog}
-        setOpenTransferDialog={setOpenTransferDialog}
-        currency={currency}
-        setCurrency={setCurrency}
-      />
-      <AddMoneyDialog
-        openAddMoneyDialog={openAddMoneyDialog}
-        setOpenAddMoneyDialog={setOpenAddMoneyDialog}
-        currency={currency}
-        setCurrency={setCurrency}
-      />
-      <AddFriendDialog
-        openAddFriendDialog={openAddFriendDialog}
-        setOpenAddFriendDialog={setOpenAddFriendDialog}
-      />
-    </>
-  );
+            <TransferDialog
+                openTransferDialog={openTransferDialog}
+                setOpenTransferDialog={setOpenTransferDialog}
+                currency={currency}
+                setCurrency={setCurrency}
+            />
+            <AddMoneyDialog
+                openAddMoneyDialog={openAddMoneyDialog}
+                setOpenAddMoneyDialog={setOpenAddMoneyDialog}
+                currency={currency}
+                setCurrency={setCurrency}
+            />
+            <AddFriendDialog
+                openAddFriendDialog={openAddFriendDialog}
+                setOpenAddFriendDialog={setOpenAddFriendDialog}
+            />
+        </>
+    );
 };
 
 export default TotalBalanceContent;

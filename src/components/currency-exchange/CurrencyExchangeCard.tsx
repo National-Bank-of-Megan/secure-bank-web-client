@@ -1,21 +1,23 @@
-import {Box, Card, CardContent, TextField, Typography} from "@mui/material";
+import {Box, Card, CardContent, SelectChangeEvent, TextField, Typography} from "@mui/material";
 import exchangeCurrencyCardStyles from "../../styles/exchangeCurrencyCardStyles";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import React, {ChangeEventHandler} from "react";
+import React from "react";
 import NumberFormat, {InputAttributes} from "react-number-format";
+import {CURRENCIES} from "../../constants/Constants";
+import {Action} from "./CurrencyExchangeForm";
 
 interface CustomProps {
-    onChange: (event: { target: { value: string } }) => void;
+    onChange: (event: { target: { value: string } }) => void,
+    action: Action
 
 
 }
 
 const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
     CustomProps>(function NumberFormatCustom(props, ref) {
-    const {onChange, ...other} = props;
-
+    const {onChange, action, ...other} = props;
 
 
     return (
@@ -25,19 +27,25 @@ const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
             onValueChange={(values) => {
                 onChange({
                     target: {
-                        value: values.value,
-                        // prefix :values.prefix
+                        value: values.value
                     }
                 });
             }}
+            decimalScale={2}
             thousandSeparator
+            allowLeadingZeros={false}
+            allowNegative={false}
             isNumericString
-            // prefix={prefix}
+            prefix={action === Action.sell ? '-' : '+'}
         />
     );
 });
 
-const CurrencyExchangeCard: React.FC<{values :string, handleChange :ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>}> = ({values, handleChange}) => {
+const CurrencyExchangeCard: React.FC<{
+    action: Action, currency: string, amount: number,
+    handleCurrencyChange: (action: Action, currency: string) => void, handleAmountChange: (action: Action, amount: number) => void
+}> = (props) => {
+
     return (
         <Card sx={exchangeCurrencyCardStyles}>
 
@@ -62,11 +70,16 @@ const CurrencyExchangeCard: React.FC<{values :string, handleChange :ChangeEventH
                             size="medium"
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value="PLN"
+                            value={props.currency}
+                            onChange={(e: SelectChangeEvent) => props.handleCurrencyChange(props.action, e.target.value)}
                         >
-                            <MenuItem value={"PLN"}>PLN</MenuItem>
-                            <MenuItem value={"CHF"}>CHF</MenuItem>
-                            <MenuItem value={"USD"}>USD</MenuItem>
+                            {
+                                CURRENCIES.map((currency) => {
+                                    return <MenuItem value={currency}>{currency}</MenuItem>
+                                })
+                            }
+
+
                         </Select>
                     </FormControl>
                     <Typography
@@ -88,13 +101,14 @@ const CurrencyExchangeCard: React.FC<{values :string, handleChange :ChangeEventH
                     }}
                     id="standard-basic"
                     variant="standard"
-                    value={values}
-                    prefix='USD+'
+                    value={props.amount}
                     placeholder="13.98"
-                    onChange={handleChange}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.handleAmountChange(props.action, parseFloat(e.target.value))}
+                    // action={props.action}
                     size="medium"
                     InputProps={{
                         inputComponent: NumberFormatCustom as any,
+                        inputProps: {action: props.action},
                         disableUnderline: true,
                         style: {fontSize: 40},
                     }}

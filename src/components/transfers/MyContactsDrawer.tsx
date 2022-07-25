@@ -7,7 +7,7 @@ const friends = [
     new FriendAccountData("Michał Wójcik", "14 1234 5678 1234 4567"),
     new FriendAccountData("Katarzyna Grygorowicz", "14 1234 5678 1234 4567"),
     new FriendAccountData("Kolega", "14 1234 5678 1234 4567"),
-  ];
+];
 
 const MyContactsDrawer: React.FC<{ friendsDrawerOpen: boolean, setFriendsDrawerOpen: (isOpen: boolean) => void }> = (props) => {
 
@@ -16,30 +16,30 @@ const MyContactsDrawer: React.FC<{ friendsDrawerOpen: boolean, setFriendsDrawerO
     };
 
     const friendsList = (
-        <Box sx={{ width: 280 }} onClick={toggleDrawer} onKeyDown={toggleDrawer}>
-          <List>
-            {friends.map((friend) => (
-              <FriendAccount friendAccount={friend} />
-            ))}
-          </List>
+        <Box sx={{width: 280}} onClick={toggleDrawer} onKeyDown={toggleDrawer}>
+            <List>
+                {friends.map((friend) => (
+                    <FriendAccount friendAccount={friend}/>
+                ))}
+            </List>
         </Box>
-      );
+    );
 
     return (
         <Drawer
             sx={{
-              zIndex: "3000",
+                zIndex: "3000",
             }}
             anchor="right"
             open={props.friendsDrawerOpen}
             onClose={() => props.setFriendsDrawerOpen(false)}
-          >
+        >
             <Typography variant="h4" sx={{
-              padding: "16px 16px 8px",
-              textAlign: "center"
+                padding: "16px 16px 8px",
+                textAlign: "center"
             }}>Your Contacts</Typography>
             {friendsList}
-          </Drawer>
+        </Drawer>
     );
 }
 

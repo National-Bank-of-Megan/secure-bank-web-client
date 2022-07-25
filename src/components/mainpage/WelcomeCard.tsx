@@ -10,57 +10,57 @@ import cardStyles from "../../styles/CardStyles";
 import {Link} from "react-router-dom";
 
 const card = (
-  <React.Fragment>
-    <CardContent
-      sx={{
-        margin: "auto",
-        textAlign: "center",
-      }}
-    >
-      <Typography variant="h3" color="text.primary" gutterBottom>
-        National Bank of Megan
-      </Typography>
-      <Typography variant="h5" component="div" color="text.primary">
-        We have your money and there’s nothing you can do about it.
-      </Typography>
-    </CardContent>
-    <CardActions sx={{display :'flex', flexDirection:'column', marginTop :'5%', gap:'15px'}}>
-      <Typography variant="h4" component="div" color="text.primary">
-        Join us !!!
-      </Typography>
-      <Button
-        component={Link} to="/signup"
-        size="large"
-        sx={buttonStyles}
-        variant="outlined"
-        style={{ width: "100%" }}
-      >
-        Sign up
-      </Button>
-    </CardActions>
-  </React.Fragment>
+    <React.Fragment>
+        <CardContent
+            sx={{
+                margin: "auto",
+                textAlign: "center",
+            }}
+        >
+            <Typography variant="h3" color="text.primary" gutterBottom>
+                National Bank of Megan
+            </Typography>
+            <Typography variant="h5" component="div" color="text.primary">
+                We have your money and there’s nothing you can do about it.
+            </Typography>
+        </CardContent>
+        <CardActions sx={{display: 'flex', flexDirection: 'column', marginTop: '5%', gap: '15px'}}>
+            <Typography variant="h4" component="div" color="text.primary">
+                Join us !!!
+            </Typography>
+            <Button
+                component={Link} to="/signup"
+                size="large"
+                sx={buttonStyles}
+                variant="outlined"
+                style={{width: "100%"}}
+            >
+                Sign up
+            </Button>
+        </CardActions>
+    </React.Fragment>
 );
 
 export default function WelcomeCard() {
-  return (
-    <Box
-      sx={{
-        maxWidth: 750,
-        minHeight: 160,
-        margin: "auto",
-        // todo znalezc jakis ladnieszy sposob na ustawienie karty 
-        marginTop:'10%'
-      }}
-    >
-      <Card
-        variant="outlined"
-        sx={cardStyles}
-        style={{
-          border: "none",
-        }}
-      >
-        {card}
-      </Card>
-    </Box>
-  );
+    return (
+        <Box
+            sx={{
+                maxWidth: 750,
+                minHeight: 160,
+                margin: "auto",
+                // todo znalezc jakis ladnieszy sposob na ustawienie karty
+                marginTop: '10%'
+            }}
+        >
+            <Card
+                variant="outlined"
+                sx={cardStyles}
+                style={{
+                    border: "none",
+                }}
+            >
+                {card}
+            </Card>
+        </Box>
+    );
 }

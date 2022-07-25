@@ -1,13 +1,11 @@
-import {Backdrop, Box, Button, CircularProgress, Paper, Snackbar, Stack, TextField, Typography} from "@mui/material";
+import {Box, Button, Paper, Stack, Typography} from "@mui/material";
 import React, {createRef, useEffect, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
-import currencyExchangeHistoryCard from "../history/CurrencyExchangeHistoryCard";
 import {useNavigate, useSearchParams} from "react-router-dom";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
-import MuiAlert from "@mui/material/Alert";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
-import {CODE_LENGTH} from "../../constants/Constants";
+import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 
 const DeviceVerificationForm = () => {
@@ -68,7 +66,7 @@ const DeviceVerificationForm = () => {
             return;
         }
         const loginRequestContent: RequestConfig = {
-            url: "/web/login/verify",
+            url: REST_PATH_AUTH + "/web/login/verify",
             method: "POST",
             body: {
                 "clientId": clientId,

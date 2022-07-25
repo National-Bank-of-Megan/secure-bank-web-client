@@ -1,12 +1,12 @@
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import {Box, Button, Grid, IconButton, Stack, Typography} from '@mui/material';
+import {Button, Grid, IconButton, Stack, Typography} from '@mui/material';
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {ContentCopy} from "@mui/icons-material";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {SuccessfulRegistrationType} from "../../models/custom-types/SuccessfulRegistrationType";
 
-const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegistrationType }> = ({ registrationResponseData }) => {
+const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegistrationType }> = ({registrationResponseData}) => {
     const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
 
     const handleCopyClicked = () => {
@@ -16,14 +16,15 @@ const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegist
 
     return (
         <>
-            <AlertSnackBar  alertState={{"state" :isAlertOpen, "setState" :setIsAlertOpen}} severity="success" message="Copied!" />
+            <AlertSnackBar alertState={{"state": isAlertOpen, "setState": setIsAlertOpen}} severity="success"
+                           message="Copied!"/>
             <Grid container marginTop="50px" gap={-2}>
                 <Grid item xs={6} pl="50px">
                     <Stack textAlign="center" height='100%' sx={{
                         alignItems: 'center',
                         justifyContent: 'space-between'
                     }}>
-                        <CheckCircleOutlineIcon color="success" sx={{ fontSize: "64px" }} />
+                        <CheckCircleOutlineIcon color="success" sx={{fontSize: "64px"}}/>
                         <Typography variant="body1">
                             Successfully registered your account.
                         </Typography>
@@ -37,7 +38,7 @@ const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegist
                             <IconButton sx={{
                                 marginLeft: '-8px'
                             }}>
-                                <ContentCopy color="primary" sx={{ fontSize: "25px" }} onClick={handleCopyClicked} />
+                                <ContentCopy color="primary" sx={{fontSize: "25px"}} onClick={handleCopyClicked}/>
                             </IconButton>
                         </Stack>
                         <Button component={Link} to="/login" sx={{width: "350px"}} variant="contained" size="large">

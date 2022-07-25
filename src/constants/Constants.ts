@@ -1,11 +1,15 @@
-const REST_PATH = 'http://127.0.0.1:8080/api'
+const REST_PATH_AUTH = 'http://127.0.0.1:8080/api'
+const REST_PATH_EXCHANGE = 'http://127.0.0.1:8082/api/exchange'
+const REST_PATH_TRANSFER = 'http://127.0.0.1:8082/api/transfer'
 const PASSWORD_MAX_LENGTH = 20
 const PASSWORD_MIN_LENGTH = 10
 const CODE_LENGTH = 6
-const CURRENCIES = ['USD', 'PLN','CHF','GBP','EUR']
+const CURRENCIES = ['USD', 'PLN', 'CHF', 'GBP', 'EUR']
 
 export {
-    REST_PATH,
+    REST_PATH_AUTH,
+    REST_PATH_EXCHANGE,
+    REST_PATH_TRANSFER,
     PASSWORD_MAX_LENGTH,
     PASSWORD_MIN_LENGTH,
     CODE_LENGTH,

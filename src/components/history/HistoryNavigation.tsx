@@ -4,7 +4,10 @@ import React from "react";
 
 
 //todo poprawic typ handleBrowsingChange
-const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: any }> = ({currentlyBrowsing, handleBrowsingChange}) => {
+const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: any }> = ({
+                                                                                                   currentlyBrowsing,
+                                                                                                   handleBrowsingChange
+                                                                                               }) => {
 
 
     return (

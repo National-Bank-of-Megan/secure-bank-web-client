@@ -17,18 +17,21 @@ const AuthContext = React.createContext<AuthContextObj>({
     authToken: '',
     refreshToken: '',
     isLoggedIn: () => false,
-    login: (authToken, refreshToken) => {},
-    logout: () => {},
+    login: (authToken, refreshToken) => {
+    },
+    logout: () => {
+    },
     removeAuthTokenIfExpired: () => false,
     removeRefreshTokenIfExpired: () => false,
-    addAuthToken: (authToken) => {}
+    addAuthToken: (authToken) => {
+    }
 });
 
 interface Props {
     children: React.ReactNode;
 }
 
-export const AuthContextProvider: React.FC<Props> = ({ children }) => {
+export const AuthContextProvider: React.FC<Props> = ({children}) => {
     const authHeader = "Bearer ";
     const authTokenKey = "authToken";
     const refreshTokenKey = "refreshToken";
@@ -110,6 +113,6 @@ export const AuthContextProvider: React.FC<Props> = ({ children }) => {
         <AuthContext.Provider value={contextValue}>
             {children}
         </AuthContext.Provider>);
-    };
+};
 
 export default AuthContext;

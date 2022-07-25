@@ -33,10 +33,10 @@ const DevicesTable = () => {
 
     return (
         <Box sx={{width: '100%'}}>
-            <Box sx={{display:'flex',justifyContent:'end'}}>
-            <Button size="large" variant="outlined" color="error" onClick={handleDeleteRow} >
-                Delete device
-            </Button>
+            <Box sx={{display: 'flex', justifyContent: 'end'}}>
+                <Button size="large" variant="outlined" color="error" onClick={handleDeleteRow}>
+                    Delete device
+                </Button>
             </Box>
             <Box sx={{height: 400, mt: 1}}>
                 <DataGrid rows={rows} columns={columns}

@@ -1,10 +1,10 @@
 const buttonStyles = {
-    "&.MuiButton-root":{
-        color : "primary.main",
-        border : "1px primary.main solid"
+    "&.MuiButton-root": {
+        color: "primary.main",
+        border: "1px primary.main solid"
     },
-    "&.MuiButton-outlined":{
-        color : "primary.main",
+    "&.MuiButton-outlined": {
+        color: "primary.main",
     },
     "&.MuiFab-root": {
         color: "#DFEAF5",

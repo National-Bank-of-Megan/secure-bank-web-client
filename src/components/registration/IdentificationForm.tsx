@@ -1,16 +1,4 @@
-import {
-    Alert,
-    Backdrop,
-    Button,
-    CircularProgress,
-    FormHelperText,
-    Grid,
-    Paper,
-    Snackbar,
-    TextField,
-    Typography
-} from "@mui/material";
-import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import {Button, Grid, Paper, TextField, Typography} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import useInput from "../../hook/use-input";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
@@ -21,6 +9,7 @@ import {isNotEmpty} from "../../input-rules/is-not-empty";
 import {isEmail} from "../../input-rules/is-email";
 import Spinner from "../common/Spinner";
 import {SuccessfulRegistrationType} from "../../models/custom-types/SuccessfulRegistrationType";
+import {REST_PATH_AUTH} from "../../constants/Constants";
 
 const IdentificationForm = () => {
     const {isLoading, error, sendRequest: registerRequest} = useFetch();
@@ -90,8 +79,10 @@ const IdentificationForm = () => {
 
     const handleRegistration = (response: SuccessfulRegistrationType) => {
         setIsRegistering(false);
-        navigate('success', { replace: true, state: {
-            clientId: response['clientId'], qr: response['qr'] }
+        navigate('success', {
+            replace: true, state: {
+                clientId: response['clientId'], qr: response['qr']
+            }
         });
     }
 
@@ -102,7 +93,7 @@ const IdentificationForm = () => {
             return;
         }
         const registerRequestContent: RequestConfig = {
-            url: "/web/register",
+            url: REST_PATH_AUTH + "/web/register",
             method: "POST",
             body: {
                 'firstName': firstNameValue,
@@ -130,7 +121,7 @@ const IdentificationForm = () => {
 
     return (
         <>
-           <Spinner isLoading={isRegistering || isLoading}/>
+            <Spinner isLoading={isRegistering || isLoading}/>
             <AlertSnackBar alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}
                            severity="error"
                            message="This email has already been taken."/>
@@ -225,7 +216,8 @@ const IdentificationForm = () => {
                         </Grid>
                     </Grid>
                 </Paper>
-                <Typography mt="5px">Already have an account? Log in <Link to='/login' style={{ color: '#007AFF'}}>here</Link>.</Typography>
+                <Typography mt="5px">Already have an account? Log in <Link to='/login'
+                                                                           style={{color: '#007AFF'}}>here</Link>.</Typography>
             </form>
         </>
 

@@ -3,7 +3,7 @@ import Transaction from "./Transaction";
 import {TransactionType} from "../../models/custom-types/TransactionType";
 import React from "react";
 
-const RecentActivityContent : React.FC<{ recent: TransactionType[] }> = ({recent}) => {
+const RecentActivityContent: React.FC<{ recent: TransactionType[] }> = ({recent}) => {
 
     return (
         <>
@@ -30,7 +30,7 @@ const RecentActivityContent : React.FC<{ recent: TransactionType[] }> = ({recent
                 }}
             >
                 {
-                    recent.map(r=>{
+                    recent.map(r => {
                         return <Transaction item={r}/>
                     })
                 }

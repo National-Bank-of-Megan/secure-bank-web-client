@@ -23,7 +23,8 @@ const AccountPage = () => {
                     <Stack sx={{width: '70%'}} spacing={6}>
                         <Box sx={{display: 'flex'}}>
                             <Typography sx={{width: '50%'}} variant="body1">Account number</Typography>
-                            <Typography sx={{width: '50%'}} variant="body1">PL10 1050 0099 7603 1234 5678 9123</Typography>
+                            <Typography sx={{width: '50%'}} variant="body1">PL10 1050 0099 7603 1234 5678
+                                9123</Typography>
                         </Box>
                         <Box sx={{display: 'flex'}}>
                             <Typography sx={{width: '50%'}} variant="body1">First name</Typography>
@@ -44,7 +45,7 @@ const AccountPage = () => {
                     </Stack>
                 </Grid>
             </Grid>
-            <Divider sx={{backgroundColor:'primary.main'}}/>
+            <Divider sx={{backgroundColor: 'primary.main'}}/>
             <Stack spacing={3}>
                 <Typography
                     variant="h2"

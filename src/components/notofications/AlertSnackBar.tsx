@@ -1,13 +1,13 @@
-import React, {Dispatch, SetStateAction} from "react";
+import React from "react";
 import MuiAlert, {AlertColor} from "@mui/material/Alert";
 import {Snackbar} from "@mui/material";
 import {UseStateType} from "../../models/custom-types/UseStateType";
 
 const AlertSnackBar: React.FC<{ alertState: UseStateType<boolean>, message: string, severity: AlertColor }> = ({
-                                                                                                            alertState,
-                                                                                                            message,
-                                                                                                            severity
-                                                                                                        }) => {
+                                                                                                                   alertState,
+                                                                                                                   message,
+                                                                                                                   severity
+                                                                                                               }) => {
 
     const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {

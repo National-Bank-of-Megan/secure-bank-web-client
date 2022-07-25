@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 const useInput = (validateValue: (value: string) => boolean, initialValue?: string) => {
     if (!initialValue) {

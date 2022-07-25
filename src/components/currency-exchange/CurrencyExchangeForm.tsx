@@ -1,37 +1,35 @@
 import {Avatar, Box, Button, FormHelperText, Stack, Typography,} from "@mui/material";
-import React, {useState} from "react";
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import React from "react";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import CurrencyExchangeCard from "./CurrencyExchangeCard";
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import {IExchangeData} from "../../pages/CurrencyExchangePage";
+import {UseStateType} from "../../models/custom-types/UseStateType";
+
 // import CurrencyExchangeCard from "./CurrencyExchangeCard";
 
+export enum Action {
+    sell,
+    buy
+}
 
-export default function CurrencyExchangeForm() {
+const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> = ({exchange}) => {
 
-    const conversionRate = 4
-    const [bought, setBought] = useState('')
-    const [sold, setSold] = useState('')
-    const [isSold, setIsSold] = useState(true)
+    const handleAmountChange = (action: Action, amount: number) => {
+        if (action === Action.buy) exchange.setState({...exchange.state, "bought": amount})
+        else exchange.setState({...exchange.state, "sold": amount})
 
-
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // setSold(event.target.value)
-        if (isSold) {
-            setSold(event.target.value)
-            let converted: number = parseFloat(sold) / conversionRate;
-            setBought(converted.toString())
-        }
     };
 
-    const exchangeChange = () => {
-        setIsSold(!isSold);
+    const handleCurrencyChange = (action: Action, currency: string) => {
+        if (action === Action.buy) exchange.setState({...exchange.state, "boughtCurrency": currency})
+        else exchange.setState({...exchange.state, "soldCurrency": currency})
     }
 
     const returnArrow = () => {
-        if (isSold) {
-            return <ArrowDownwardIcon sx={{color: "primary.main"}}/>
-        }
+        // if (isSold) {
+        //     return <ArrowDownwardIcon sx={{color: "primary.main"}}/>
+        // }
         return <ArrowUpwardIcon sx={{color: "primary.main"}}/>
     }
 
@@ -45,9 +43,15 @@ export default function CurrencyExchangeForm() {
                 </Box>
                 <Box>
                     <Box sx={{width: '480px'}}>
-                        <CurrencyExchangeCard values={sold} handleChange={handleChange}/>
+                        <CurrencyExchangeCard
+                            action={Action.sell}
+                            currency={exchange.state.soldCurrency}
+                            amount={exchange.state.sold}
+                            handleCurrencyChange={handleCurrencyChange}
+                            handleAmountChange={handleAmountChange}
+                        />
                         <Avatar
-                            onClick={exchangeChange}
+                            // onClick={exchangeChange}
                             sx={{
                                 bgcolor: 'background.paper',
                                 border: '1px solid primary',
@@ -62,7 +66,13 @@ export default function CurrencyExchangeForm() {
                             {returnArrow()}
                         </Avatar>
 
-                        <CurrencyExchangeCard values={sold} handleChange={handleChange}/>
+                        <CurrencyExchangeCard
+                            action={Action.buy}
+                            currency={exchange.state.boughtCurrency}
+                            amount={exchange.state.bought}
+                            handleCurrencyChange={handleCurrencyChange}
+                            handleAmountChange={handleAmountChange}
+                        />
                     </Box>
                 </Box>
 
@@ -82,3 +92,5 @@ export default function CurrencyExchangeForm() {
         </>
     );
 }
+
+export default CurrencyExchangeForm;

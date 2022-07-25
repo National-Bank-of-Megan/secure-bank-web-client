@@ -12,13 +12,13 @@ const SuccessfulRegistrationPage = () => {
     useEffect(() => {
         if (!registrationData) {
             console.log('gówno')
-            navigate('/', { replace: true });
+            navigate('/', {replace: true});
         }
     }, [])
 
     return (
         <>
-            {registrationData && <RegistrationSuccess registrationResponseData={registrationData} />}
+            {registrationData && <RegistrationSuccess registrationResponseData={registrationData}/>}
         </>
     );
 }

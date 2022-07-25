@@ -1,9 +1,9 @@
 import {Divider, Stack, Typography} from "@mui/material";
 
-const DevicesPageInformation =()=>{
-    return(
+const DevicesPageInformation = () => {
+    return (
         <Stack spacing={3}>
-            <Typography variant="h1"  color="primary.main" >Your devices</Typography>
+            <Typography variant="h1" color="primary.main">Your devices</Typography>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris nec ornare dolor. Aliquam ornare
                 purus id metus ullamcorper, at porta nisl consequat. Ut pharetra tincidunt risus, vestibulum lacinia
@@ -12,9 +12,9 @@ const DevicesPageInformation =()=>{
                 nec ullamcorper mi, vel varius enim. Praesent malesuada felis lectus, quis vestibulum augue
                 ullamcorper et. Donec sit amet suscipit mauris. Ut rhoncus sollicitudin lacinia.
             </p>
-            <Divider sx={{backgroundColor:'primary.main'}}/>
+            <Divider sx={{backgroundColor: 'primary.main'}}/>
         </Stack>
     )
 
 }
-export default  DevicesPageInformation;
+export default DevicesPageInformation;

@@ -11,7 +11,8 @@ const AccountNotification: React.FC<{ icon: React.ReactElement<SvgIconProps> }> 
                 display: 'flex',
                 flexDirection: 'column'
             }}>
-                <Typography>Your password has been changed. If it wasn't you, contact us immediately. Your password has been changed. If it wasn't you, contact us immediately.</Typography>
+                <Typography>Your password has been changed. If it wasn't you, contact us immediately. Your password has
+                    been changed. If it wasn't you, contact us immediately.</Typography>
                 <Typography color="text.secondary" sx={{
                     fontWeight: "500",
                     fontSize: "14px"

@@ -1,15 +1,12 @@
-import {Backdrop, Box, Button, CircularProgress, Paper, Snackbar, Stack, Typography,} from "@mui/material";
-import React, {createRef, useContext, useEffect, useRef, useState} from "react";
+import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
+import React, {createRef, useContext, useEffect, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
-import useInput from "../../hook/use-input";
-import MuiAlert from "@mui/material/Alert";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {useNavigate} from "react-router-dom";
-import SuccessfulAuthentication from "../../models/successfulAuthentication";
 import authContext from "../../store/auth-context";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
-import {PASSWORD_MAX_LENGTH} from "../../constants/Constants";
+import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 
@@ -83,7 +80,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         const authToken = response['access_token'];
         const refreshToken = response['refresh_token'];
         authCtx.login(authToken, refreshToken);
-        navigate('/transfers', { replace: true })
+        navigate('/transfers', {replace: true})
     }
 
     const passwordSubmitHandler = () => {
@@ -93,7 +90,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
             setIsErrorMessageOpen(true);
         } else {
             const loginRequestContent: RequestConfig = {
-                url: "/web/login",
+                url: REST_PATH_AUTH + "/web/login",
                 method: "POST",
                 body: {
                     "clientId": props.data?.clientId,

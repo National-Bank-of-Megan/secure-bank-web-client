@@ -1,13 +1,13 @@
 import {useCallback, useContext} from "react";
-import {REST_PATH} from "../constants/Constants";
 import FetchError from "../models/fetchError";
 import AuthContext from "../store/auth-context";
+import {REST_PATH_AUTH} from "../constants/Constants";
 
 const useRefreshToken = () => {
     const authCtx = useContext(AuthContext);
 
     const fetchAuthToken = useCallback(async (): Promise<string> => {
-        const APIAddress = REST_PATH + "/web/token/refresh";
+        const APIAddress = REST_PATH_AUTH + "/web/token/refresh";
         const response = await fetch(APIAddress, {
             method: 'GET',
             headers: {

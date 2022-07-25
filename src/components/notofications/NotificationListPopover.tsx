@@ -4,7 +4,7 @@ import AccountNotification from "./AccountNotification";
 
 const NotificationsListPopover = () => {
     return (
-        <Container sx ={{
+        <Container sx={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -12,14 +12,14 @@ const NotificationsListPopover = () => {
             paddingBottom: '20px',
             rowGap: '20px'
         }}>
-            <AccountNotification icon={<CompareArrows />}/>
-            <AccountNotification icon={<Security />}/>
-            <AccountNotification icon={<CompareArrows />}/>
-            <AccountNotification icon={<Security />}/>
-            <AccountNotification icon={<CompareArrows />}/>
-            <AccountNotification icon={<Security />}/>
-            <AccountNotification icon={<CompareArrows />}/>
-            <AccountNotification icon={<Security />}/>
+            <AccountNotification icon={<CompareArrows/>}/>
+            <AccountNotification icon={<Security/>}/>
+            <AccountNotification icon={<CompareArrows/>}/>
+            <AccountNotification icon={<Security/>}/>
+            <AccountNotification icon={<CompareArrows/>}/>
+            <AccountNotification icon={<Security/>}/>
+            <AccountNotification icon={<CompareArrows/>}/>
+            <AccountNotification icon={<Security/>}/>
         </Container>
     );
 }

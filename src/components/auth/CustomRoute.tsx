@@ -3,12 +3,12 @@ import AuthContext from "../../store/auth-context";
 import useRefreshToken from "../../hook/use-refresh";
 
 type Props = {
-    [x:string]: any;
+    [x: string]: any;
 }
 
-const CustomRoute: React.FC<Props> = ({ children }) => {
+const CustomRoute: React.FC<Props> = ({children}) => {
     const authCtx = useContext(AuthContext);
-    const { requestAuthTokenWithRefreshToken } = useRefreshToken();
+    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
 
     const authTokenExpired = authCtx.removeAuthTokenIfExpired();
     const refreshTokenExpired = authCtx.removeRefreshTokenIfExpired();

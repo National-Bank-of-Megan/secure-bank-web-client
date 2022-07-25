@@ -1,16 +1,16 @@
 import React, {useContext} from 'react'
-import {Route, Navigate, useLocation} from 'react-router-dom'
+import {Navigate, useLocation} from 'react-router-dom'
 import AuthContext from "../../store/auth-context";
 import useRefreshToken from "../../hook/use-refresh";
 
 type Props = {
-    [x:string]: any;
+    [x: string]: any;
 }
 
-const PrivateRoute: React.FC<Props> = ({ children }) => {
+const PrivateRoute: React.FC<Props> = ({children}) => {
     const location = useLocation();
     const authCtx = useContext(AuthContext);
-    const { requestAuthTokenWithRefreshToken } = useRefreshToken();
+    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
 
     console.log("W PrivateRoute!");
 

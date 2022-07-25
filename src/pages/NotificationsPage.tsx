@@ -5,7 +5,7 @@ const NotificationsPage = () => {
     return (
         <>
             <Typography variant="h3" textAlign="center" color="primary">Notifications</Typography>
-            <NotificationsList />
+            <NotificationsList/>
         </>
     );
 }

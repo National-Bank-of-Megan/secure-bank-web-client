@@ -13,15 +13,16 @@ const CurrencyExchangeHistoryCard: React.FC<{ item: ExchangeType }> = ({item}) =
                     justifyContent: 'space-between'
                 }}>
                     <Box>
-                        <Typography variant="h5" color="success.main">{'+'+item.bought+' '+item.boughtCurrency}</Typography>
+                        <Typography variant="h5"
+                                    color="success.main">{'+' + item.bought + ' ' + item.boughtCurrency}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                            { item.date.toLocaleDateString('en-us', { year:"numeric",day :"numeric", month:"short"})}
+                            {item.date.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short"})}
                         </Typography></Box>
                     <Box sx={{
                         alignSelf: 'center'
                     }}>
-                        <Typography  variant="h5" color="error">
-                            {'-'+item.sold+' '+item.soldCurrency}
+                        <Typography variant="h5" color="error">
+                            {'-' + item.sold + ' ' + item.soldCurrency}
                         </Typography> </Box>
                 </Box>
             </CardContent>

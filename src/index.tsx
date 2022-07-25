@@ -5,12 +5,12 @@ import App from './App';
 import {AuthContextProvider} from "./store/auth-context";
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+    document.getElementById('root') as HTMLElement
 );
 root.render(
-  <AuthContextProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </AuthContextProvider>
+    <AuthContextProvider>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
+    </AuthContextProvider>
 );

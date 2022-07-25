@@ -11,10 +11,10 @@ const NotificationsList = () => {
             marginTop: '50px',
             rowGap: '20px'
         }}>
-            <AccountNotification icon={<CompareArrows />}/>
-            <AccountNotification icon={<Security />}/>
-            <AccountNotification icon={<CompareArrows />}/>
-            <AccountNotification icon={<Security />}/>
+            <AccountNotification icon={<CompareArrows/>}/>
+            <AccountNotification icon={<Security/>}/>
+            <AccountNotification icon={<CompareArrows/>}/>
+            <AccountNotification icon={<Security/>}/>
         </Container>
     );
 }

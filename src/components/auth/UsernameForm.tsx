@@ -1,15 +1,15 @@
-import {Backdrop, Box, Button, CircularProgress, Paper, Snackbar, Stack, TextField, Typography,} from "@mui/material";
+import {Box, Button, Paper, Stack, TextField, Typography,} from "@mui/material";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import useInput from "../../hook/use-input";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
-import MuiAlert from "@mui/material/Alert";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
 import Spinner from "../common/Spinner";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 import {UseStateType} from "../../models/custom-types/UseStateType";
+import {REST_PATH_AUTH} from "../../constants/Constants";
 
-const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispatch<SetStateAction<PasswordCombinationType | null>>, savedClientIdState :UseStateType<string>}> = (props) => {
+const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData: Dispatch<SetStateAction<PasswordCombinationType | null>>, savedClientIdState: UseStateType<string> }> = (props) => {
     const {isLoading, error, sendRequest: getPasswordCombinationRequest} = useFetch();
     const [isGettingCombination, setIsGettingCombination] = useState<boolean>(false);
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
@@ -34,7 +34,7 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData :Dispa
             return
         }
         const getPasswordRandomCharsRequestContent: RequestConfig = {
-            url: "/web/login/combination?clientId=" + clientIdValue,
+            url: REST_PATH_AUTH + "/web/login/combination?clientId=" + clientIdValue,
             method: "GET",
             body: {},
             headers: {
