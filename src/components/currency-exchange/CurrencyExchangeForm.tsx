@@ -1,8 +1,9 @@
 import {Avatar, Box, Button, FormHelperText, Stack, Typography,} from "@mui/material";
-import React from "react";
+import React, {useState} from "react";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import CurrencyExchangeCard from "./CurrencyExchangeCard";
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowDownward';
 import {IExchangeData} from "../../pages/CurrencyExchangePage";
 import {UseStateType} from "../../models/custom-types/UseStateType";
 
@@ -14,6 +15,11 @@ export enum Action {
 }
 
 const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> = ({exchange}) => {
+    const [isArrowUp, setIsArrowUp] = useState<boolean>(false);
+    const [actions, setActions] = useState({
+        "upCard": Action.sell,
+        "downCard": Action.buy
+    })
 
     const handleAmountChange = (action: Action, amount: number) => {
         if (action === Action.buy) exchange.setState({...exchange.state, "bought": amount})
@@ -27,10 +33,24 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
     }
 
     const returnArrow = () => {
-        // if (isSold) {
-        //     return <ArrowDownwardIcon sx={{color: "primary.main"}}/>
-        // }
-        return <ArrowUpwardIcon sx={{color: "primary.main"}}/>
+        if (isArrowUp) return <ArrowUpwardIcon sx={{color: "primary.main"}}/>
+        else return <ArrowDownwardIcon sx={{color: "primary.main"}}/>
+    }
+
+    const arrowChangeHandler = () => {
+       setActions({
+           "upCard" : actions.upCard === Action.buy? Action.sell : Action.buy,
+           "downCard": actions.upCard !== Action.buy? Action.sell : Action.buy
+       })
+
+
+        // exchange.setState({
+        //     ...exchange.state,
+        //     sold: exchange.state.bought,
+        //     bought: exchange.state.sold
+        // })
+        setIsArrowUp(!isArrowUp);
+
     }
 
 
@@ -44,14 +64,14 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
                 <Box>
                     <Box sx={{width: '480px'}}>
                         <CurrencyExchangeCard
-                            action={Action.sell}
+                            action={actions.upCard}
                             currency={exchange.state.soldCurrency}
                             amount={exchange.state.sold}
                             handleCurrencyChange={handleCurrencyChange}
                             handleAmountChange={handleAmountChange}
                         />
                         <Avatar
-                            // onClick={exchangeChange}
+                            onClick={arrowChangeHandler}
                             sx={{
                                 bgcolor: 'background.paper',
                                 border: '1px solid primary',
@@ -60,14 +80,12 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
                                 marginTop: '-14px',
                                 marginBottom: '-14px',
                                 marginLeft: '47%'
-
-
                             }}>
                             {returnArrow()}
                         </Avatar>
 
                         <CurrencyExchangeCard
-                            action={Action.buy}
+                            action={actions.downCard}
                             currency={exchange.state.boughtCurrency}
                             amount={exchange.state.bought}
                             handleCurrencyChange={handleCurrencyChange}

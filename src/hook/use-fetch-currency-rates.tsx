@@ -2,23 +2,31 @@ import {useCallback, useState} from "react";
 
 const useFetchCurrencyRates = (base: string) => {
     const [error, setError] = useState<string | null>(null)
-    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    useCallback(() => {
+    const getCurrencyRates = useCallback((base :string) => {
+        setIsLoading(true);
         let requestURL = 'https://api.exchangerate.host/latest?base=' + base;
         let request = new XMLHttpRequest();
         request.open('GET', requestURL);
         request.responseType = 'json';
         request.send();
-
+        console.log('useCallback')
         request.onload = function () {
-            var response = request.response;
+            setIsLoading(false);
+            let response = request.response;
             if (!response.ok) {
-                alert("Not ok response")
+               setError("Service currently not in use!")
             }
             console.log(response);
         }
-    }, [setError, isLoading])
+    }, [setError, setIsLoading, base])
+
+    return {
+        getCurrencyRates,
+        error,
+        isLoading
+    }
 
 }
 
