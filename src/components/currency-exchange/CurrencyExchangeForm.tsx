@@ -22,14 +22,14 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
     })
 
     const handleAmountChange = (action: Action, amount: number) => {
-        if (action === Action.buy) exchange.setState({...exchange.state, "bought": amount})
-        else exchange.setState({...exchange.state, "sold": amount})
+        // if (action === Action.buy) exchange.setState({...exchange.state, "bottomCardAmount": amount})
+        // else exchange.setState({...exchange.state, "upperCardAmount": amount})
 
     };
 
     const handleCurrencyChange = (action: Action, currency: string) => {
-        if (action === Action.buy) exchange.setState({...exchange.state, "boughtCurrency": currency})
-        else exchange.setState({...exchange.state, "soldCurrency": currency})
+        if (action === Action.buy) exchange.setState({...exchange.state, "bottomCardCurrency": currency})
+        else exchange.setState({...exchange.state, "upperCardCurrency": currency})
     }
 
     const returnArrow = () => {
@@ -38,16 +38,17 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
     }
 
     const arrowChangeHandler = () => {
-       setActions({
+       setActions({...actions,
            "upCard" : actions.upCard === Action.buy? Action.sell : Action.buy,
-           "downCard": actions.upCard !== Action.buy? Action.sell : Action.buy
+           "downCard": actions.downCard === Action.sell? Action.buy : Action.sell
        })
 
 
-        // exchange.setState({
-        //     ...exchange.state,
+        // exchange.setState({...exchange,
         //     sold: exchange.state.bought,
-        //     bought: exchange.state.sold
+        //     soldCurrency : exchange.state.boughtCurrency,
+        //     bought: exchange.state.sold,
+        //     boughtCurrency : exchange.state.soldCurrency
         // })
         setIsArrowUp(!isArrowUp);
 
@@ -65,8 +66,8 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
                     <Box sx={{width: '480px'}}>
                         <CurrencyExchangeCard
                             action={actions.upCard}
-                            currency={exchange.state.soldCurrency}
-                            amount={exchange.state.sold}
+                            currency={exchange.state.upperCardCurrency}
+                            amount={exchange.state.upperCardAmount}
                             handleCurrencyChange={handleCurrencyChange}
                             handleAmountChange={handleAmountChange}
                         />
@@ -86,8 +87,8 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
 
                         <CurrencyExchangeCard
                             action={actions.downCard}
-                            currency={exchange.state.boughtCurrency}
-                            amount={exchange.state.bought}
+                            currency={exchange.state.bottomCardCurrency}
+                            amount={exchange.state.bottomCardAmount}
                             handleCurrencyChange={handleCurrencyChange}
                             handleAmountChange={handleAmountChange}
                         />
