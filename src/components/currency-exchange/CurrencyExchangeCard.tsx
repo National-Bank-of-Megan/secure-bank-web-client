@@ -75,7 +75,7 @@ const CurrencyExchangeCard: React.FC<{
                         >
                             {
                                 CURRENCIES.map((currency) => {
-                                    return <MenuItem value={currency}>{currency}</MenuItem>
+                                    return <MenuItem key={currency} value={currency}>{currency}</MenuItem>
                                 })
                             }
 
