@@ -11,9 +11,9 @@ export type Headers = {
 
 export type RequestConfig = {
     url: string;
-    method: string;
-    headers: Headers;
-    body: {};
+    method?: string;
+    headers?: Headers;
+    body?: {};
 };
 
 const useFetch = () => {
@@ -65,7 +65,7 @@ const useFetch = () => {
             setError(error as FetchError || new FetchError(500, "Something went wrong."));
         }
         setIsLoading(false);
-    }, [authCtx, navigate]);
+    }, [authCtx, navigate, requestAuthTokenWithRefreshToken]);
 
 
     return {

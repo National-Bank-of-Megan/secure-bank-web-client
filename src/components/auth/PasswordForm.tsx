@@ -1,5 +1,5 @@
 import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
-import React, {createRef, useContext, useEffect, useState} from "react";
+import React, {createRef, useContext, useEffect, useReducer, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {useNavigate} from "react-router-dom";
@@ -23,6 +23,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         Array.from({length: PASSWORD_MAX_LENGTH}, () => createRef<HTMLInputElement>())
     );
     const setCurrentIndex = useState<number>(password![0])[1];
+    const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const getPassword = () => {
         let psw: string = ''
@@ -56,6 +57,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
 
         inputRefsArray[password![0]].current?.focus()
     }, [error, inputRefsArray, password]);
+
+    useEffect(() => {
+        forceUpdate();
+    }, []);
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const pressedButton = e.key;
