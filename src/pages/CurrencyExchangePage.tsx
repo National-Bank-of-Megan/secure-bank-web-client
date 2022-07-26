@@ -1,37 +1,33 @@
 import {Grid, Typography} from "@mui/material";
 import CurrencyExchangeForm from "../components/currency-exchange/CurrencyExchangeForm";
 import React, {useEffect, useState} from "react";
-import {GridRowsProp} from "@mui/x-data-grid";
 import useFetchCurrencyRates from "../hook/use-fetch-currency-rates";
-import {CURRENCIES} from "../constants/Constants";
 import ExchangeRatesTable from "../components/currency-exchange/ExchangeRatesTable";
 
 export interface IExchangeData {
-    upperCardCurrency: string,
-    upperCardAmount: number,
-    bottomCardCurrency: string,
-    bottomCardAmount: number
+    currency: string,
+    amount: number
+    // upperCardCurrency: string,
+    // upperCardAmount: number,
+    // bottomCardCurrency: string,
+    // bottomCardAmount: number
 }
 
 const CurrencyExchangePage = () => {
-    const [exchange, setExchange] = useState<IExchangeData>({
-        upperCardCurrency: 'PLN',
-        upperCardAmount: 0.00,
-        bottomCardCurrency: 'USD',
-        bottomCardAmount: 0.00
-    })
+    const [sold, setSold] = useState<IExchangeData>({currency: 'PLN', amount: 0.00})
+    const [bought, setBought] = useState<IExchangeData>({currency: 'USD', amount: 0.00})
 
-    const {getCurrencyRates, error, isLoading, rates} = useFetchCurrencyRates(exchange.upperCardCurrency);
+    const {getCurrencyRates, error, isLoading, rates} = useFetchCurrencyRates(sold.currency);
 
     useEffect(() => {
-        getCurrencyRates(exchange.upperCardCurrency)
+        getCurrencyRates(sold.currency)
 
-    }, [exchange.upperCardCurrency, getCurrencyRates])
+    }, [sold.currency, getCurrencyRates])
 
-    const getCurrencyRatesTable = ()=>{
-        if(rates !== null) {
-            return <ExchangeRatesTable  isLoading={isLoading} data={rates}
-                                       currentCurrency={exchange.upperCardCurrency}/>
+    const getCurrencyRatesTable = () => {
+        if (rates !== null) {
+            return <ExchangeRatesTable isLoading={isLoading} data={rates}
+                                       currentCurrency={sold.currency}/>
         }
     }
 
@@ -52,7 +48,7 @@ const CurrencyExchangePage = () => {
                 </Typography>
             </Grid>
             <Grid item xs={6}>
-                <CurrencyExchangeForm exchange={{"state": exchange, "setState": setExchange}}/>
+                <CurrencyExchangeForm sold={{"state" :sold, "setState" : setSold}} bought={{"state" :bought, "setState" : setBought}}/>
             </Grid>
             <Grid item xs={6} style={{justifyContent: 'end'}}>
                 {getCurrencyRatesTable()}

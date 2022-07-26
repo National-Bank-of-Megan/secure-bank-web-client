@@ -7,6 +7,8 @@ import React from "react";
 import NumberFormat, {InputAttributes} from "react-number-format";
 import {CURRENCIES} from "../../constants/Constants";
 import {Action} from "./CurrencyExchangeForm";
+import {UseStateType} from "../../models/custom-types/UseStateType";
+import {IExchangeData} from "../../pages/CurrencyExchangePage";
 
 interface CustomProps {
     onChange: (event: { target: { value: string } }) => void,
@@ -42,8 +44,7 @@ const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
 });
 
 const CurrencyExchangeCard: React.FC<{
-    action: Action, currency: string, amount: number,
-    handleCurrencyChange: (action: Action, currency: string) => void, handleAmountChange: (action: Action, amount: number) => void
+    action: Action, exchange : UseStateType<IExchangeData>
 }> = (props) => {
 
     return (
@@ -70,8 +71,8 @@ const CurrencyExchangeCard: React.FC<{
                             size="medium"
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
-                            value={props.currency}
-                            onChange={(e: SelectChangeEvent) => props.handleCurrencyChange(props.action, e.target.value)}
+                            value={props.exchange.state.currency}
+                            onChange={(e: SelectChangeEvent) => props.exchange.setState({...props.exchange.state, "currency" : e.target.value})}
                         >
                             {
                                 CURRENCIES.map((currency) => {
@@ -101,10 +102,10 @@ const CurrencyExchangeCard: React.FC<{
                     }}
                     id="standard-basic"
                     variant="standard"
-                    value={props.amount}
+                    value={props.exchange.state.amount}
                     placeholder="13.98"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.handleAmountChange(props.action, parseFloat(e.target.value))}
-                    // action={props.action}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.exchange.setState({...props.exchange.state, "amount" : parseFloat(e.target.value)})}
+
                     size="medium"
                     InputProps={{
                         inputComponent: NumberFormatCustom as any,

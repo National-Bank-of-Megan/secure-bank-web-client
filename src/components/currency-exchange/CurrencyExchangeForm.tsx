@@ -2,8 +2,8 @@ import {Avatar, Box, Button, FormHelperText, Stack, Typography,} from "@mui/mate
 import React, {useState} from "react";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import CurrencyExchangeCard from "./CurrencyExchangeCard";
-import ArrowDownwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import {IExchangeData} from "../../pages/CurrencyExchangePage";
 import {UseStateType} from "../../models/custom-types/UseStateType";
 
@@ -14,23 +14,20 @@ export enum Action {
     buy
 }
 
-const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> = ({exchange}) => {
+const CurrencyExchangeForm: React.FC<{ sold : UseStateType<IExchangeData>, bought :UseStateType<IExchangeData> }> = ({sold, bought}) => {
+    //tmp
+    const conversionRate = 4;
     const [isArrowUp, setIsArrowUp] = useState<boolean>(false);
     const [actions, setActions] = useState({
         "upCard": Action.sell,
         "downCard": Action.buy
     })
 
-    const handleAmountChange = (action: Action, amount: number) => {
+    const handleAmountChange = (changeOrigin: string) => {
         // if (action === Action.buy) exchange.setState({...exchange.state, "bottomCardAmount": amount})
         // else exchange.setState({...exchange.state, "upperCardAmount": amount})
 
     };
-
-    const handleCurrencyChange = (action: Action, currency: string) => {
-        if (action === Action.buy) exchange.setState({...exchange.state, "bottomCardCurrency": currency})
-        else exchange.setState({...exchange.state, "upperCardCurrency": currency})
-    }
 
     const returnArrow = () => {
         if (isArrowUp) return <ArrowUpwardIcon sx={{color: "primary.main"}}/>
@@ -60,16 +57,13 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
             <Box gap={2} sx={{display: 'flex', flexDirection: 'column'}}>
                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}} gap={1}>
                     <TrendingUpIcon sx={{color: "primary.main"}}/>
-                    <Typography variant="h5" color="primary.main">PLN = CHF 0.02244</Typography>
+                    <Typography variant="h5" color="primary.main">{'1'+bought.state.currency+' = '+sold.state.currency}</Typography>
                 </Box>
                 <Box>
                     <Box sx={{width: '480px'}}>
                         <CurrencyExchangeCard
                             action={actions.upCard}
-                            currency={exchange.state.upperCardCurrency}
-                            amount={exchange.state.upperCardAmount}
-                            handleCurrencyChange={handleCurrencyChange}
-                            handleAmountChange={handleAmountChange}
+                            exchange={sold}
                         />
                         <Avatar
                             onClick={arrowChangeHandler}
@@ -87,10 +81,7 @@ const CurrencyExchangeForm: React.FC<{ exchange: UseStateType<IExchangeData> }> 
 
                         <CurrencyExchangeCard
                             action={actions.downCard}
-                            currency={exchange.state.bottomCardCurrency}
-                            amount={exchange.state.bottomCardAmount}
-                            handleCurrencyChange={handleCurrencyChange}
-                            handleAmountChange={handleAmountChange}
+                            exchange={bought}
                         />
                     </Box>
                 </Box>
