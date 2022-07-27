@@ -12,21 +12,35 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import {currencies} from "../TotalBalanceContent";
+import {AccountCurrencyBalance} from "../TotalBalanceContent";
+import useInput from "../../../hook/use-input";
+
+const isNotEmpty = (value: string) => value.trim() !== '';
 
 const AddMoneyDialog: React.FC<{
     openAddMoneyDialog: boolean;
     setOpenAddMoneyDialog: (isOpen: boolean) => void;
-    currency: string;
-    setCurrency: (currency: string) => void;
+    currency: AccountCurrencyBalance;
+    setCurrency: (currency: AccountCurrencyBalance) => void;
+    currencies: AccountCurrencyBalance[];
 }> = (props) => {
+
+    const {
+        value: addBalanceValue,
+        isValid: addBalanceValueIsValid,
+        hasError: addBalanceHasError,
+        setIsTouched: setIsAddBalanceTouched,
+        valueChangeHandler: addBalanceChangeHandler,
+        inputBlurHandler: addBalanceBlurHandler
+    } = useInput(isNotEmpty);
 
     const handleDialogClose = () => {
         props.setOpenAddMoneyDialog(false);
     };
 
     const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        props.setCurrency(event.target.value);
+        const accountCurrencyBalance = props.currencies.find((nextCurrency) => (nextCurrency.currency === event.target.value))!;
+        props.setCurrency(accountCurrencyBalance);
     };
 
     return (
@@ -80,7 +94,7 @@ const AddMoneyDialog: React.FC<{
                                 />
                                 <TextField
                                     select
-                                    value={props.currency}
+                                    value={props.currency.currency}
                                     onChange={handleCurrencyChange}
                                     variant="standard"
                                     InputProps={{disableUnderline: true}}
@@ -93,9 +107,9 @@ const AddMoneyDialog: React.FC<{
                                         },
                                     }}
                                 >
-                                    {currencies.map((option) => (
-                                        <MenuItem key={option.value} value={option.value}>
-                                            {option.label}
+                                    {props.currencies.map((currencyBalance) => (
+                                        <MenuItem key={currencyBalance.currency} value={currencyBalance.currency}>
+                                            {currencyBalance.symbol}
                                         </MenuItem>
                                     ))}
                                 </TextField>
