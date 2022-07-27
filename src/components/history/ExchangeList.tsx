@@ -1,9 +1,9 @@
 import CurrencyExchangeHistoryCard from "./CurrencyExchangeHistoryCard";
-import React from "react";
+import React, {useEffect} from "react";
 import {Stack} from "@mui/material";
-import {ExchangeType} from "../../models/custom-types/ExchangeType";
+import {CurrencyExchangeHistoryType} from "../../models/custom-types/CurrencyExchangeHistoryType";
 
-const ExchangeList: React.FC<{ history: ExchangeType[] }> = ({history}) => {
+const ExchangeList: React.FC<{ history: CurrencyExchangeHistoryType[] }> = ({history}) => {
 
     return (<Stack spacing={2}>
             {
@@ -11,11 +11,8 @@ const ExchangeList: React.FC<{ history: ExchangeType[] }> = ({history}) => {
                     return <CurrencyExchangeHistoryCard item={i}/>
                 })
             }
-
         </Stack>
     )
-
-
 }
 
 export default ExchangeList;

@@ -1,3 +1,4 @@
+
 import {Add, ArrowForward, Cached, Favorite,} from "@mui/icons-material";
 import {Box, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography,} from "@mui/material";
 import React, {useCallback, useEffect, useState} from "react";
@@ -8,15 +9,6 @@ import AddFriendDialog from "./dialog/AddFriendDialog";
 import useFetch, {Headers, RequestConfig} from "../../hook/use-fetch";
 import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemAvatar from '@mui/material/ListItemAvatar';
-import Avatar from '@mui/material/Avatar';
-import ImageIcon from '@mui/icons-material/Image';
-import WorkIcon from '@mui/icons-material/Work';
-import BeachAccessIcon from '@mui/icons-material/BeachAccess';
-import Divider from '@mui/material/Divider';
 
 export const currencies = [
     {
@@ -150,7 +142,7 @@ const TotalBalanceContent = () => {
                     <Select value={selectedCurrency.currency} onChange={handleCurrencyChange}>
                         {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
                             <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
-                    ))}
+                        ))}
                     </Select>
                     {/*<List*/}
                     {/*    sx={{*/}
@@ -178,7 +170,7 @@ const TotalBalanceContent = () => {
                     {/*        );*/}
                     {/*    })}*/}
                     {/*</List>*/}
-                    
+
                 </FormControl>
                 <Box
                     sx={{
