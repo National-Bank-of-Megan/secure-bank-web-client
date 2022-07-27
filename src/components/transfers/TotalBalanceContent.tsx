@@ -37,7 +37,7 @@ const availableCurrencies = {
     'GBP': "£"
 };
 
-type AccountCurrencyBalance = {
+export type AccountCurrencyBalance = {
     currency: string;
     symbol: string;
     balance: number;
@@ -138,7 +138,10 @@ const TotalBalanceContent = () => {
                         marginBottom: "88px",
                     }}
                 >
-                    <InputLabel>Currency balance</InputLabel>
+                    <InputLabel sx={{
+                        color: "primary.main",
+                        fontSize: "18px"
+                    }}>Currency balance</InputLabel>
                     <Select value={selectedCurrency.currency} onChange={handleCurrencyChange}>
                         {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
                             <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
@@ -248,8 +251,9 @@ const TotalBalanceContent = () => {
             <AddMoneyDialog
                 openAddMoneyDialog={openAddMoneyDialog}
                 setOpenAddMoneyDialog={setOpenAddMoneyDialog}
-                currency={dialogCurrency}
-                setCurrency={setDialogCurrency}
+                currency={selectedCurrency}
+                setCurrency={setSelectedCurrency}
+                currencies={accountCurrencyBalanceList}
             />
             <AddFriendDialog
                 openAddFriendDialog={openAddFriendDialog}
