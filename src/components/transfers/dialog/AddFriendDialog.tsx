@@ -14,6 +14,8 @@ import {
 const AddFriendDialog: React.FC<{
     openAddFriendDialog: boolean;
     setOpenAddFriendDialog: (isOpen: boolean) => void;
+    setIsErrorMessageOpen: (isOpen: boolean) => void;
+    setIsSuccessMessageOpen: (isOpen: boolean) => void;
 }> = (props) => {
     const handleDialogClose = () => {
         props.setOpenAddFriendDialog(false);

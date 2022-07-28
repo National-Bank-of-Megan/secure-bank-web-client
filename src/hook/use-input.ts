@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 
-const useInput = (validateValue: (value: string) => boolean, initialValue?: string) => {
+const useInput = (validateValue: (value: string) => boolean, initialValue?: string, shouldUpdate?: (value: string) => boolean) => {
     if (!initialValue) {
         initialValue = '';
     }
@@ -12,7 +12,10 @@ const useInput = (validateValue: (value: string) => boolean, initialValue?: stri
     const hasError = !valueIsValid && isTouched;
 
     const valueChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setEnteredValue((event.target as HTMLInputElement).value);
+        let valueToSet = (event.target as HTMLInputElement).value;
+        if (!shouldUpdate || shouldUpdate(valueToSet)) {
+            setEnteredValue(valueToSet);
+        }
     };
 
     const inputBlurHandler = (event: React.FocusEvent<HTMLInputElement>) => {

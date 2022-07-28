@@ -9,6 +9,7 @@ import AddFriendDialog from "./dialog/AddFriendDialog";
 import useFetch, {Headers, RequestConfig} from "../../hook/use-fetch";
 import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
+import AlertSnackBar from "../notofications/AlertSnackBar";
 
 export const currencies = [
     {
@@ -52,6 +53,11 @@ const TotalBalanceContent = () => {
     const [openTransferDialog, setOpenTransferDialog] = useState(false);
     const [openAddMoneyDialog, setOpenAddMoneyDialog] = useState(false);
     const [openAddFriendDialog, setOpenAddFriendDialog] = useState(false);
+    const [isAddMoneyErrorMessageOpen, setIsAddMoneyErrorMessageOpen] = useState(false);
+    const [isAddMoneySuccessMessageOpen, setIsAddMoneySuccessMessageOpen] = useState(false);
+    const [isAddFriendErrorMessageOpen, setIsAddFriendErrorMessageOpen] = useState(false);
+    const [isAddFriendSuccessMessageOpen, setIsAddFriendSuccessMessageOpen] = useState(false);
+
 
     const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
     const [dialogCurrency, setDialogCurrency] = useState("EUR");
@@ -74,6 +80,11 @@ const TotalBalanceContent = () => {
     const handleAddFriendDialogOpen = () => {
         setOpenAddFriendDialog(true);
     };
+
+    const updateCurrencyBalance = (currencyName: string, amountToAdd: number) => {
+        setAccountCurrencyBalanceList(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
+                                                ? {...currency, balance: currency.balance + amountToAdd} : currency))
+    }
 
     const findCurrencyByName = useCallback((selectedCurrencyName: string, loadedCurrencyBalances: AccountCurrencyBalance[]): AccountCurrencyBalance | undefined => {
         return loadedCurrencyBalances.find((accountCurrencyBalance) => {
@@ -116,6 +127,13 @@ const TotalBalanceContent = () => {
     return (
         <>
             <Spinner isLoading={isLoading} />
+            <AlertSnackBar alertState={{"state": isAddMoneyErrorMessageOpen, "setState": setIsAddMoneyErrorMessageOpen}}
+                           severity="error"
+                           message="Could not add money to your balance."/>
+            <AlertSnackBar alertState={{"state": isAddMoneySuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
+                           severity="success"
+                           message="Successfully added funds to your acccount."/>
+
             <Typography variant="h2" color="primary.main">
                 Total balance
             </Typography>
@@ -254,10 +272,15 @@ const TotalBalanceContent = () => {
                 currency={selectedCurrency}
                 setCurrency={setSelectedCurrency}
                 currencies={accountCurrencyBalanceList}
+                setIsErrorMessageOpen={setIsAddMoneyErrorMessageOpen}
+                setIsSuccessMessageOpen={setIsAddMoneySuccessMessageOpen}
+                updateCurrencyBalance={updateCurrencyBalance}
             />
             <AddFriendDialog
                 openAddFriendDialog={openAddFriendDialog}
                 setOpenAddFriendDialog={setOpenAddFriendDialog}
+                setIsErrorMessageOpen={setIsAddFriendErrorMessageOpen}
+                setIsSuccessMessageOpen={setIsAddFriendSuccessMessageOpen}
             />
         </>
     );
