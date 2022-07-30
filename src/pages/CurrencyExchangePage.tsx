@@ -1,37 +1,54 @@
 import {Grid, Typography} from "@mui/material";
-import CurrencyExchangeForm from "../components/currency-exchange/CurrencyExchangeForm";
+import CurrencyExchangeForm, {Action} from "../components/currency-exchange/CurrencyExchangeForm";
 import React, {useEffect, useState} from "react";
 import useFetchCurrencyRates from "../hook/use-fetch-currency-rates";
 import ExchangeRatesTable from "../components/currency-exchange/ExchangeRatesTable";
+import {CURRENCIES} from "../constants/Constants";
 
 export interface IExchangeData {
     currency: string,
-    amount: number
-    // upperCardCurrency: string,
-    // upperCardAmount: number,
-    // bottomCardCurrency: string,
-    // bottomCardAmount: number
+    amount: number,
+    action: Action
 }
 
 const CurrencyExchangePage = () => {
-    const [sold, setSold] = useState<IExchangeData>({currency: 'PLN', amount: 0.00})
-    const [bought, setBought] = useState<IExchangeData>({currency: 'USD', amount: 0.00})
+    const [top, setTop] = useState<IExchangeData>({currency: 'PLN', amount: 0.00, action: Action.sell})
+    const [bottom, setBottom] = useState<IExchangeData>({currency: 'USD', amount: 0.00, action: Action.buy})
+    const [isCurrencyServiceDisabled, setIsCurrencyServiceDisabled] = useState<boolean>(false);
 
-    const {getCurrencyRates, error, isLoading, rates} = useFetchCurrencyRates(sold.currency);
+    const {getCurrencyRates, error, isLoading, rates} = useFetchCurrencyRates(top.currency);
 
     useEffect(() => {
-        getCurrencyRates(sold.currency)
+        console.log('currency page rendering ...')
+        getCurrencyRates(top.currency)
+        if(!!error) setIsCurrencyServiceDisabled(true)
 
-    }, [sold.currency, getCurrencyRates])
+    }, [top.currency, getCurrencyRates])
+
 
     const getCurrencyRatesTable = () => {
         if (rates !== null) {
-            return <ExchangeRatesTable isLoading={isLoading} data={rates}
-                                       currentCurrency={sold.currency}/>
+            return <ExchangeRatesTable isLoading={isLoading}
+                                       currentCurrency={top.currency}
+            data={ CURRENCIES.map((currency) => {
+                        if (currency !== top.currency) {
+                            return {id: currency, col1: currency, col2: rates[currency]}
+                        }
+                    }
+                ).filter((anyValue) => typeof anyValue !== 'undefined')}
+            />
         }
     }
 
-    console.log(rates)
+    const getExchangeForm=()=>{
+        if (rates !== null) {
+            return <CurrencyExchangeForm
+                top={{"state": top, "setState": setTop}}
+                bottom={{"state": bottom, "setState": setBottom}}
+                rates={rates}/>
+        }
+    }
+
     return (
         <Grid
             rowSpacing={2}
@@ -44,11 +61,11 @@ const CurrencyExchangePage = () => {
         >
             <Grid item xs={12}>
                 <Typography variant="h2" color="primary.main" sx={{marginBottom: '50px'}}>
-                    Sell PLN
+                    Sell {top.action === Action.sell ? top.currency : bottom.currency}
                 </Typography>
             </Grid>
             <Grid item xs={6}>
-                <CurrencyExchangeForm sold={{"state" :sold, "setState" : setSold}} bought={{"state" :bought, "setState" : setBought}}/>
+                {getExchangeForm()}
             </Grid>
             <Grid item xs={6} style={{justifyContent: 'end'}}>
                 {getCurrencyRatesTable()}

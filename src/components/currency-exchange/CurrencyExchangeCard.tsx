@@ -44,7 +44,7 @@ const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
 });
 
 const CurrencyExchangeCard: React.FC<{
-    action: Action, exchange : UseStateType<IExchangeData>
+    exchange : UseStateType<IExchangeData>, handleAmountChangeOtherCard(newAmount: number,actionSettingNewAmount :Action) :void,currencies :string[]
 }> = (props) => {
 
     return (
@@ -75,7 +75,7 @@ const CurrencyExchangeCard: React.FC<{
                             onChange={(e: SelectChangeEvent) => props.exchange.setState({...props.exchange.state, "currency" : e.target.value})}
                         >
                             {
-                                CURRENCIES.map((currency) => {
+                                props.currencies.map((currency) => {
                                     return <MenuItem key={currency} value={currency}>{currency}</MenuItem>
                                 })
                             }
@@ -104,12 +104,15 @@ const CurrencyExchangeCard: React.FC<{
                     variant="standard"
                     value={props.exchange.state.amount}
                     placeholder="13.98"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.exchange.setState({...props.exchange.state, "amount" : parseFloat(e.target.value)})}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        props.exchange.setState({...props.exchange.state, "amount" : parseFloat(e.target.value)})
+                        props.handleAmountChangeOtherCard( parseFloat(e.target.value),props.exchange.state.action)
+                    }}
 
                     size="medium"
                     InputProps={{
                         inputComponent: NumberFormatCustom as any,
-                        inputProps: {action: props.action},
+                        inputProps: {action: props.exchange.state.action},
                         disableUnderline: true,
                         style: {fontSize: 40},
                     }}

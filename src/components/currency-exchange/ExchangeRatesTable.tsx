@@ -7,17 +7,10 @@ import {useEffect, useState} from "react";
 
 const ExchangeRatesTable: React.FC<{ currentCurrency: string, data :GridRowsProp, isLoading :boolean }> = ({currentCurrency, data, isLoading}) => {
 
-
     const columns: GridColDef[] = [
         {field: 'col1', headerName: 'Currency', flex: 1},
         {field: 'col2', headerName: 'Sell [' + currentCurrency + ']', flex: 1}
     ];
-
-    // const columns: GridColDef[] = [
-    //     {field: 'col1', headerName: 'Currency',flex :1},
-    //     {field: 'col2', headerName: 'Exchange rate [' + soldCurrency + ']',flex :1}
-    // ];
-
 
     return (
         <div style={{height: 400, width: '100%'}}>
