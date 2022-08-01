@@ -33,7 +33,7 @@ const TransactionDetailed: React.FC<{ item: DetailedTransactionType }> = ({item}
                     <Box>
                         <Typography variant="h5">{item.title}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                            {item.date.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short"})}
+                            {item.date.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short", hour : "numeric",minute :"numeric"})}
                         </Typography>
                     </Box>
                     <Box
@@ -100,7 +100,7 @@ const TransactionDetailed: React.FC<{ item: DetailedTransactionType }> = ({item}
                             {item.date.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short"})}
                         </Typography>
                         <Typography>
-                            {item.accountCurrency + ' ' + item.balanceAfterTransfer.toFixed(2)}
+                            {item.currency + ' ' + item.balanceAfterTransfer.toFixed(2)}
                         </Typography>
                     </Box>
                 </Box>

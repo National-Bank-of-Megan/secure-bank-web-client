@@ -5,58 +5,46 @@ import {DetailedTransactionType} from "../../models/custom-types/DetailedTransac
 import OperationsList from "./OperationsList";
 import ExchangeList from "./ExchangeList";
 import {CurrencyExchangeHistoryTypeResponse} from "../../models/custom-types/CurrencyExchangeHistoryTypeResponse";
-import {REST_PATH_EXCHANGE} from "../../constants/Constants";
+import {REST_PATH_EXCHANGE, REST_PATH_TRANSFER} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
 import HistoryNavigation from "./HistoryNavigation";
+import {Typography} from "@mui/material";
+import {DetailedTransactionTypeResponse} from "../../models/custom-types/DetailedTransactionTypeResponse";
+import {wait} from "@testing-library/user-event/dist/utils";
 
-const History :React.FC<{currentlyBrowsing: string, handleBrowsingChange : (event: React.SyntheticEvent, newCurrent: string)=> void }> =(props) => {
-    const {isLoading, error, sendRequest: sendCurrencyExchangeHistoryRequest} = useFetch();
+const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (event: React.SyntheticEvent, newCurrent: string) => void }> = (props) => {
+    const {
+        isLoading: isLoadingExchangeHistory,
+        error: errorExchangeHistory,
+        sendRequest: sendCurrencyExchangeHistoryRequest
+    } = useFetch();
+    const {
+        isLoading: isLoadingDetailedTransaction,
+        error: errorDetailedTransaction,
+        sendRequest: sendDetailedTransactionHistoryRequest
+    } = useFetch();
     const [currencyExchangeHistory, setCurrencyExchangeHistory] = useState<CurrencyExchangeHistoryType[]>([]);
-    const recentTransfers: DetailedTransactionType[] = [
-        {
-            title: 'Spotify',
-            date: new Date(2022, 0O5, 12),
-            amount: 20.00,
-            currency: 'PLN',
-            status: 'completed',
-            receiver: 'Mike',
-            balanceAfterTransfer: 1234.67,
-            accountCurrency: 'USD'
-        },
-        {
-            title: 'Dziwki',
-            date: new Date(2022, 0O5, 12),
-            amount: -120.00,
-            currency: 'CHF',
-            status: 'completed',
-            receiver: 'Mike',
-            balanceAfterTransfer: 1234.67,
-            accountCurrency: 'USD'
-        },
-        {
-            title: 'Spotify',
-            date: new Date(2022, 0O5, 12),
-            amount: 20.00,
-            currency: 'PLN',
-            status: 'completed',
-            receiver: 'Mike',
-            balanceAfterTransfer: 1234.67,
-            accountCurrency: 'USD'
-        },
+    const [recentTransfers, setRecentTransfers] = useState<DetailedTransactionType[]>([]);
 
-    ]
 
     const returnHistory = () => {
         if (props.currentlyBrowsing === 'transfers') {
-            return <OperationsList history={recentTransfers}/>
+            if (recentTransfers.length === 0)
+                return <Typography variant="h4" color="primary.main">You do not have any transfers</Typography>
+            else
+                return <OperationsList history={recentTransfers}/>
         } else {
-            return <ExchangeList history={currencyExchangeHistory}/>
+            if (currencyExchangeHistory.length === 0)
+                return <Typography variant="h4" color="primary.main">You do not have any currency exchanges</Typography>
+            else
+                return <ExchangeList history={currencyExchangeHistory}/>
         }
     }
 
     useEffect(() => {
 
-        console.log('Fetching currency exchange history from HistoryPage')
+
+        //  fetching currency exchange history
         const transformCurrencyExchangeHistory = (currencyExchangeHistoryObj: CurrencyExchangeHistoryTypeResponse[]) => {
             const history: CurrencyExchangeHistoryType[] = [];
             for (const key in currencyExchangeHistoryObj) {
@@ -77,11 +65,41 @@ const History :React.FC<{currentlyBrowsing: string, handleBrowsingChange : (even
         }
 
         sendCurrencyExchangeHistoryRequest(currencyExchangeHistoryRequest, transformCurrencyExchangeHistory)
-    }, [sendCurrencyExchangeHistoryRequest, setCurrencyExchangeHistory])
+
+        //    fetching transaction history
+        const transformDetailedTransactionHistory = (detailedTransactionTypeObj: DetailedTransactionTypeResponse[]) => {
+            const history: DetailedTransactionType[] = [];
+            for (const key in detailedTransactionTypeObj) {
+                //todo co zorbic requested date
+                history.push({
+                    date: new Date(detailedTransactionTypeObj[key].doneDate),
+                    title: detailedTransactionTypeObj[key].title,
+                    amount: detailedTransactionTypeObj[key].amount,
+                    currency: detailedTransactionTypeObj[key].currency,
+                    status: detailedTransactionTypeObj[key].status,
+                    receiver: detailedTransactionTypeObj[key].receiver,
+                    balanceAfterTransfer: detailedTransactionTypeObj[key].balanceAfter
+                })
+            }
+            console.log("transformed")
+            console.log(history)
+            setRecentTransfers(history)
+        }
+
+        const transformDetailedTransactionHistoryRequest: RequestConfig = {
+            'url': REST_PATH_TRANSFER
+        }
+
+        sendDetailedTransactionHistoryRequest(transformDetailedTransactionHistoryRequest, transformDetailedTransactionHistory);
+
+    }, [sendCurrencyExchangeHistoryRequest, setCurrencyExchangeHistory, setRecentTransfers, sendDetailedTransactionHistoryRequest])
     return (
         <>
-            <Spinner isLoading={isLoading}/>
-            <HistoryNavigation currentlyBrowsing={props.currentlyBrowsing} handleBrowsingChange={props.handleBrowsingChange}/>
+
+            {/*add error handler*/}
+            <HistoryNavigation currentlyBrowsing={props.currentlyBrowsing}
+                               handleBrowsingChange={props.handleBrowsingChange}/>
+            <Spinner isLoading={isLoadingExchangeHistory || isLoadingDetailedTransaction}/>
             {returnHistory()}
         </>
     );

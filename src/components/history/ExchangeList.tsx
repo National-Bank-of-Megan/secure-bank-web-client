@@ -1,5 +1,5 @@
 import CurrencyExchangeHistoryCard from "./CurrencyExchangeHistoryCard";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Pagination, Stack} from "@mui/material";
 import {CurrencyExchangeHistoryType} from "../../models/custom-types/CurrencyExchangeHistoryType";
 import {UseStateType} from "../../models/custom-types/UseStateType";
