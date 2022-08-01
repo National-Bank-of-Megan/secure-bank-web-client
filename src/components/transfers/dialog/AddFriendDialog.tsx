@@ -13,16 +13,18 @@ import {
 import useInput from "../../../hook/use-input";
 import {isNotEmpty} from "../../../input-rules/is-not-empty";
 import { isValidAccountNumber } from "../../../input-rules/is-valid-account-number";
-import React, {useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import useFetch, {RequestConfig} from "../../../hook/use-fetch";
 import {REST_PATH_AUTH} from "../../../constants/Constants";
 import Spinner from "../../common/Spinner";
+import {FavoriteReceiverResponse} from "../TotalBalanceContent";
 
 const AddFriendDialog: React.FC<{
     openAddFriendDialog: boolean;
     setOpenAddFriendDialog: (isOpen: boolean) => void;
     setIsErrorMessageOpen: (isOpen: boolean) => void;
     setIsSuccessMessageOpen: (isOpen: boolean) => void;
+    setFavoriteReceiversList: Dispatch<SetStateAction<FavoriteReceiverResponse[]>>;
 }> = (props) => {
     const appTheme = useTheme();
     const {isLoading, error, sendRequest: addFavoriteReceiverRequest} = useFetch();
@@ -68,8 +70,13 @@ const AddFriendDialog: React.FC<{
         removeErrorIfFieldEmpty(nameValue, setIsNameTouched);
     }
 
-    const handleAddFavoriteReceiverResponse = (response: any) => {
+    const handleAddFavoriteReceiverResponse = (response: FavoriteReceiverResponse) => {
         setIsProcessingAddFavoriteReceiverRequest(false);
+        props.setFavoriteReceiversList((oldFavoriteReceiversList) => [...oldFavoriteReceiversList, {
+            id: response.id,
+            name: response.name,
+            accountNumber: response.accountNumber
+        }]);
         handleDialogClose();
         clearAccountNumberValue();
         clearNameValue();

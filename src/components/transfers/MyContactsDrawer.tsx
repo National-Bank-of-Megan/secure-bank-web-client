@@ -1,6 +1,7 @@
 import {Box, Drawer, List, Typography} from "@mui/material";
 import FriendAccountData from "../../models/friendAccount";
 import FriendAccount from "./FriendAccount";
+import {FavoriteReceiverResponse} from "./TotalBalanceContent";
 
 const friends = [
     new FriendAccountData("Kaczor Donald", "14 1234 5678 1234 4567"),
@@ -9,7 +10,11 @@ const friends = [
     new FriendAccountData("Kolega", "14 1234 5678 1234 4567"),
 ];
 
-const MyContactsDrawer: React.FC<{ friendsDrawerOpen: boolean, setFriendsDrawerOpen: (isOpen: boolean) => void }> = (props) => {
+const MyContactsDrawer: React.FC<{
+    friendsDrawerOpen: boolean,
+    setFriendsDrawerOpen: (isOpen: boolean) => void,
+    favoriteReceivers: FavoriteReceiverResponse[];
+}> = (props) => {
 
     const toggleDrawer = () => {
         props.setFriendsDrawerOpen(!props.friendsDrawerOpen);
@@ -18,8 +23,8 @@ const MyContactsDrawer: React.FC<{ friendsDrawerOpen: boolean, setFriendsDrawerO
     const friendsList = (
         <Box sx={{width: 280}} onClick={toggleDrawer} onKeyDown={toggleDrawer}>
             <List>
-                {friends.map((friend) => (
-                    <FriendAccount friendAccount={friend}/>
+                {props.favoriteReceivers.map((favoriteTransfer) => (
+                    <FriendAccount favoriteTransfer={favoriteTransfer}/>
                 ))}
             </List>
         </Box>

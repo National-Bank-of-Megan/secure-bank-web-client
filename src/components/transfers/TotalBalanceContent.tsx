@@ -49,6 +49,12 @@ type AccountCurrencyBalanceResponse = {
     balance: number;
 };
 
+export type FavoriteReceiverResponse = {
+    id: number;
+    name: string;
+    accountNumber: string;
+};
+
 const TotalBalanceContent = () => {
     const [openTransferDialog, setOpenTransferDialog] = useState(false);
     const [openAddMoneyDialog, setOpenAddMoneyDialog] = useState(false);
@@ -57,9 +63,10 @@ const TotalBalanceContent = () => {
     const [isAddMoneySuccessMessageOpen, setIsAddMoneySuccessMessageOpen] = useState(false);
     const [isAddFavoriteReceiverErrorMessageOpen, setIsAddFavoriteReceiverErrorMessageOpen] = useState(false);
     const [isAddFavoriteReceiverSuccessMessageOpen, setIsAddFavoriteReceiverSuccessMessageOpen] = useState(false);
-
-
+    
     const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
+    const [favoriteReceiversList, setFavoriteReceiversList] = useState<FavoriteReceiverResponse[]>([]);
+    
     const [dialogCurrency, setDialogCurrency] = useState("EUR");
     const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
         currency: "",
@@ -67,7 +74,17 @@ const TotalBalanceContent = () => {
         balance: 0.0
     });
 
-    const { isLoading, error, sendRequest: sendSubAccountsRequest } = useFetch();
+    const {
+        isLoading: isSubAccountsLoading,
+        error: subAccountsError,
+        sendRequest: sendSubAccountsRequest
+    } = useFetch();
+    const {
+        isLoading: isFavoriteTransferReceiversLoading,
+        error: favoriteTransferReceiversError,
+        sendRequest: sendFavoriteTransferReceiversRequest
+    } = useFetch();
+
 
     const handleTransferDialogOpen = () => {
         setOpenTransferDialog(true);
@@ -124,21 +141,45 @@ const TotalBalanceContent = () => {
         sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
     }, [findCurrencyByName, sendSubAccountsRequest]);
 
+    useEffect(() => {
+        const transformFavoriteReceivers = (favoriteReceiverObj: FavoriteReceiverResponse[]) => {
+            const loadedFavReceivers: FavoriteReceiverResponse[] = [];
+            for (const key in loadedFavReceivers) {
+                loadedFavReceivers.push({
+                    id: favoriteReceiverObj[key].id,
+                    name: favoriteReceiverObj[key].name,
+                    accountNumber: favoriteReceiverObj[key].accountNumber
+                });
+            }
+
+            setFavoriteReceiversList(loadedFavReceivers);
+        }
+
+        const fetchFavoriteReceiversRequest: RequestConfig = {
+            url: REST_PATH_AUTH + '/account/receiver/all'
+        };
+
+        console.log("Pobieram favoriteReceivers")
+
+        sendFavoriteTransferReceiversRequest(fetchFavoriteReceiversRequest, transformFavoriteReceivers);
+    }, [sendFavoriteTransferReceiversRequest]);
+
     return (
         <>
-            <Spinner isLoading={isLoading} />
+            <Spinner isLoading={isSubAccountsLoading || isFavoriteTransferReceiversLoading} />
             <AlertSnackBar alertState={{"state": isAddMoneyErrorMessageOpen, "setState": setIsAddMoneyErrorMessageOpen}}
                            severity="error"
                            message="Could not add money to your balance."/>
             <AlertSnackBar alertState={{"state": isAddMoneySuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
                            severity="success"
                            message="Successfully added funds to your acccount."/>
+
             <AlertSnackBar alertState={{"state": isAddFavoriteReceiverSuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
                            severity="success"
-                           message="Successfully added funds to your acccount."/>
-            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverErrorMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
-                           severity="success"
-                           message="Successfully added funds to your acccount."/>
+                           message="Successfully added new receiver."/>
+            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverErrorMessageOpen, "setState": setIsAddFavoriteReceiverErrorMessageOpen}}
+                           severity="error"
+                           message="Could not add new receiver."/>
 
             <Typography variant="h2" color="primary.main">
                 Total balance
@@ -271,6 +312,7 @@ const TotalBalanceContent = () => {
                 setOpenTransferDialog={setOpenTransferDialog}
                 currency={dialogCurrency}
                 setCurrency={setDialogCurrency}
+                favoriteReceivers={favoriteReceiversList}
             />
             <AddMoneyDialog
                 openAddMoneyDialog={openAddMoneyDialog}
@@ -287,6 +329,7 @@ const TotalBalanceContent = () => {
                 setOpenAddFriendDialog={setOpenAddFriendDialog}
                 setIsErrorMessageOpen={setIsAddFavoriteReceiverErrorMessageOpen}
                 setIsSuccessMessageOpen={setIsAddFavoriteReceiverSuccessMessageOpen}
+                setFavoriteReceiversList={setFavoriteReceiversList}
             />
         </>
     );

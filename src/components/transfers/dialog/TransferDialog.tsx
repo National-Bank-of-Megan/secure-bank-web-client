@@ -17,13 +17,14 @@ import {
 } from "@mui/material";
 import {useState} from "react";
 import MyContactsDrawer from "../MyContactsDrawer";
-import {currencies} from "../TotalBalanceContent";
+import {currencies, FavoriteReceiverResponse} from "../TotalBalanceContent";
 
 const TransferDialog: React.FC<{
     openTransferDialog: boolean;
     setOpenTransferDialog: (isOpen: boolean) => void;
     currency: string;
     setCurrency: (currency: string) => void;
+    favoriteReceivers: FavoriteReceiverResponse[];
 }> = (props) => {
     const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
 
@@ -164,6 +165,7 @@ const TransferDialog: React.FC<{
                 <MyContactsDrawer
                     friendsDrawerOpen={friendsDrawerOpen}
                     setFriendsDrawerOpen={setFriendsDrawerOpen}
+                    favoriteReceivers={props.favoriteReceivers}
                 />
             </Paper>
         </Dialog>
