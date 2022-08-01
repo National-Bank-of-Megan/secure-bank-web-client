@@ -9,6 +9,8 @@ import {isCodeValid} from "../../input-rules/is-code-valid";
 import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
+import {login} from "../../actions/user-action";
+import {useDispatch} from "react-redux";
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
     const authCtx = useContext(authContext);
@@ -24,6 +26,8 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
     );
     const setCurrentIndex = useState<number>(password![0])[1];
     const [, forceUpdate] = useReducer(x => x + 1, 0);
+
+    const dispatch = useDispatch();
 
     const getPassword = () => {
         let psw: string = ''
@@ -96,13 +100,13 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         setCurrentIndex(index);
     };
 
-    const handleLogin = (response: any) => {
-        //todo check whether new device
-        const authToken = response['access_token'];
-        const refreshToken = response['refresh_token'];
-        authCtx.login(authToken, refreshToken);
-        navigate('/transfers', {replace: true})
-    }
+    // const handleLogin = (response: any) => {
+    //     //todo check whether new device
+    //     const authToken = response['access_token'];
+    //     const refreshToken = response['refresh_token'];
+    //     authCtx.login(authToken, refreshToken);
+    //     navigate('/transfers', {replace: true})
+    // }
 
     const passwordSubmitHandler = () => {
         const psw = getPassword();
@@ -110,18 +114,9 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
             setErrorMsg('Fill all cells')
             setIsErrorMessageOpen(true);
         } else {
-            const loginRequestContent: RequestConfig = {
-                url: REST_PATH_AUTH + "/web/login",
-                method: "POST",
-                body: {
-                    "clientId": props.data?.clientId,
-                    "password": psw
-                },
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-            loginRequest(loginRequestContent, handleLogin);
+            // @ts-ignore
+            dispatch(login(props.data!.clientId, psw))
+            navigate('/transfers', {replace: true})
         }
     }
 
