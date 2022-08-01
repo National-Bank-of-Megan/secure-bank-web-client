@@ -55,8 +55,8 @@ const TotalBalanceContent = () => {
     const [openAddFriendDialog, setOpenAddFriendDialog] = useState(false);
     const [isAddMoneyErrorMessageOpen, setIsAddMoneyErrorMessageOpen] = useState(false);
     const [isAddMoneySuccessMessageOpen, setIsAddMoneySuccessMessageOpen] = useState(false);
-    const [isAddFriendErrorMessageOpen, setIsAddFriendErrorMessageOpen] = useState(false);
-    const [isAddFriendSuccessMessageOpen, setIsAddFriendSuccessMessageOpen] = useState(false);
+    const [isAddFavoriteReceiverErrorMessageOpen, setIsAddFavoriteReceiverErrorMessageOpen] = useState(false);
+    const [isAddFavoriteReceiverSuccessMessageOpen, setIsAddFavoriteReceiverSuccessMessageOpen] = useState(false);
 
 
     const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
@@ -131,6 +131,12 @@ const TotalBalanceContent = () => {
                            severity="error"
                            message="Could not add money to your balance."/>
             <AlertSnackBar alertState={{"state": isAddMoneySuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
+                           severity="success"
+                           message="Successfully added funds to your acccount."/>
+            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverSuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
+                           severity="success"
+                           message="Successfully added funds to your acccount."/>
+            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverErrorMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
                            severity="success"
                            message="Successfully added funds to your acccount."/>
 
@@ -279,8 +285,8 @@ const TotalBalanceContent = () => {
             <AddFriendDialog
                 openAddFriendDialog={openAddFriendDialog}
                 setOpenAddFriendDialog={setOpenAddFriendDialog}
-                setIsErrorMessageOpen={setIsAddFriendErrorMessageOpen}
-                setIsSuccessMessageOpen={setIsAddFriendSuccessMessageOpen}
+                setIsErrorMessageOpen={setIsAddFavoriteReceiverErrorMessageOpen}
+                setIsSuccessMessageOpen={setIsAddFavoriteReceiverSuccessMessageOpen}
             />
         </>
     );

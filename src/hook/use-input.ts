@@ -24,13 +24,19 @@ const useInput = (validateValue: (value: string) => boolean, initialValue?: stri
         }
     };
 
+    const clearInput = () => {
+        setEnteredValue('');
+        setIsTouched(false);
+    };
+
     return {
         value: enteredValue,
         isValid: valueIsValid,
         hasError,
         setIsTouched,
         valueChangeHandler,
-        inputBlurHandler
+        inputBlurHandler,
+        clearInput
     };
 };
 

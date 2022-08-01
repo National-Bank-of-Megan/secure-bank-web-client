@@ -1,0 +1,1 @@
+export const isValidAccountNumber = (value: string) => value.trim().length === 26;

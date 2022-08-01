@@ -65,13 +65,15 @@ const AddMoneyDialog: React.FC<{
         hasError: addBalanceHasError,
         setIsTouched: setIsAddBalanceTouched,
         valueChangeHandler: addBalanceChangeHandler,
-        inputBlurHandler: addBalanceBlurHandler
+        inputBlurHandler: addBalanceBlurHandler,
+        clearInput: clearAddBalanceValue
     } = useInput(isNotEmpty, '', shouldUpdateInput);
 
     const handleAddToBalance = (response: any) => {
         setIsProcessingAddingMoneyRequest(false);
         props.updateCurrencyBalance(props.currency.currency, parseFloat(addBalanceValue));
         handleDialogClose();
+        clearAddBalanceValue();
         props.setIsSuccessMessageOpen(true);
     }
 
@@ -81,7 +83,7 @@ const AddMoneyDialog: React.FC<{
             return;
         }
 
-        const registerRequestContent: RequestConfig = {
+        const addToBalanceRequestContent: RequestConfig = {
             url: REST_PATH_AUTH + "/account/currency",
             method: "PUT",
             body: {
@@ -94,7 +96,7 @@ const AddMoneyDialog: React.FC<{
         };
 
         setIsProcessingAddingMoneyRequest(true);
-        addBalanceRequest(registerRequestContent, handleAddToBalance);
+        addBalanceRequest(addToBalanceRequestContent, handleAddToBalance);
     };
 
     const handlePrefix = (value: string): string => {
@@ -159,7 +161,6 @@ const AddMoneyDialog: React.FC<{
                                         position: "relative",
                                     }}
                                 >
-
                                     <TextField
                                         variant="standard"
                                         label="Amount"
