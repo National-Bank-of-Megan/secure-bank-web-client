@@ -164,32 +164,24 @@ const AddFriendDialog: React.FC<{
                                 />
                             </FormControl>
                             <FormControl fullWidth variant="standard">
-                                <Box
+                                <TextField
+                                    variant="standard"
+                                    label="Name"
+                                    type="text"
+                                    onChange={nameChangeHandler}
+                                    onBlur={nameBlurHandler}
+                                    value={nameValue}
+                                    error={nameHasError}
+                                    helperText={nameHasError ? "Field cannot be empty." : ''}
                                     sx={{
-                                        display: "flex",
-                                        alignItems: "flex-end",
-                                        position: "relative",
+                                        '& .MuiInput-input': {
+                                            '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+                                                '-webkit-appearance': 'none',
+                                            }
+                                        },
+
                                     }}
-                                >
-                                    <TextField
-                                        variant="standard"
-                                        label="Name"
-                                        type="text"
-                                        onChange={nameChangeHandler}
-                                        onBlur={nameBlurHandler}
-                                        value={nameValue}
-                                        error={nameHasError}
-                                        helperText={nameHasError ? "Field cannot be empty." : ''}
-                                        sx={{
-                                            '& .MuiInput-input': {
-                                                '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-                                                    '-webkit-appearance': 'none',
-                                                }
-                                            },
-                                            width: "100%",
-                                        }}
-                                    />
-                                </Box>
+                                />
                             </FormControl>
                         </DialogContent>
                         <DialogActions>

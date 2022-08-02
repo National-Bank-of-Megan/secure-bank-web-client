@@ -6,30 +6,10 @@ import buttonStyles from "../../styles/ButtonStyles";
 import TransferDialog from "./dialog/TransferDialog";
 import AddMoneyDialog from "./dialog/AddMoneyDialog";
 import AddFriendDialog from "./dialog/AddFriendDialog";
-import useFetch, {Headers, RequestConfig} from "../../hook/use-fetch";
+import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
-import Spinner from "../common/Spinner";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {Link} from "react-router-dom";
-
-export const currencies = [
-    {
-        value: "USD",
-        label: "$",
-    },
-    {
-        value: "EUR",
-        label: "€",
-    },
-    {
-        value: "BTC",
-        label: "฿",
-    },
-    {
-        value: "JPY",
-        label: "¥",
-    },
-];
 
 const availableCurrencies = {
     'EUR': "€",
@@ -67,8 +47,7 @@ const TotalBalanceContent = () => {
     
     const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
     const [favoriteReceiversList, setFavoriteReceiversList] = useState<FavoriteReceiverResponse[]>([]);
-    
-    const [dialogCurrency, setDialogCurrency] = useState("EUR");
+
     const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
         currency: "",
         symbol: "",
@@ -166,6 +145,7 @@ const TotalBalanceContent = () => {
     }, [sendFavoriteTransferReceiversRequest]);
 
     return (
+        // TODO: generic AlertSnackBar for all cases
         <>
             <AlertSnackBar alertState={{"state": isAddMoneyErrorMessageOpen, "setState": setIsAddMoneyErrorMessageOpen}}
                            severity="error"
@@ -174,12 +154,19 @@ const TotalBalanceContent = () => {
                            severity="success"
                            message="Successfully added funds to your acccount."/>
 
-            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverSuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
+            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverSuccessMessageOpen, "setState": setIsAddFavoriteReceiverSuccessMessageOpen}}
                            severity="success"
                            message="Successfully added new receiver."/>
             <AlertSnackBar alertState={{"state": isAddFavoriteReceiverErrorMessageOpen, "setState": setIsAddFavoriteReceiverErrorMessageOpen}}
                            severity="error"
                            message="Could not add new receiver."/>
+
+            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverSuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
+                           severity="success"
+                           message="Successfully transferred money."/>
+            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverErrorMessageOpen, "setState": setIsAddFavoriteReceiverErrorMessageOpen}}
+                           severity="error"
+                           message="Could not transfer money."/>
 
             <Typography variant="h2" color="primary.main">
                 Total balance
@@ -286,9 +273,13 @@ const TotalBalanceContent = () => {
             <TransferDialog
                 openTransferDialog={openTransferDialog}
                 setOpenTransferDialog={setOpenTransferDialog}
-                currency={dialogCurrency}
-                setCurrency={setDialogCurrency}
+                currency={selectedCurrency}
+                setCurrency={setSelectedCurrency}
+                currencies={accountCurrencyBalanceList}
                 favoriteReceivers={favoriteReceiversList}
+                setIsErrorMessageOpen={setIsAddMoneyErrorMessageOpen}
+                setIsSuccessMessageOpen={setIsAddMoneySuccessMessageOpen}
+                updateCurrencyBalance={updateCurrencyBalance}
             />
             <AddMoneyDialog
                 openAddMoneyDialog={openAddMoneyDialog}

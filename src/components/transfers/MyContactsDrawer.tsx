@@ -2,18 +2,13 @@ import {Box, Drawer, List, Typography} from "@mui/material";
 import FriendAccountData from "../../models/friendAccount";
 import FriendAccount from "./FriendAccount";
 import {FavoriteReceiverResponse} from "./TotalBalanceContent";
-
-const friends = [
-    new FriendAccountData("Kaczor Donald", "14 1234 5678 1234 4567"),
-    new FriendAccountData("Michał Wójcik", "14 1234 5678 1234 4567"),
-    new FriendAccountData("Katarzyna Grygorowicz", "14 1234 5678 1234 4567"),
-    new FriendAccountData("Kolega", "14 1234 5678 1234 4567"),
-];
+import {Dispatch, SetStateAction} from "react";
 
 const MyContactsDrawer: React.FC<{
-    friendsDrawerOpen: boolean,
-    setFriendsDrawerOpen: (isOpen: boolean) => void,
+    friendsDrawerOpen: boolean;
+    setFriendsDrawerOpen: (isOpen: boolean) => void;
     favoriteReceivers: FavoriteReceiverResponse[];
+    writeAccountNumber: Dispatch<SetStateAction<string>>;
 }> = (props) => {
 
     const toggleDrawer = () => {
@@ -24,7 +19,7 @@ const MyContactsDrawer: React.FC<{
         <Box sx={{width: 280}} onClick={toggleDrawer} onKeyDown={toggleDrawer}>
             <List>
                 {props.favoriteReceivers.map((favoriteTransfer) => (
-                    <FriendAccount favoriteTransfer={favoriteTransfer}/>
+                    <FriendAccount favoriteTransfer={favoriteTransfer} writeAccountNumber={props.writeAccountNumber}/>
                 ))}
             </List>
         </Box>

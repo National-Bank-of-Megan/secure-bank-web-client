@@ -36,7 +36,8 @@ const useInput = (validateValue: (value: string) => boolean, initialValue?: stri
         setIsTouched,
         valueChangeHandler,
         inputBlurHandler,
-        clearInput
+        clearInput,
+        setEnteredValue
     };
 };
 
