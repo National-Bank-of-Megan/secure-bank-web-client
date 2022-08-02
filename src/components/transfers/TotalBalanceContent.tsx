@@ -10,6 +10,7 @@ import useFetch, {Headers, RequestConfig} from "../../hook/use-fetch";
 import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
 import AlertSnackBar from "../notofications/AlertSnackBar";
+import {Link} from "react-router-dom";
 
 export const currencies = [
     {
@@ -144,7 +145,7 @@ const TotalBalanceContent = () => {
     useEffect(() => {
         const transformFavoriteReceivers = (favoriteReceiverObj: FavoriteReceiverResponse[]) => {
             const loadedFavReceivers: FavoriteReceiverResponse[] = [];
-            for (const key in loadedFavReceivers) {
+            for (const key in favoriteReceiverObj) {
                 loadedFavReceivers.push({
                     id: favoriteReceiverObj[key].id,
                     name: favoriteReceiverObj[key].name,
@@ -156,7 +157,7 @@ const TotalBalanceContent = () => {
         }
 
         const fetchFavoriteReceiversRequest: RequestConfig = {
-            url: REST_PATH_AUTH + '/account/receiver/all'
+            url: REST_PATH_AUTH + "/account/receiver/all"
         };
 
         console.log("Pobieram favoriteReceivers")
@@ -166,7 +167,6 @@ const TotalBalanceContent = () => {
 
     return (
         <>
-            <Spinner isLoading={isSubAccountsLoading || isFavoriteTransferReceiversLoading} />
             <AlertSnackBar alertState={{"state": isAddMoneyErrorMessageOpen, "setState": setIsAddMoneyErrorMessageOpen}}
                            severity="error"
                            message="Could not add money to your balance."/>
@@ -212,34 +212,8 @@ const TotalBalanceContent = () => {
                             <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                         ))}
                     </Select>
-                    {/*<List*/}
-                    {/*    sx={{*/}
-                    {/*        width: '100%',*/}
-                    {/*        bgcolor: 'background.paper',*/}
-
-                    {/*    }}*/}
-                    {/*>*/}
-                    {/*    {accountCurrencyBalanceList.map((accountCurrencyBalance) => {*/}
-                    {/*        return (*/}
-                    {/*            <>*/}
-                    {/*                <ListItem sx={{*/}
-                    {/*                    paddingTop: '10px',*/}
-                    {/*                    paddingBottom: '10px'*/}
-                    {/*                }}>*/}
-                    {/*                    <ListItemAvatar>*/}
-                    {/*                        <Avatar>*/}
-                    {/*                            <ImageIcon/>*/}
-                    {/*                        </Avatar>*/}
-                    {/*                    </ListItemAvatar>*/}
-                    {/*                    <ListItemText primary="Photos" secondary="Jan 9, 2014"/>*/}
-                    {/*                </ListItem>*/}
-                    {/*                <Divider component="li"/>*/}
-                    {/*            </>*/}
-                    {/*        );*/}
-                    {/*    })}*/}
-                    {/*</List>*/}
-
                 </FormControl>
+
                 <Box
                     sx={{
                         display: "flex",
@@ -283,6 +257,8 @@ const TotalBalanceContent = () => {
                         }}
                     >
                         <Fab
+                            component={Link}
+                            to="/exchange"
                             color="primary"
                             variant="extended"
                             aria-label="transfer"
