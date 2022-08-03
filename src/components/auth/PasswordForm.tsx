@@ -10,13 +10,15 @@ import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 import {login} from "../../actions/user-action";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "../../store/auth-store";
+import {UserState} from "../../reducers/user-reducer";
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
-    const authCtx = useContext(authContext);
+    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
+    const { error } = userAuth;
+    const { loading } = userAuth;
     const navigate = useNavigate();
-    const {isLoading, error, sendRequest: loginRequest} = useFetch();
-    //  error handlers
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string>('');
     //data preparation
@@ -130,7 +132,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                <Spinner isLoading={isLoading}/>
+                <Spinner isLoading={loading}/>
                 <AlertSnackBar message={errorMsg} severity="error"
                                alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
                 <Paper

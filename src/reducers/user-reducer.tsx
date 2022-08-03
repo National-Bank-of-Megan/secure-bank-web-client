@@ -1,8 +1,8 @@
 import {USER_AUTH_FAIL, USER_AUTH_REQUEST, USER_AUTH_SUCCESS, USER_LOGOUT} from "../constants/AuthConstants";
 
 export interface UserState {
-    loading?: boolean,
-    isAuthenticated? :boolean,
+    loading: boolean,
+    isAuthenticated :boolean,
     error?: string,
     authTokens: { accessToken?: string, refreshToken?: string }
 }
@@ -12,7 +12,10 @@ interface Action {
     payload?: string
 }
 
-export const userAuthenticationReducer = (state: UserState = { authTokens: {} }, action: Action) => {
+export const userAuthenticationReducer = (state: UserState = {
+    isAuthenticated: false,
+    loading: false,
+    authTokens: {} }, action: Action) => {
     switch (action.type) {
         case USER_AUTH_REQUEST:
             return {loading: true}
@@ -21,7 +24,7 @@ export const userAuthenticationReducer = (state: UserState = { authTokens: {} },
         case USER_AUTH_FAIL:
             return {loading: false, error: action.payload, isAuthenticated: false}
         case USER_LOGOUT:
-            return {}
+            return {loading: false,error: null, isAuthenticated: false,authTokens: {}}
         default:
             return state;
 

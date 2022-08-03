@@ -18,10 +18,12 @@ export type RequestConfig = {
 };
 
 const useFetch = () => {
+
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<FetchError | null>(null);
     const navigate = useNavigate();
     const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
+
     const {isAuthenticated} = userAuth;
 
     const sendRequest = useCallback(async <T, >(requestConfig: RequestConfig, applyData: (data: T) => void) => {
@@ -36,16 +38,19 @@ const useFetch = () => {
         // send it together with refreshToken to Backend API
 
 
+
         try {
             if (isAuthenticated) {
                 //get access token from redux state
-                requestConfig.headers['Authorization'] = userAuth.authTokens.accessToken;
+                requestConfig.headers['Authorization'] = 'Bearer ' +userAuth.authTokens.accessToken;
 
             }
-            if(!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
-            {
-                navigate('/login');
-            }
+
+
+            // if(!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
+            // {
+            //     navigate('/login');
+            // }
 
             const APIAddress = requestConfig.url;
             const response = await fetch(APIAddress, {
@@ -54,6 +59,7 @@ const useFetch = () => {
                 body: requestConfig.method === 'GET' ? null : (requestConfig.body ? JSON.stringify(requestConfig.body) : null),
             });
 
+            console.log(response)
             if (!response.ok) {
                 throw new FetchError(response.status, await response.text());
             }

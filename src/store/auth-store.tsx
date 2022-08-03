@@ -1,35 +1,35 @@
-import {createStore, combineReducers,applyMiddleware} from "redux";
-import thunk from 'redux-thunk';
-import {composeWithDevTools} from "redux-devtools-extension";
+import {combineReducers} from "redux";
+
 import {configureStore} from "@reduxjs/toolkit";
 import {userAuthenticationReducer} from "../reducers/user-reducer";
-import {PersistGate} from "redux-persist/integration/react";
+import storage from 'redux-persist/lib/storage'
+import {persistReducer, persistStore} from 'redux-persist'
 
-//
-// const reducers = combineReducers({
-//     userAuth : userAuthenticationReducer
-// })
+
+const reducers = combineReducers({
+    userAuth: userAuthenticationReducer
+})
 
 const persistConfig = {
-    key : 'persist-key',
+    key: 'persist-key',
     storage
 }
 
-persistReducer(persistConfig,userAuthenticationReducer)
+const persistedReducer = persistReducer(persistConfig, reducers)
 
-
-
-
-const initialState={}
+const initialState = {}
 
 const authStore = configureStore({
     devTools: true,
     preloadedState: initialState,
-    reducer: reducers
+    reducer: persistedReducer
 
 })
 
+const persistor = persistStore(authStore)
+
 
 export default authStore;
+export {persistor}
 
 export type RootState = ReturnType<typeof authStore.getState>
