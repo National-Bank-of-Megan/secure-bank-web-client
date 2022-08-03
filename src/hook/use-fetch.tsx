@@ -1,9 +1,10 @@
-import {useCallback, useContext, useState} from 'react';
-import AuthContext from "../store/auth-context";
+import {useCallback, useState} from 'react';
 import FetchError from "../models/fetchError";
 import {useNavigate} from "react-router-dom";
-import useRefreshToken from "./use-refresh";
 import {REST_PATH_AUTH} from "../constants/Constants";
+import {useSelector} from "react-redux";
+import {RootState} from "../store/auth-store";
+import {UserState} from "../reducers/user-reducer";
 
 export type Headers = {
     [key: string]: any;
@@ -19,9 +20,9 @@ export type RequestConfig = {
 const useFetch = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<FetchError | null>(null);
-    const authCtx = useContext(AuthContext);
-    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
     const navigate = useNavigate();
+    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
+    const {isAuthenticated} = userAuth;
 
     const sendRequest = useCallback(async <T, >(requestConfig: RequestConfig, applyData: (data: T) => void) => {
         setIsLoading(true);
@@ -33,17 +34,16 @@ const useFetch = () => {
 
         // if we want to set session max idle time, we should retrieve old authToken before we remove it and
         // send it together with refreshToken to Backend API
-        const authTokenExpired = authCtx.removeAuthTokenIfExpired();
-        const refreshTokenExpired = authCtx.removeRefreshTokenIfExpired();
-        const isLoggedIn = !authTokenExpired;
-        console.log("is user logged in? " + isLoggedIn)
+
 
         try {
-            if (isLoggedIn) {
-                requestConfig.headers['Authorization'] = authCtx.authToken;
-            } else if (!refreshTokenExpired) {
-                requestConfig.headers['Authorization'] = await requestAuthTokenWithRefreshToken();
-            } else if (!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register"))) {
+            if (isAuthenticated) {
+                //get access token from redux state
+                requestConfig.headers['Authorization'] = userAuth.authTokens.accessToken;
+
+            }
+            if(!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
+            {
                 navigate('/login');
             }
 
@@ -65,7 +65,7 @@ const useFetch = () => {
             setError(error as FetchError || new FetchError(500, "Something went wrong."));
         }
         setIsLoading(false);
-    }, [authCtx, navigate, requestAuthTokenWithRefreshToken]);
+    }, [navigate]);
 
 
     return {

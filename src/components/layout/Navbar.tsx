@@ -7,12 +7,16 @@ import Tab from '@mui/material/Tab';
 import {useLocation, useNavigate} from "react-router-dom";
 import NotificationsListPopover from "../notofications/NotificationListPopover";
 import AuthContext from "../../store/auth-context";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/auth-store";
+import {UserState} from "../../reducers/user-reducer";
 
 export default function Navbar() {
-    const authCtx = useContext(AuthContext);
+    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
+    const { isAuthenticated } = userAuth;
 
     const {pathname} = useLocation();
-    const [currentPath, setCurrentPath] = useState(-1);
+    const [currentPath, setCurrentPath] = useState(0);
     const [notificationsPopover, setNotificationsPopover] = React.useState<HTMLButtonElement | null>(null);
 
     const navigate = useNavigate();
@@ -45,7 +49,7 @@ export default function Navbar() {
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         National Bank of Megan
                     </Typography>
-                    {authCtx.isLoggedIn() && <Box>
+                    {isAuthenticated && <Box>
                         <IconButton
                             size="large"
                             aria-label="show 4 new mails"
@@ -109,7 +113,8 @@ export default function Navbar() {
                         <IconButton
                             size="large"
                             color="inherit"
-                            onClick={() => authCtx.logout()}
+                            onClick={() => {
+                            }}
                         >
                             <LogoutIcon fontSize="inherit"/>
                         </IconButton>
@@ -117,7 +122,7 @@ export default function Navbar() {
                 </Toolbar>
             </AppBar>
 
-            {authCtx.isLoggedIn() && <Paper sx={{bgcolor: 'background.paper'}}>
+            {isAuthenticated && <Paper sx={{bgcolor: 'background.paper'}}>
                 <Tabs value={currentPath} onChange={handleChange} variant="fullWidth">
                     <Tab label="Transfers"/>
                     <Tab label="History"/>

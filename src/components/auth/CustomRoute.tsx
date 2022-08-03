@@ -1,26 +1,19 @@
 import React, {useContext} from "react";
 import AuthContext from "../../store/auth-context";
 import useRefreshToken from "../../hook/use-refresh";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/auth-store";
+import {UserState} from "../../reducers/user-reducer";
 
 type Props = {
     [x: string]: any;
 }
 
 const CustomRoute: React.FC<Props> = ({children}) => {
-    const authCtx = useContext(AuthContext);
-    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
+    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
+    const { isAuthenticated } = userAuth;
 
-    const authTokenExpired = authCtx.removeAuthTokenIfExpired();
-    const refreshTokenExpired = authCtx.removeRefreshTokenIfExpired();
-    let isLoggedIn = !authTokenExpired;
 
-    if (!isLoggedIn && !refreshTokenExpired) {
-        try {
-            requestAuthTokenWithRefreshToken();
-        } catch (error: any) {
-            console.log("Something went wrong - " + error.msg);
-        }
-    }
 
     return children;
 }

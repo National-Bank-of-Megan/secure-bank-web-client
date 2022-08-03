@@ -3,16 +3,24 @@ import thunk from 'redux-thunk';
 import {composeWithDevTools} from "redux-devtools-extension";
 import {configureStore} from "@reduxjs/toolkit";
 import {userAuthenticationReducer} from "../reducers/user-reducer";
+import {PersistGate} from "redux-persist/integration/react";
 
+//
+// const reducers = combineReducers({
+//     userAuth : userAuthenticationReducer
+// })
 
-const reducers = combineReducers({
-    userAuth : userAuthenticationReducer
-})
-
-
-const initialState={
-
+const persistConfig = {
+    key : 'persist-key',
+    storage
 }
+
+persistReducer(persistConfig,userAuthenticationReducer)
+
+
+
+
+const initialState={}
 
 const authStore = configureStore({
     devTools: true,
@@ -20,6 +28,7 @@ const authStore = configureStore({
     reducer: reducers
 
 })
+
 
 export default authStore;
 

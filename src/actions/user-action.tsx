@@ -22,17 +22,21 @@ export const login = (clientId: string, password: string): ThunkAction<Promise<v
         })
 
         const data = await response.json();
-        const authTokens = {accessToken: data.acces_token, refreshToken: data.refresh_token}
+        const authTokens = {accessToken: data.access_token, refreshToken: data.refresh_token}
 
         dispatch({
             type :USER_AUTH_SUCCESS,
             payload : authTokens
         })
 
+        localStorage.setItem('accessToken',authTokens.accessToken)
+        localStorage.setItem('refreshToken',authTokens.refreshToken)
     } catch (error :any) {
         dispatch({
            type : USER_AUTH_FAIL,
            payload: error.response && error.response.data.message ? error.response.data.message : error.message
        })
     }
+
+//    todo add logout
 }

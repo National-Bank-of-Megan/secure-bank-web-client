@@ -2,6 +2,7 @@ import {USER_AUTH_FAIL, USER_AUTH_REQUEST, USER_AUTH_SUCCESS, USER_LOGOUT} from 
 
 export interface UserState {
     loading?: boolean,
+    isAuthenticated? :boolean,
     error?: string,
     authTokens: { accessToken?: string, refreshToken?: string }
 }
@@ -16,9 +17,9 @@ export const userAuthenticationReducer = (state: UserState = { authTokens: {} },
         case USER_AUTH_REQUEST:
             return {loading: true}
         case USER_AUTH_SUCCESS:
-            return {loading: false, authTokens: action.payload}
+            return {loading: false, authTokens: action.payload, isAuthenticated : true}
         case USER_AUTH_FAIL:
-            return {loading: false, error: action.payload}
+            return {loading: false, error: action.payload, isAuthenticated: false}
         case USER_LOGOUT:
             return {}
         default:
