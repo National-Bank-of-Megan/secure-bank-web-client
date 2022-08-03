@@ -7,9 +7,6 @@ import {
     DialogContent,
     FormControl,
     IconButton,
-    Input,
-    InputAdornment,
-    InputLabel,
     MenuItem,
     Paper,
     TextField,
@@ -21,8 +18,14 @@ import {AccountCurrencyBalance, FavoriteReceiverResponse} from "../TotalBalanceC
 import useInput from "../../../hook/use-input";
 import {isValidAccountNumber} from "../../../input-rules/is-valid-account-number";
 import {isNotEmpty} from "../../../input-rules/is-not-empty";
-import {shouldUpdateInput} from "../../../common/validation";
+import {
+    isValidAmount,
+    shouldUpdateTransferInput
+} from "../../../common/validation";
 import {removeErrorIfFieldEmpty} from "../../../common/input";
+import useTransferInput from "../../../hook/use-transfer-input";
+import useFetch, {RequestConfig} from "../../../hook/use-fetch";
+import {REST_PATH_AUTH, REST_PATH_TRANSFER} from "../../../constants/Constants";
 
 const TransferDialog: React.FC<{
     openTransferDialog: boolean;
@@ -35,8 +38,9 @@ const TransferDialog: React.FC<{
     setIsSuccessMessageOpen: (isOpen: boolean) => void;
     updateCurrencyBalance: (currencyName: string, amountToAdd: number) => void;
 }> = (props) => {
-    const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
+    const {isLoading, error, sendRequest: makeTransferRequest} = useFetch();
 
+    const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
     const {
         value: accountNumberValue,
         isValid: accountNumberValueIsValid,
@@ -64,7 +68,7 @@ const TransferDialog: React.FC<{
         valueChangeHandler: amountChangeHandler,
         inputBlurHandler: amountBlurHandler,
         clearInput: clearAmountValue
-    } = useInput(isNotEmpty, '', shouldUpdateInput);
+    } = useTransferInput(isValidAmount, props.currency.balance, shouldUpdateTransferInput);
 
     const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const accountCurrencyBalance = props.currencies.find((nextCurrency) => (nextCurrency.currency === event.target.value))!;
@@ -78,6 +82,36 @@ const TransferDialog: React.FC<{
         removeErrorIfFieldEmpty(titleValue, setIsTitleTouched);
         removeErrorIfFieldEmpty(amountValue, setIsAmountTouched);
     };
+
+    const allInputsValid = () => {
+        return accountNumberValueIsValid && titleValueIsValid && amountValueIsValid;
+    }
+
+    const setAllInputsError = () => {
+        const setIsTouchedList = [setIsAccountNumberTouched, setIsTitleTouched, setIsAmountTouched];
+
+        setIsTouchedList.forEach(setIsTouched => {
+            setIsTouched(true);
+        })
+    }
+
+    const makeTransferHandler = () => {
+        if (!allInputsValid()) {
+            setAllInputsError();
+            return;
+        }
+
+        const makeTransferRequestContent: RequestConfig = {
+            url: REST_PATH_TRANSFER,
+            method: "POST",
+            body: {
+
+            },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+    }
 
     const toggleDrawer = () => {
         setFriendsDrawerOpen(!friendsDrawerOpen);
@@ -232,7 +266,7 @@ const TransferDialog: React.FC<{
                                     marginTop: "10px",
                                 }}
                             >
-                                Currency balance after money load: {props.currency.balance + Number(amountValue)} {props.currency.symbol}
+                                Currency balance after money load: {props.currency.balance - Number(amountValue)} {props.currency.symbol}
                             </Typography>
                             <Typography
                                 color="text.secondary"
@@ -248,7 +282,7 @@ const TransferDialog: React.FC<{
                         <Button
                             variant="contained"
                             size="large"
-                            onClick={handleDialogClose}
+                            onClick={makeTransferHandler}
                             sx={{
                                 margin: "0 0 30px",
                                 width: "250px",

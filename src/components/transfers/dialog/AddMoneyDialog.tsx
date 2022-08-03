@@ -18,8 +18,7 @@ import useFetch, {RequestConfig} from "../../../hook/use-fetch";
 import {REST_PATH_AUTH} from "../../../constants/Constants";
 import React, {useEffect, useState} from "react";
 import Spinner from "../../common/Spinner";
-
-const isNotEmpty = (value: string) => value.trim() !== '';
+import {isValidAmount} from "../../../common/validation";
 
 const AddMoneyDialog: React.FC<{
     openAddMoneyDialog: boolean;
@@ -67,7 +66,7 @@ const AddMoneyDialog: React.FC<{
         valueChangeHandler: addBalanceChangeHandler,
         inputBlurHandler: addBalanceBlurHandler,
         clearInput: clearAddBalanceValue
-    } = useInput(isNotEmpty, '', shouldUpdateInput);
+    } = useInput(isValidAmount, '', shouldUpdateInput);
 
     const handleAddToBalance = (response: any) => {
         setIsProcessingAddingMoneyRequest(false);
