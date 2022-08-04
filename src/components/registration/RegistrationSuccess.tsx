@@ -3,21 +3,26 @@ import {Button, Grid, IconButton, Stack, Typography} from '@mui/material';
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {ContentCopy} from "@mui/icons-material";
-import AlertSnackBar from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
 import {SuccessfulRegistrationType} from "../../models/custom-types/SuccessfulRegistrationType";
 
 const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegistrationType }> = ({registrationResponseData}) => {
-    const [isAlertOpen, setIsAlertOpen] = useState<boolean>(false);
+    const [successAlertState, setSuccessAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
 
     const handleCopyClicked = () => {
         navigator.clipboard.writeText(registrationResponseData.clientId);
-        setIsAlertOpen(true);
+        setSuccessAlertState({
+            isOpen: true,
+            message: "Copied!"
+        });
     }
 
     return (
         <>
-            <AlertSnackBar alertState={{"state": isAlertOpen, "setState": setIsAlertOpen}} severity="success"
-                           message="Copied!"/>
+            <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}} severity="success" />
             <Grid container marginTop="50px" gap={-2}>
                 <Grid item xs={6} pl="50px">
                     <Stack textAlign="center" height='100%' sx={{

@@ -10,9 +10,9 @@ import {
     MenuItem,
     Paper,
     TextField,
-    Typography,
+    Typography, useTheme,
 } from "@mui/material";
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import MyContactsDrawer from "../MyContactsDrawer";
 import {AccountCurrencyBalance, FavoriteReceiverResponse} from "../TotalBalanceContent";
 import useInput from "../../../hook/use-input";
@@ -26,18 +26,26 @@ import {removeErrorIfFieldEmpty} from "../../../common/input";
 import useTransferInput from "../../../hook/use-transfer-input";
 import useFetch, {RequestConfig} from "../../../hook/use-fetch";
 import {REST_PATH_AUTH, REST_PATH_TRANSFER} from "../../../constants/Constants";
+import AuthContext from "../../../store/auth-context";
+import jwt_decode from "jwt-decode";
+import JWT from "../../../models/jwt";
+import Spinner from "../../common/Spinner";
+import {AlertState} from "../../notofications/AlertSnackBar";
+import {findCurrencyByName} from "../../../common/transfer";
 
 const TransferDialog: React.FC<{
     openTransferDialog: boolean;
     setOpenTransferDialog: (isOpen: boolean) => void;
-    currency: AccountCurrencyBalance;
-    setCurrency: (currency: AccountCurrencyBalance) => void;
+    selectedCurrencyName: string;
+    setSelectedCurrencyName: (currencyName: string) => void;
     currencies: AccountCurrencyBalance[]
     favoriteReceivers: FavoriteReceiverResponse[];
-    setIsErrorMessageOpen: (isOpen: boolean) => void;
-    setIsSuccessMessageOpen: (isOpen: boolean) => void;
-    updateCurrencyBalance: (currencyName: string, amountToAdd: number) => void;
+    setErrorAlertState: (alertState: AlertState) => void;
+    setSuccessAlertState: (alertState: AlertState) => void;
+    updateCurrencyBalance: (currencyName: string, amountToCharge: number) => void;
 }> = (props) => {
+    const authCtx = useContext(AuthContext);
+    const appTheme = useTheme();
     const {isLoading, error, sendRequest: makeTransferRequest} = useFetch();
 
     const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
@@ -68,11 +76,20 @@ const TransferDialog: React.FC<{
         valueChangeHandler: amountChangeHandler,
         inputBlurHandler: amountBlurHandler,
         clearInput: clearAmountValue
-    } = useTransferInput(isValidAmount, props.currency.balance, shouldUpdateTransferInput);
+    } = useTransferInput(isValidAmount, findCurrencyByName(props.selectedCurrencyName, props.currencies)!.balance, shouldUpdateTransferInput);
+
+    useEffect(() => {
+        if (!!error) {
+            console.log(error.message);
+            props.setErrorAlertState({
+                isOpen: true,
+                message: "Could not transfer money."
+            });
+        }
+    }, [error, props.setErrorAlertState])
 
     const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const accountCurrencyBalance = props.currencies.find((nextCurrency) => (nextCurrency.currency === event.target.value))!;
-        props.setCurrency(accountCurrencyBalance);
+        props.setSelectedCurrencyName(event.target.value);
     };
 
     const handleDialogClose = () => {
@@ -95,6 +112,22 @@ const TransferDialog: React.FC<{
         })
     }
 
+    const clearAllInputs = () => {
+        clearAccountNumber();
+        clearTitleValue();
+        clearAmountValue();
+    }
+
+    const handleMakeTransferResponse = (response: any) => {
+        props.updateCurrencyBalance(props.selectedCurrencyName, parseFloat(amountValue));
+        handleDialogClose();
+        clearAllInputs();
+        props.setSuccessAlertState({
+            isOpen: true,
+            message: "Transfer successful."
+        });
+    }
+
     const makeTransferHandler = () => {
         if (!allInputsValid()) {
             setAllInputsError();
@@ -105,201 +138,212 @@ const TransferDialog: React.FC<{
             url: REST_PATH_TRANSFER,
             method: "POST",
             body: {
-
+                "title": titleValue,
+                "senderId": jwt_decode<JWT>(authCtx.authToken).sub,
+                "receiverAccountNumber": accountNumberValue,
+                "amount": amountValue,
+                "currency": props.selectedCurrencyName
             },
             headers: {
                 'Content-Type': 'application/json'
             }
         };
+
+        makeTransferRequest(makeTransferRequestContent, handleMakeTransferResponse);
     }
 
     const toggleDrawer = () => {
         setFriendsDrawerOpen(!friendsDrawerOpen);
     };
 
+    const foundCurrency = findCurrencyByName(props.selectedCurrencyName, props.currencies)!;
+
     return (
         // TODO: currency input component
         // TODO: balance info component
-        <Dialog
-            open={props.openTransferDialog}
-            onClose={handleDialogClose}
-            fullWidth
-            maxWidth="md"
-        >
-            <Paper
-                sx={{
-                    bgcolor: "background.paper",
-                }}
+        <>
+            <Spinner isLoading={isLoading} zIndex={appTheme.zIndex.modal + 1}/>
+            <Dialog
+                open={props.openTransferDialog}
+                onClose={handleDialogClose}
+                fullWidth
+                maxWidth="md"
             >
-                <Box
+                <Paper
                     sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        padding: "35px 0",
-                        rowGap: "15px 40px",
+                        bgcolor: "background.paper",
                     }}
                 >
-                    <Typography variant="h2" color="primary">
-                        New transfer
-                    </Typography>
-                    <DialogContent
+                    <Box
                         sx={{
-                            width: "55%",
-                            padding: "65px 24px",
                             display: "flex",
                             flexDirection: "column",
-                            justifyContent: "center",
                             alignItems: "center",
-                            rowGap: "15px",
+                            padding: "35px 0",
+                            rowGap: "15px 40px",
                         }}
                     >
-                        <FormControl fullWidth variant="standard">
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "flex-end",
-                                    position: "relative",
-                                }}
-                            >
-                                <TextField
-                                    fullWidth
-                                    variant="standard"
-                                    label="Receiver"
-                                    type="text"
-                                    onChange={accountNumberChangeHandler}
-                                    onBlur={accountNumberBlurHandler}
-                                    value={accountNumberValue}
-                                    error={accountNumberHasError}
-                                    helperText={accountNumberHasError ? "Invalid account number." : ''}
-                                    sx={{
-                                        '& .MuiInput-input': {
-                                            '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-                                                '-webkit-appearance': 'none',
-                                            }
-                                        }
-                                    }}
-                                />
-                                <IconButton id="drawerButton" onClick={toggleDrawer} sx={{
-                                    position: "absolute",
-                                    right: "0%",
-                                    bottom: accountNumberHasError ? "27%" : "-5%",
-                                }}>
-                                    <People/>
-                                </IconButton>
-                            </Box>
-
-
-                        </FormControl>
-                        <FormControl fullWidth variant="standard">
-                            <TextField
-                                variant="standard"
-                                label="Title"
-                                type="text"
-                                onChange={titleChangeHandler}
-                                onBlur={titleBlurHandler}
-                                value={titleValue}
-                                error={titleHasError}
-                                helperText={titleHasError ? "Field cannot be empty." : ''}
-                                sx={{
-                                    '& .MuiInput-input': {
-                                        '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-                                            '-webkit-appearance': 'none',
-                                        }
-                                    }
-                                }}
-                            />
-                        </FormControl>
-                        <FormControl fullWidth variant="standard">
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "flex-end",
-                                    position: "relative",
-                                }}
-                            >
-                                <TextField
-                                    fullWidth
-                                    variant="standard"
-                                    label="Amount"
-                                    type="number"
-                                    onChange={amountChangeHandler}
-                                    onBlur={amountBlurHandler}
-                                    value={amountValue}
-                                    error={amountHasError}
-                                    helperText={amountHasError ? "Provide correct amount of money." : ''}
-                                    sx={{
-                                        '& .MuiInput-input': {
-                                            '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-                                                '-webkit-appearance': 'none',
-                                            }
-                                        }
-                                    }}
-                                />
-                                <TextField
-                                    select
-                                    value={props.currency.currency}
-                                    onChange={handleCurrencyChange}
-                                    variant="standard"
-                                    InputProps={{disableUnderline: true}}
-                                    sx={{
-                                        position: "absolute",
-                                        width: "8%",
-                                        right: "0%",
-                                        bottom: amountHasError ? "32%" : "0%",
-                                        "& .MuiSelect-select:focus": {
-                                            background: "none",
-                                        },
-                                    }}
-                                >
-                                    {props.currencies.map((currencyBalance) => (
-                                        <MenuItem key={currencyBalance.currency} value={currencyBalance.currency}>
-                                            {currencyBalance.symbol}
-                                        </MenuItem>
-                                    ))}
-                                </TextField>
-                            </Box>
-                            <Typography
-                                color="text.secondary"
-                                sx={{
-                                    fontSize: "12px",
-                                    marginTop: "10px",
-                                }}
-                            >
-                                Currency balance after money load: {props.currency.balance - Number(amountValue)} {props.currency.symbol}
-                            </Typography>
-                            <Typography
-                                color="text.secondary"
-                                sx={{
-                                    fontSize: "12px",
-                                }}
-                            >
-                                Total balance after money load: 15.253,51 PLN
-                            </Typography>
-                        </FormControl>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button
-                            variant="contained"
-                            size="large"
-                            onClick={makeTransferHandler}
+                        <Typography variant="h2" color="primary">
+                            New transfer
+                        </Typography>
+                        <DialogContent
                             sx={{
-                                margin: "0 0 30px",
-                                width: "250px",
+                                width: "55%",
+                                padding: "65px 24px",
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                rowGap: "15px",
                             }}
                         >
-                            Transfer money
-                        </Button>
-                    </DialogActions>
-                </Box>
-                <MyContactsDrawer
-                    friendsDrawerOpen={friendsDrawerOpen}
-                    setFriendsDrawerOpen={setFriendsDrawerOpen}
-                    favoriteReceivers={props.favoriteReceivers}
-                    writeAccountNumber={setAccountNumberValue}
-                />
-            </Paper>
-        </Dialog>
+                            <FormControl fullWidth variant="standard">
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "flex-end",
+                                        position: "relative",
+                                    }}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        variant="standard"
+                                        label="Receiver"
+                                        type="text"
+                                        onChange={accountNumberChangeHandler}
+                                        onBlur={accountNumberBlurHandler}
+                                        value={accountNumberValue}
+                                        error={accountNumberHasError}
+                                        helperText={accountNumberHasError ? "Invalid account number." : ''}
+                                        sx={{
+                                            '& .MuiInput-input': {
+                                                '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+                                                    '-webkit-appearance': 'none',
+                                                }
+                                            }
+                                        }}
+                                    />
+                                    <IconButton id="drawerButton" onClick={toggleDrawer} sx={{
+                                        position: "absolute",
+                                        right: "0%",
+                                        bottom: accountNumberHasError ? "27%" : "-5%",
+                                    }}>
+                                        <People/>
+                                    </IconButton>
+                                </Box>
+
+
+                            </FormControl>
+                            <FormControl fullWidth variant="standard">
+                                <TextField
+                                    variant="standard"
+                                    label="Title"
+                                    type="text"
+                                    onChange={titleChangeHandler}
+                                    onBlur={titleBlurHandler}
+                                    value={titleValue}
+                                    error={titleHasError}
+                                    helperText={titleHasError ? "Field cannot be empty." : ''}
+                                    sx={{
+                                        '& .MuiInput-input': {
+                                            '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+                                                '-webkit-appearance': 'none',
+                                            }
+                                        }
+                                    }}
+                                />
+                            </FormControl>
+                            <FormControl fullWidth variant="standard">
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "flex-end",
+                                        position: "relative",
+                                    }}
+                                >
+                                    <TextField
+                                        fullWidth
+                                        variant="standard"
+                                        label="Amount"
+                                        type="number"
+                                        onChange={amountChangeHandler}
+                                        onBlur={amountBlurHandler}
+                                        value={amountValue}
+                                        error={amountHasError}
+                                        helperText={amountHasError ? "Provide correct amount of money." : ''}
+                                        sx={{
+                                            '& .MuiInput-input': {
+                                                '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+                                                    '-webkit-appearance': 'none',
+                                                }
+                                            }
+                                        }}
+                                    />
+                                    <TextField
+                                        select
+                                        value={props.selectedCurrencyName}
+                                        onChange={handleCurrencyChange}
+                                        variant="standard"
+                                        InputProps={{disableUnderline: true}}
+                                        sx={{
+                                            position: "absolute",
+                                            width: "8%",
+                                            right: "0%",
+                                            bottom: amountHasError ? "32%" : "0%",
+                                            "& .MuiSelect-select:focus": {
+                                                background: "none",
+                                            },
+                                        }}
+                                    >
+                                        {props.currencies.map((currencyBalance) => (
+                                            <MenuItem key={currencyBalance.currency} value={currencyBalance.currency}>
+                                                {currencyBalance.symbol}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+                                </Box>
+                                <Typography
+                                    color="text.secondary"
+                                    sx={{
+                                        fontSize: "12px",
+                                        marginTop: "10px",
+                                    }}
+                                >
+                                    Currency balance after money load: {foundCurrency.balance - Number(amountValue)} {foundCurrency.symbol}
+                                </Typography>
+                                <Typography
+                                    color="text.secondary"
+                                    sx={{
+                                        fontSize: "12px",
+                                    }}
+                                >
+                                    Total balance after money load: 15.253,51 PLN
+                                </Typography>
+                            </FormControl>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button
+                                variant="contained"
+                                size="large"
+                                onClick={makeTransferHandler}
+                                sx={{
+                                    margin: "0 0 30px",
+                                    width: "250px",
+                                }}
+                            >
+                                Transfer money
+                            </Button>
+                        </DialogActions>
+                    </Box>
+                    <MyContactsDrawer
+                        friendsDrawerOpen={friendsDrawerOpen}
+                        setFriendsDrawerOpen={setFriendsDrawerOpen}
+                        favoriteReceivers={props.favoriteReceivers}
+                        writeAccountNumber={setAccountNumberValue}
+                    />
+                </Paper>
+            </Dialog>
+        </>
     );
 };
 

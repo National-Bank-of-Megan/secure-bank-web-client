@@ -19,15 +19,17 @@ import {REST_PATH_AUTH} from "../../../constants/Constants";
 import React, {useEffect, useState} from "react";
 import Spinner from "../../common/Spinner";
 import {isValidAmount} from "../../../common/validation";
+import {AlertState} from "../../notofications/AlertSnackBar";
+import {findCurrencyByName} from "../../../common/transfer";
 
 const AddMoneyDialog: React.FC<{
     openAddMoneyDialog: boolean;
     setOpenAddMoneyDialog: (isOpen: boolean) => void;
-    currency: AccountCurrencyBalance;
-    setCurrency: (currency: AccountCurrencyBalance) => void;
+    selectedCurrencyName: string;
+    setSelectedCurrencyName: (currencyName: string) => void;
     currencies: AccountCurrencyBalance[]
-    setIsErrorMessageOpen: (isOpen: boolean) => void;
-    setIsSuccessMessageOpen: (isOpen: boolean) => void;
+    setErrorAlertState: (alertState: AlertState) => void;
+    setSuccessAlertState: (alertState: AlertState) => void;
     updateCurrencyBalance: (currencyName: string, amountToAdd: number) => void;
 }> = (props) => {
     const appTheme = useTheme();
@@ -53,10 +55,13 @@ const AddMoneyDialog: React.FC<{
     useEffect(() => {
         if (!!error) {
             console.log(error.message);
-            props.setIsErrorMessageOpen(true);
+            props.setErrorAlertState({
+                isOpen: true,
+                message: "Could not add money to your balance."
+            });
             setIsProcessingAddingMoneyRequest(false);
         }
-    }, [error, props.setIsErrorMessageOpen])
+    }, [error, props.setErrorAlertState])
 
     const {
         value: addBalanceValue,
@@ -70,10 +75,13 @@ const AddMoneyDialog: React.FC<{
 
     const handleAddToBalance = (response: any) => {
         setIsProcessingAddingMoneyRequest(false);
-        props.updateCurrencyBalance(props.currency.currency, parseFloat(addBalanceValue));
+        props.updateCurrencyBalance(props.selectedCurrencyName, parseFloat(addBalanceValue));
         handleDialogClose();
         clearAddBalanceValue();
-        props.setIsSuccessMessageOpen(true);
+        props.setSuccessAlertState({
+            isOpen: true,
+            message: "Successfully added funds to your acccount."
+        });
     }
 
     const addBalanceHandler = () => {
@@ -86,7 +94,7 @@ const AddMoneyDialog: React.FC<{
             url: REST_PATH_AUTH + "/account/currency",
             method: "PUT",
             body: {
-                'currency': props.currency.currency,
+                'currency': props.selectedCurrencyName,
                 'amount': addBalanceValue
             },
             headers: {
@@ -111,9 +119,10 @@ const AddMoneyDialog: React.FC<{
     }
 
     const handleCurrencyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const accountCurrencyBalance = props.currencies.find((nextCurrency) => (nextCurrency.currency === event.target.value))!;
-        props.setCurrency(accountCurrencyBalance);
+        props.setSelectedCurrencyName(event.target.value);
     };
+
+    const foundCurrency = findCurrencyByName(props.selectedCurrencyName, props.currencies)!;
 
     return (
         <>
@@ -180,7 +189,7 @@ const AddMoneyDialog: React.FC<{
                                     />
                                     <TextField
                                         select
-                                        value={props.currency.currency}
+                                        value={props.selectedCurrencyName}
                                         onChange={handleCurrencyChange}
                                         variant="standard"
                                         InputProps={{disableUnderline: true}}
@@ -208,7 +217,7 @@ const AddMoneyDialog: React.FC<{
                                         marginTop: "10px",
                                     }}
                                 >
-                                    Currency balance after money load: {props.currency.balance + Number(addBalanceValue)} {props.currency.symbol}
+                                    Currency balance after money load: {foundCurrency.balance + Number(addBalanceValue)} {foundCurrency.symbol}
                                 </Typography>
                                 <Typography
                                     color="text.secondary"

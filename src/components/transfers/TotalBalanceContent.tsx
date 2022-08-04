@@ -8,8 +8,9 @@ import AddMoneyDialog from "./dialog/AddMoneyDialog";
 import AddFriendDialog from "./dialog/AddFriendDialog";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
 import {Link} from "react-router-dom";
+import {findCurrencyByName} from "../../common/transfer";
 
 const availableCurrencies = {
     'EUR': "€",
@@ -40,19 +41,20 @@ const TotalBalanceContent = () => {
     const [openTransferDialog, setOpenTransferDialog] = useState(false);
     const [openAddMoneyDialog, setOpenAddMoneyDialog] = useState(false);
     const [openAddFriendDialog, setOpenAddFriendDialog] = useState(false);
-    const [isAddMoneyErrorMessageOpen, setIsAddMoneyErrorMessageOpen] = useState(false);
-    const [isAddMoneySuccessMessageOpen, setIsAddMoneySuccessMessageOpen] = useState(false);
-    const [isAddFavoriteReceiverErrorMessageOpen, setIsAddFavoriteReceiverErrorMessageOpen] = useState(false);
-    const [isAddFavoriteReceiverSuccessMessageOpen, setIsAddFavoriteReceiverSuccessMessageOpen] = useState(false);
+    const [subAccountsLoaded, setSubAccountsLoaded] = useState(false);
+    const [successAlertState, setSuccessAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
+    const [errorAlertState, setErrorAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
     
     const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
     const [favoriteReceiversList, setFavoriteReceiversList] = useState<FavoriteReceiverResponse[]>([]);
 
-    const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
-        currency: "",
-        symbol: "",
-        balance: 0.0
-    });
+    const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("PLN");
 
     const {
         isLoading: isSubAccountsLoading,
@@ -78,21 +80,19 @@ const TotalBalanceContent = () => {
         setOpenAddFriendDialog(true);
     };
 
-    const updateCurrencyBalance = (currencyName: string, amountToAdd: number) => {
+    const addCurrencyBalance = (currencyName: string, amountToAdd: number) => {
         setAccountCurrencyBalanceList(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
                                                 ? {...currency, balance: currency.balance + amountToAdd} : currency))
     }
 
-    const findCurrencyByName = useCallback((selectedCurrencyName: string, loadedCurrencyBalances: AccountCurrencyBalance[]): AccountCurrencyBalance | undefined => {
-        return loadedCurrencyBalances.find((accountCurrencyBalance) => {
-            return accountCurrencyBalance.currency === selectedCurrencyName;
-        });
-    }, []);
+    const chargeCurrencyBalance = (currencyName: string, amountToCharge: number) => {
+        setAccountCurrencyBalanceList(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
+            ? {...currency, balance: currency.balance - amountToCharge} : currency))
+    }
 
     const handleCurrencyChange = (e: SelectChangeEvent) => {
         const selectedCurrencyName = e.target.value;
-        const userSelectedCurrency = findCurrencyByName(selectedCurrencyName, accountCurrencyBalanceList)!;
-        setSelectedCurrency(userSelectedCurrency);
+        setSelectedCurrencyName(selectedCurrencyName);
     }
 
     const mapSelectedCurrencyToString = (accountCurrencyBalance: AccountCurrencyBalance) => {
@@ -111,7 +111,7 @@ const TotalBalanceContent = () => {
             }
 
             setAccountCurrencyBalanceList(loadedCurrencyBalances);
-            setSelectedCurrency(findCurrencyByName(DEFAULT_SELECTED_CURRENCY, loadedCurrencyBalances)!);
+            setSubAccountsLoaded(true);
         }
 
         const fetchSubAccountsRequest: RequestConfig = {
@@ -119,7 +119,7 @@ const TotalBalanceContent = () => {
         };
 
         sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
-    }, [findCurrencyByName, sendSubAccountsRequest]);
+    }, [sendSubAccountsRequest]);
 
     useEffect(() => {
         const transformFavoriteReceivers = (favoriteReceiverObj: FavoriteReceiverResponse[]) => {
@@ -144,29 +144,19 @@ const TotalBalanceContent = () => {
         sendFavoriteTransferReceiversRequest(fetchFavoriteReceiversRequest, transformFavoriteReceivers);
     }, [sendFavoriteTransferReceiversRequest]);
 
+    const getAlertMessage = (message: string) => {
+        return message;
+    }
+
     return (
         // TODO: generic AlertSnackBar for all cases
         <>
-            <AlertSnackBar alertState={{"state": isAddMoneyErrorMessageOpen, "setState": setIsAddMoneyErrorMessageOpen}}
-                           severity="error"
-                           message="Could not add money to your balance."/>
-            <AlertSnackBar alertState={{"state": isAddMoneySuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
-                           severity="success"
-                           message="Successfully added funds to your acccount."/>
 
-            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverSuccessMessageOpen, "setState": setIsAddFavoriteReceiverSuccessMessageOpen}}
-                           severity="success"
-                           message="Successfully added new receiver."/>
-            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverErrorMessageOpen, "setState": setIsAddFavoriteReceiverErrorMessageOpen}}
-                           severity="error"
-                           message="Could not add new receiver."/>
+            <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
+                           severity="error" />
+            <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}}
+                           severity="success" />
 
-            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverSuccessMessageOpen, "setState": setIsAddMoneySuccessMessageOpen}}
-                           severity="success"
-                           message="Successfully transferred money."/>
-            <AlertSnackBar alertState={{"state": isAddFavoriteReceiverErrorMessageOpen, "setState": setIsAddFavoriteReceiverErrorMessageOpen}}
-                           severity="error"
-                           message="Could not transfer money."/>
 
             <Typography variant="h2" color="primary.main">
                 Total balance
@@ -194,7 +184,7 @@ const TotalBalanceContent = () => {
                         color: "primary.main",
                         fontSize: "18px"
                     }}>Currency balance</InputLabel>
-                    <Select value={selectedCurrency.currency} onChange={handleCurrencyChange}>
+                    <Select value={selectedCurrencyName} onChange={handleCurrencyChange}>
                         {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
                             <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                         ))}
@@ -270,32 +260,36 @@ const TotalBalanceContent = () => {
                 </Box>
             </Box>
 
-            <TransferDialog
-                openTransferDialog={openTransferDialog}
-                setOpenTransferDialog={setOpenTransferDialog}
-                currency={selectedCurrency}
-                setCurrency={setSelectedCurrency}
-                currencies={accountCurrencyBalanceList}
-                favoriteReceivers={favoriteReceiversList}
-                setIsErrorMessageOpen={setIsAddMoneyErrorMessageOpen}
-                setIsSuccessMessageOpen={setIsAddMoneySuccessMessageOpen}
-                updateCurrencyBalance={updateCurrencyBalance}
-            />
-            <AddMoneyDialog
-                openAddMoneyDialog={openAddMoneyDialog}
-                setOpenAddMoneyDialog={setOpenAddMoneyDialog}
-                currency={selectedCurrency}
-                setCurrency={setSelectedCurrency}
-                currencies={accountCurrencyBalanceList}
-                setIsErrorMessageOpen={setIsAddMoneyErrorMessageOpen}
-                setIsSuccessMessageOpen={setIsAddMoneySuccessMessageOpen}
-                updateCurrencyBalance={updateCurrencyBalance}
-            />
+            {subAccountsLoaded &&
+                <>
+                    <TransferDialog
+                        openTransferDialog={openTransferDialog}
+                        setOpenTransferDialog={setOpenTransferDialog}
+                        selectedCurrencyName={selectedCurrencyName}
+                        setSelectedCurrencyName={setSelectedCurrencyName}
+                        currencies={accountCurrencyBalanceList}
+                        favoriteReceivers={favoriteReceiversList}
+                        setErrorAlertState={setErrorAlertState}
+                        setSuccessAlertState={setSuccessAlertState}
+                        updateCurrencyBalance={chargeCurrencyBalance}
+                    />
+                    <AddMoneyDialog
+                        openAddMoneyDialog={openAddMoneyDialog}
+                        setOpenAddMoneyDialog={setOpenAddMoneyDialog}
+                        selectedCurrencyName={selectedCurrencyName}
+                        setSelectedCurrencyName={setSelectedCurrencyName}
+                        currencies={accountCurrencyBalanceList}
+                        setErrorAlertState={setErrorAlertState}
+                        setSuccessAlertState={setSuccessAlertState}
+                        updateCurrencyBalance={addCurrencyBalance}
+                    />
+                </>
+            }
             <AddFriendDialog
                 openAddFriendDialog={openAddFriendDialog}
                 setOpenAddFriendDialog={setOpenAddFriendDialog}
-                setIsErrorMessageOpen={setIsAddFavoriteReceiverErrorMessageOpen}
-                setIsSuccessMessageOpen={setIsAddFavoriteReceiverSuccessMessageOpen}
+                setErrorAlertState={setErrorAlertState}
+                setSuccessAlertState={setSuccessAlertState}
                 setFavoriteReceiversList={setFavoriteReceiversList}
             />
         </>

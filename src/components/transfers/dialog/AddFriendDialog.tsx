@@ -18,12 +18,13 @@ import useFetch, {RequestConfig} from "../../../hook/use-fetch";
 import {REST_PATH_AUTH} from "../../../constants/Constants";
 import Spinner from "../../common/Spinner";
 import {FavoriteReceiverResponse} from "../TotalBalanceContent";
+import {AlertState} from "../../notofications/AlertSnackBar";
 
 const AddFriendDialog: React.FC<{
     openAddFriendDialog: boolean;
     setOpenAddFriendDialog: (isOpen: boolean) => void;
-    setIsErrorMessageOpen: (isOpen: boolean) => void;
-    setIsSuccessMessageOpen: (isOpen: boolean) => void;
+    setErrorAlertState: (alertState: AlertState) => void;
+    setSuccessAlertState: (alertState: AlertState) => void;
     setFavoriteReceiversList: Dispatch<SetStateAction<FavoriteReceiverResponse[]>>;
 }> = (props) => {
     const appTheme = useTheme();
@@ -53,10 +54,13 @@ const AddFriendDialog: React.FC<{
     useEffect(() => {
         if (!!error) {
             console.log(error.message);
-            props.setIsErrorMessageOpen(true);
+            props.setErrorAlertState({
+                isOpen: true,
+                message: "Could not add new receiver."
+            });
             setIsProcessingAddFavoriteReceiverRequest(false);
         }
-    }, [error, props.setIsErrorMessageOpen])
+    }, [error, props.setErrorAlertState])
 
     const removeErrorIfFieldEmpty = (value: string, setTouched: (isTouched: boolean) => void) => {
         if (value.trim() === '') {
@@ -80,7 +84,10 @@ const AddFriendDialog: React.FC<{
         handleDialogClose();
         clearAccountNumberValue();
         clearNameValue();
-        props.setIsSuccessMessageOpen(true);
+        props.setSuccessAlertState({
+            isOpen: true,
+            message: "Successfully added new receiver."
+        });
     }
 
     const addFavoriteReceiverHandler = () => {

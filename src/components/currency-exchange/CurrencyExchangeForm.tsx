@@ -9,7 +9,7 @@ import {UseStateType} from "../../models/custom-types/UseStateType";
 import {CURRENCIES, REST_PATH_EXCHANGE} from "../../constants/Constants";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
-import AlertSnackBar from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
 
 export enum Action {
     sell,
@@ -21,8 +21,14 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
                                                                                                                                                           bottom,rates
 }) => {
     const { isLoading, error, sendRequest: sendExchangeCurrencyRequest } = useFetch();
-    const [isExchangeCurrencyErrorMessageOpen, setIsExchangeCurrencyErrorMessageOpen] = useState(false);
-    const [isExchangeCurrencySuccessMessageOpen, setIsExchangeCurrencySuccessMessageOpen] = useState(false);
+    const [successAlertState, setSuccessAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
+    const [errorAlertState, setErrorAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
     const conversionRate = rates[bottom.state.currency];
     const [isArrowUp, setIsArrowUp] = useState<boolean>(false);
 
@@ -65,26 +71,30 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
         }
         sendExchangeCurrencyRequest(exchangeCurrencyRequest, ()=>{
             top.setState({...top.state, "amount" : 0.00})
-            setIsExchangeCurrencySuccessMessageOpen(true);
+            setSuccessAlertState({
+                isOpen: true,
+                message: 'Successfully exchanged currency.'
+            });
         })
 
     }
 
     useEffect(()=>{
         if (!!error) {
-            setIsExchangeCurrencyErrorMessageOpen(true);
+            setErrorAlertState({
+                isOpen: true,
+                message: "Could not exchange currency."
+            })
         }
-    },[error, setIsExchangeCurrencyErrorMessageOpen])
+    },[error, setErrorAlertState])
 
     return (
         <>
             <Spinner isLoading={isLoading} />
-            <AlertSnackBar alertState={{"state": isExchangeCurrencyErrorMessageOpen, "setState": setIsExchangeCurrencyErrorMessageOpen}}
-                           severity="error"
-                           message="Could not exchange currency."/>
-            <AlertSnackBar alertState={{"state": isExchangeCurrencySuccessMessageOpen, "setState": setIsExchangeCurrencySuccessMessageOpen}}
-                           severity="success"
-                           message="Successfully exchanged currency."/>
+            <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
+                           severity="error"/>
+            <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}}
+                           severity="success"/>
             <Box gap={2} sx={{display: 'flex', flexDirection: 'column'}}>
                 <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}} gap={1}>
                     <TrendingUpIcon sx={{color: "primary.main"}}/>

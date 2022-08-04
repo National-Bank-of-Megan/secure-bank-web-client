@@ -7,7 +7,7 @@ import authContext from "../../store/auth-context";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
@@ -15,8 +15,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
     const navigate = useNavigate();
     const {isLoading, error, sendRequest: loginRequest} = useFetch();
     //  error handlers
-    const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
-    const [errorMsg, setErrorMsg] = useState<string>('');
+    const [errorAlertState, setErrorAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
     //data preparation
     const [password] = useState<number[] | undefined>(props.data?.combination.split(' ').map((i) => parseInt(i)))
     const [inputRefsArray] = useState(() =>
@@ -35,8 +37,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
 
     useEffect(() => {
         if (!!error) {
-            setIsErrorMessageOpen(true);
-            setErrorMsg('Incorrect password');
+            setErrorAlertState({
+                isOpen: true,
+                message: 'Incorrect password.'
+            });
             inputRefsArray.forEach(
                 (ref) => {
                     ref.current!.value = "";
@@ -107,8 +111,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
     const passwordSubmitHandler = () => {
         const psw = getPassword();
         if (!isCodeValid(psw)) {
-            setErrorMsg('Fill all cells')
-            setIsErrorMessageOpen(true);
+            setErrorAlertState({
+                isOpen: true,
+                message: 'Fill all cells.'
+            });
         } else {
             const loginRequestContent: RequestConfig = {
                 url: REST_PATH_AUTH + "/web/login",
@@ -136,8 +142,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 }}
             >
                 <Spinner isLoading={isLoading}/>
-                <AlertSnackBar message={errorMsg} severity="error"
-                               alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
+                <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
                 <Paper
                     sx={{
                         bgcolor: "background.paper",

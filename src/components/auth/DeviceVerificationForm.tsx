@@ -6,7 +6,7 @@ import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
 
 const DeviceVerificationForm = () => {
     const [digitsRefs] = useState(() =>
@@ -17,8 +17,10 @@ const DeviceVerificationForm = () => {
     const clientId = searchParams.get('clientId');
     //request
     const navigate = useNavigate();
-    const [errorMsg, setErrorMsg] = useState<string>('');
-    const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
+    const [errorAlertState, setErrorAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
     const {isLoading, error, sendRequest: loginRequest} = useFetch();
 
 
@@ -45,8 +47,10 @@ const DeviceVerificationForm = () => {
 
     useEffect(() => {
         if (!!error) {
-            setIsErrorMessageOpen(true);
-            setErrorMsg('Incorrect password');
+            setErrorAlertState({
+                isOpen: true,
+                message: 'Incorrect password.'
+            });
             return;
         }
 
@@ -61,8 +65,10 @@ const DeviceVerificationForm = () => {
     const submitHandler = () => {
         const code = getCode();
         if (!isCodeValid(code)) {
-            setErrorMsg('Fill all cells')
-            setIsErrorMessageOpen(true);
+            setErrorAlertState({
+                isOpen: true,
+                message: 'Fill all cells.'
+            });
             return;
         }
         const loginRequestContent: RequestConfig = {
@@ -90,8 +96,7 @@ const DeviceVerificationForm = () => {
             }}
         >
             <Spinner isLoading={isLoading}/>
-            <AlertSnackBar message={errorMsg} severity={"error"}
-                           alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
+            <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
             <Paper
                 sx={{
                     bgcolor: "background.paper",

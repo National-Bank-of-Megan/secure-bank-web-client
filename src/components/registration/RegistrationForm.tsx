@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import useInput from "../../hook/use-input";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {Link, useNavigate} from "react-router-dom";
-import AlertSnackBar from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
 import {isValidPassword} from "../../input-rules/is-valid-password";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
 import {isEmail} from "../../input-rules/is-email";
@@ -14,7 +14,10 @@ import {REST_PATH_AUTH} from "../../constants/Constants";
 const RegistrationForm = () => {
     const {isLoading, error, sendRequest: registerRequest} = useFetch();
     const [isRegistering, setIsRegistering] = useState<boolean>(false);
-    const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
+    const [errorAlertState, setErrorAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
     const navigate = useNavigate();
 
     const {
@@ -106,7 +109,10 @@ const RegistrationForm = () => {
             }
         };
 
-        setIsErrorMessageOpen(false);
+        setErrorAlertState({
+            isOpen: false,
+            message: ''
+        });
         setIsRegistering(true);
         registerRequest(registerRequestContent, handleRegistration);
     }
@@ -114,7 +120,10 @@ const RegistrationForm = () => {
     useEffect(() => {
         if (!!error) {
             console.log(error.message);
-            setIsErrorMessageOpen(true);
+            setErrorAlertState({
+                isOpen: true,
+                message: "This email has already been taken."
+            });
             setIsRegistering(false);
         }
     }, [error])
@@ -122,9 +131,8 @@ const RegistrationForm = () => {
     return (
         <>
             <Spinner isLoading={isRegistering || isLoading}/>
-            <AlertSnackBar alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}
-                           severity="error"
-                           message="This email has already been taken."/>
+            <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
+                           severity="error" />
 
             <form onSubmit={signUpHandler} style={{
                 marginLeft: "auto",

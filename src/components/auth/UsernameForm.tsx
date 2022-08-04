@@ -2,7 +2,7 @@ import {Box, Button, Paper, Stack, TextField, Typography,} from "@mui/material";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import useInput from "../../hook/use-input";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
-import AlertSnackBar from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
 import Spinner from "../common/Spinner";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
@@ -12,7 +12,10 @@ import {REST_PATH_AUTH} from "../../constants/Constants";
 const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData: Dispatch<SetStateAction<PasswordCombinationType | null>>, savedClientIdState: UseStateType<string> }> = (props) => {
     const {isLoading, error, sendRequest: getPasswordCombinationRequest} = useFetch();
     const [isGettingCombination, setIsGettingCombination] = useState<boolean>(false);
-    const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
+    const [errorAlertState, setErrorAlertState] = useState<AlertState>({
+        isOpen: false,
+        message: ''
+    });
     const {
         value: clientIdValue,
         isValid: clientIdIsValid,
@@ -41,14 +44,20 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData: Dispa
                 'Content-Type': 'application/json'
             }
         };
-        setIsErrorMessageOpen(false);
+        setErrorAlertState({
+            isOpen: false,
+            message: ''
+        });
         setIsGettingCombination(true);
         getPasswordCombinationRequest(getPasswordRandomCharsRequestContent, handleGettingCombinationSuccess)
     };
 
     useEffect(() => {
         if (!!error) {
-            setIsErrorMessageOpen(true);
+            setErrorAlertState({
+                isOpen: true,
+                message: 'Invalid client ID'
+            });
             setIsGettingCombination(false);
         }
     }, [error])
@@ -63,9 +72,7 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData: Dispa
             }}
         >
             <Spinner isLoading={isGettingCombination || isLoading}/>
-            <AlertSnackBar message="Invalid client ID"
-                           severity="error"
-                           alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
+            <AlertSnackBar severity="error" alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
             <Paper
                 sx={{
                     bgcolor: "background.paper",

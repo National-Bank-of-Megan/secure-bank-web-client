@@ -1,9 +1,9 @@
 class JWT {
-    name: string;
+    sub: string;
     exp: number;
 
-    constructor(name: string, exp: number) {
-        this.name = name;
+    constructor(sub: string, exp: number) {
+        this.sub = sub;
         this.exp = exp;
     }
 }
