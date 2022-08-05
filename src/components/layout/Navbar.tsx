@@ -11,11 +11,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/auth-store";
 import {UserState} from "../../reducers/user-reducer";
 import {logout} from "../../actions/user-action";
+import {useAppDispatch} from "../../hook/redux-hooks";
 
 export default function Navbar() {
     const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
     const { isAuthenticated } = userAuth;
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch()
 
     const {pathname} = useLocation();
     const [currentPath, setCurrentPath] = useState(-1);
@@ -43,8 +44,6 @@ export default function Navbar() {
     };
 
     const handleLogout = (e :SyntheticEvent)=>{
-        // NW CZEMU MUSZE TU DAWAC IGNORE, NA FILMIKU U TYPA BEZ TEGO DZIALALO, WELL SHIT HAPPENS
-        // @ts-ignore
         dispatch(logout())
     }
 

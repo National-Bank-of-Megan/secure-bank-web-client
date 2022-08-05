@@ -1,23 +1,20 @@
 import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
-import React, {createRef, useContext, useEffect, useReducer, useState} from "react";
+import React, {createRef, useEffect, useReducer, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
-import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {useNavigate} from "react-router-dom";
-import authContext from "../../store/auth-context";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
-import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
+import {PASSWORD_MAX_LENGTH} from "../../constants/Constants";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 import {login} from "../../actions/user-action";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../store/auth-store";
 import {UserState} from "../../reducers/user-reducer";
+import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
+
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
-    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
-    const { error } = userAuth;
-    const { loading } = userAuth;
+    const userAuth = useAppSelector((state) => state.userAuth)
+    // const {loading} = userAuth;
     const navigate = useNavigate();
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string>('');
@@ -29,7 +26,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
     const setCurrentIndex = useState<number>(password![0])[1];
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch()
 
     const getPassword = () => {
         let psw: string = ''
@@ -40,16 +37,13 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
     }
 
     useEffect(() => {
-        if (!!error) {
-            setIsErrorMessageOpen(true);
-            setErrorMsg('Incorrect password');
-            inputRefsArray.forEach(
-                (ref) => {
-                    ref.current!.value = "";
-                }
-            )
-            return;
-        }
+
+        inputRefsArray.forEach(
+            (ref) => {
+                ref.current!.value = "";
+            }
+        )
+
         inputRefsArray.forEach(
             (ref) => {
                 ref.current!.disabled = true;
@@ -62,7 +56,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         )
 
         inputRefsArray[password![0]].current?.focus()
-    }, [error, inputRefsArray, password]);
+    }, [inputRefsArray, password]);
 
     useEffect(() => {
         forceUpdate();
@@ -102,23 +96,33 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         setCurrentIndex(index);
     };
 
-    // const handleLogin = (response: any) => {
-    //     //todo check whether new device
-    //     const authToken = response['access_token'];
-    //     const refreshToken = response['refresh_token'];
-    //     authCtx.login(authToken, refreshToken);
-    //     navigate('/transfers', {replace: true})
-    // }
-
     const passwordSubmitHandler = () => {
         const psw = getPassword();
         if (!isCodeValid(psw)) {
             setErrorMsg('Fill all cells')
             setIsErrorMessageOpen(true);
         } else {
-            // @ts-ignore
-            dispatch(login(props.data!.clientId, psw))
-            navigate('/transfers', {replace: true})
+            dispatch(login(props.data!.clientId, psw)).then(() => {
+                alert(userAuth['status'])
+                    if (userAuth['status'] === 200) {
+                        navigate('/transfers', {replace: true})
+                    }
+
+                    if (userAuth['status'] === 206) {
+                        let url = '/login/verify?clientId='+props.data?.clientId;
+                        navigate(url, {replace: true})
+                    }
+
+                }
+            ).catch((error) => {
+                setIsErrorMessageOpen(true);
+                setErrorMsg(error);
+                inputRefsArray.forEach(
+                    (ref) => {
+                        ref.current!.value = "";
+                    }
+                )
+            })
         }
     }
 
@@ -132,7 +136,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                <Spinner isLoading={loading}/>
+                <Spinner isLoading={false}/>
                 <AlertSnackBar message={errorMsg} severity="error"
                                alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
                 <Paper
@@ -217,3 +221,4 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
 };
 
 export default PasswordForm;
+

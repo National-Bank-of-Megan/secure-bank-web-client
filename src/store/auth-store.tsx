@@ -28,8 +28,8 @@ const authStore = configureStore({
 
 const persistor = persistStore(authStore)
 
-
 export default authStore;
 export {persistor}
 
 export type RootState = ReturnType<typeof authStore.getState>
+export type AppDispatch = typeof authStore.dispatch

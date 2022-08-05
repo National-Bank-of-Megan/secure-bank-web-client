@@ -11,10 +11,10 @@ const root = ReactDOM.createRoot(
 );
 root.render(
     <Provider store={authStore}>
-        {/*<PersistGate persistor={persistor}>*/}
+        <PersistGate persistor={persistor}>
         <BrowserRouter>
             <App/>
         </BrowserRouter>
-        {/*</PersistGate>*/}
+        </PersistGate>
     </Provider>
 );

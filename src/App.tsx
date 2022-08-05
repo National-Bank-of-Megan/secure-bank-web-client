@@ -31,10 +31,6 @@ function App() {
                 <Layout>
                     <Routes>
                             <>
-                                <Route path="/" element={<CustomRoute><MainPage/></CustomRoute>}/>
-                                <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
-                                <Route path="/signup/success"
-                                       element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
                                 <Route path="/transfers" element={<PrivateRoute><TransferPage/></PrivateRoute>}/>
                                 <Route path="/exchange" element={<PrivateRoute><CurrencyExchangePage/></PrivateRoute>}/>
                                 <Route path="/history" element={<PrivateRoute><HistoryPage/></PrivateRoute>}/>
@@ -46,6 +42,10 @@ function App() {
                             <>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/login/verify" element={<DeviceVerificationPage/>}/>
+                                <Route path="/" element={<CustomRoute><MainPage/></CustomRoute>}/>
+                                <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
+                                <Route path="/signup/success"
+                                       element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
                             </>
                         }
                     </Routes>
