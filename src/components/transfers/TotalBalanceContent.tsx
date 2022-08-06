@@ -10,6 +10,7 @@ import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
 import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
 import {Link} from "react-router-dom";
+import {Decimal} from "decimal.js";
 import {findCurrencyByName} from "../../common/transfer";
 
 const availableCurrencies = {
@@ -23,12 +24,12 @@ const availableCurrencies = {
 export type AccountCurrencyBalance = {
     currency: string;
     symbol: string;
-    balance: number;
+    balance: Decimal;
 };
 
 type AccountCurrencyBalanceResponse = {
     currency: string;
-    balance: number;
+    balance: Decimal;
 };
 
 export type FavoriteReceiverResponse = {
@@ -80,14 +81,14 @@ const TotalBalanceContent = () => {
         setOpenAddFriendDialog(true);
     };
 
-    const addCurrencyBalance = (currencyName: string, amountToAdd: number) => {
+    const addCurrencyBalance = (currencyName: string, amountToAdd: string) => {
         setAccountCurrencyBalanceList(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
-                                                ? {...currency, balance: currency.balance + amountToAdd} : currency))
+                                                ? {...currency, balance: Decimal.add(currency.balance, amountToAdd)} : currency))
     }
 
-    const chargeCurrencyBalance = (currencyName: string, amountToCharge: number) => {
+    const chargeCurrencyBalance = (currencyName: string, amountToCharge: Decimal) => {
         setAccountCurrencyBalanceList(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
-            ? {...currency, balance: currency.balance - amountToCharge} : currency))
+            ? {...currency, balance: Decimal.sub(currency.balance, amountToCharge)} : currency))
     }
 
     const handleCurrencyChange = (e: SelectChangeEvent) => {

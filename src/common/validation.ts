@@ -1,4 +1,5 @@
 import {isNotEmpty} from "../input-rules/is-not-empty";
+import {Decimal} from "decimal.js";
 
 export const shouldUpdateNumberInput = (value: string): boolean => {
 
@@ -13,10 +14,11 @@ export const shouldUpdateNumberInput = (value: string): boolean => {
     }
     const maxDecimalPlaces = 2;
     const userDecimalPlaces = countDecimals(parseFloat(value));
-    return (userDecimalPlaces <= maxDecimalPlaces) && parseFloat(value) >= 0.0;
+    console.log((userDecimalPlaces <= maxDecimalPlaces) && new Decimal(value).greaterThan(0.0))
+    return (userDecimalPlaces <= maxDecimalPlaces) && new Decimal(value).greaterThan(0.0);
 }
 
-export const shouldUpdateTransferInput = (value: string, userBalance: number): boolean => {
+export const shouldUpdateTransferInput = (value: string, userBalance: Decimal): boolean => {
     return shouldUpdateNumberInput(value) && hasEnoughMoney(userBalance, value);
 }
 
@@ -29,6 +31,6 @@ export const isValidAmount = (value: string): boolean => {
     return isNotEmpty(value) && isPositiveValue(value);
 }
 
-export const hasEnoughMoney = (userBalance: number, amountValue: string): boolean => {
-    return amountValue.trim() === '' || userBalance - parseFloat(amountValue) >= 0; // first condition: if user input is empty, let it be changed
+export const hasEnoughMoney = (userBalance: Decimal, amountValue: string): boolean => {
+    return amountValue.trim() === '' || Decimal.sub(userBalance, amountValue).greaterThan(0.0); // first condition: if user input is empty, let it be changed
 }

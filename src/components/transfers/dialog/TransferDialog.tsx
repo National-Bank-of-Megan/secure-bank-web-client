@@ -32,6 +32,7 @@ import JWT from "../../../models/jwt";
 import Spinner from "../../common/Spinner";
 import {AlertState} from "../../notofications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
+import {Decimal} from "decimal.js";
 
 const TransferDialog: React.FC<{
     openTransferDialog: boolean;
@@ -42,7 +43,7 @@ const TransferDialog: React.FC<{
     favoriteReceivers: FavoriteReceiverResponse[];
     setErrorAlertState: (alertState: AlertState) => void;
     setSuccessAlertState: (alertState: AlertState) => void;
-    updateCurrencyBalance: (currencyName: string, amountToCharge: number) => void;
+    updateCurrencyBalance: (currencyName: string, amountToCharge: Decimal) => void;
 }> = (props) => {
     const authCtx = useContext(AuthContext);
     const appTheme = useTheme();
@@ -119,7 +120,7 @@ const TransferDialog: React.FC<{
     }
 
     const handleMakeTransferResponse = (response: any) => {
-        props.updateCurrencyBalance(props.selectedCurrencyName, parseFloat(amountValue));
+        props.updateCurrencyBalance(props.selectedCurrencyName, new Decimal(amountValue));
         handleDialogClose();
         clearAllInputs();
         props.setSuccessAlertState({
@@ -309,7 +310,7 @@ const TransferDialog: React.FC<{
                                         marginTop: "10px",
                                     }}
                                 >
-                                    Currency balance after money load: {foundCurrency.balance - Number(amountValue)} {foundCurrency.symbol}
+                                    <>Currency balance after transfer: {amountValue.trim() !== '' ? Decimal.sub(foundCurrency.balance, amountValue).toString() : foundCurrency.balance.toString()} {foundCurrency.symbol}</>
                                 </Typography>
                                 <Typography
                                     color="text.secondary"
@@ -317,7 +318,7 @@ const TransferDialog: React.FC<{
                                         fontSize: "12px",
                                     }}
                                 >
-                                    Total balance after money load: 15.253,51 PLN
+                                    Total balance after transfer: 15.253,51 PLN
                                 </Typography>
                             </FormControl>
                         </DialogContent>

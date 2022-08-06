@@ -21,6 +21,7 @@ import Spinner from "../../common/Spinner";
 import {isValidAmount} from "../../../common/validation";
 import {AlertState} from "../../notofications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
+import {Decimal} from 'decimal.js';
 
 const AddMoneyDialog: React.FC<{
     openAddMoneyDialog: boolean;
@@ -30,7 +31,7 @@ const AddMoneyDialog: React.FC<{
     currencies: AccountCurrencyBalance[]
     setErrorAlertState: (alertState: AlertState) => void;
     setSuccessAlertState: (alertState: AlertState) => void;
-    updateCurrencyBalance: (currencyName: string, amountToAdd: number) => void;
+    updateCurrencyBalance: (currencyName: string, amountToAdd: string) => void;
 }> = (props) => {
     const appTheme = useTheme();
 
@@ -75,7 +76,8 @@ const AddMoneyDialog: React.FC<{
 
     const handleAddToBalance = (response: any) => {
         setIsProcessingAddingMoneyRequest(false);
-        props.updateCurrencyBalance(props.selectedCurrencyName, parseFloat(addBalanceValue));
+        console.log(addBalanceValue)
+        props.updateCurrencyBalance(props.selectedCurrencyName, addBalanceValue);
         handleDialogClose();
         clearAddBalanceValue();
         props.setSuccessAlertState({
@@ -217,7 +219,7 @@ const AddMoneyDialog: React.FC<{
                                         marginTop: "10px",
                                     }}
                                 >
-                                    Currency balance after money load: {foundCurrency.balance + Number(addBalanceValue)} {foundCurrency.symbol}
+                                    <>Currency balance after money load: {addBalanceValue.trim() !== '' ? Decimal.add(foundCurrency.balance, addBalanceValue).toString() : foundCurrency.balance.toString()} {foundCurrency.symbol}</>
                                 </Typography>
                                 <Typography
                                     color="text.secondary"
