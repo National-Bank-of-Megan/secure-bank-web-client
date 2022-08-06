@@ -7,6 +7,9 @@ import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
 import AlertSnackBar from "../notofications/AlertSnackBar";
+import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
+import {login, verifyOtp} from "../../actions/user-action";
+import authStore from "../../store/auth-store";
 
 const DeviceVerificationForm = () => {
     const [digitsRefs] = useState(() =>
@@ -15,12 +18,13 @@ const DeviceVerificationForm = () => {
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const searchParams = useSearchParams()[0];
     const clientId = searchParams.get('clientId');
-    //request
     const navigate = useNavigate();
     const [errorMsg, setErrorMsg] = useState<string>('');
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
-    const {isLoading, error, sendRequest: loginRequest} = useFetch();
 
+    //redux
+    const userAuth = useAppSelector((state) => state.userAuth)
+    const dispatch = useAppDispatch()
 
     const getCode = () => {
         let code = '';
@@ -44,41 +48,43 @@ const DeviceVerificationForm = () => {
     };
 
     useEffect(() => {
-        if (!!error) {
-            setIsErrorMessageOpen(true);
-            setErrorMsg('Incorrect password');
-            return;
-        }
-
         digitsRefs[currentIndex].current?.focus();
         window.addEventListener("keyup", handleKeyPress, false);
 
         return () => {
             window.removeEventListener("keyup", handleKeyPress);
         };
-    }, [error]);
+    }, []);
 
     const submitHandler = () => {
         const code = getCode();
+        if(clientId === null) {
+            setErrorMsg('No client id')
+            setIsErrorMessageOpen(true);
+            return;
+        }
         if (!isCodeValid(code)) {
             setErrorMsg('Fill all cells')
             setIsErrorMessageOpen(true);
             return;
         }
-        const loginRequestContent: RequestConfig = {
-            url: REST_PATH_AUTH + "/web/login/verify",
-            method: "POST",
-            body: {
-                "clientId": clientId,
-                "code": code
-            },
-            headers: {
-                'Content-Type': 'application/json'
+        dispatch(verifyOtp(clientId, code)).then(() => {
+                if (userAuth['status'] === 200) {
+                    navigate('/transfers', {replace: true})
+                }
             }
-        };
-
-        loginRequest(loginRequestContent, () => navigate('/transfers'));
+        ).catch((error) => {
+            setIsErrorMessageOpen(true);
+            setErrorMsg(error);
+            digitsRefs.forEach(
+                (ref) => {
+                    ref.current!.value = "";
+                }
+            )
+        })
     }
+
+
 
     const handleFocus = (index: number) => {
         setCurrentIndex(index);
@@ -93,7 +99,7 @@ const DeviceVerificationForm = () => {
                 marginTop: "100px",
             }}
         >
-            <Spinner isLoading={isLoading}/>
+            <Spinner isLoading={userAuth["loading"]}/>
             <AlertSnackBar message={errorMsg} severity={"error"}
                            alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
             <Paper
@@ -145,6 +151,7 @@ const DeviceVerificationForm = () => {
                             width: "200px",
                             marginTop: "30px",
                         }}
+                        onClick={submitHandler}
 
                     >
                         Verify

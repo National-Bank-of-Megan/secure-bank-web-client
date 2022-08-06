@@ -60,7 +60,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
 
     useEffect(() => {
         forceUpdate();
-    }, []);
+    }, [forceUpdate]);
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const pressedButton = e.key;

@@ -122,7 +122,7 @@ const TotalBalanceContent = () => {
         };
 
         sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
-    }, [findCurrencyByName, sendSubAccountsRequest]);
+    }, [findCurrencyByName, sendSubAccountsRequest,setAccountCurrencyBalanceList,setSelectedCurrency,availableCurrencies]);
 
     return (
         <>

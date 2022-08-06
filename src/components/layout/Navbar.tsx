@@ -19,16 +19,16 @@ export default function Navbar() {
     const dispatch = useAppDispatch()
 
     const {pathname} = useLocation();
-    const [currentPath, setCurrentPath] = useState(-1);
+    const [currentPath, setCurrentPath] = useState(0);
     const [notificationsPopover, setNotificationsPopover] = React.useState<HTMLButtonElement | null>(null);
 
     const navigate = useNavigate();
     const paths = useMemo(() => ["/transfers", "/history", "/exchange", "/devices", "/account"], []);
 
-    useEffect(() => {
-        const value = paths.indexOf(pathname);
-        setCurrentPath(value);
-    }, [pathname, paths])
+    // useEffect(() => {
+    //     const value = paths.indexOf(pathname);
+    //     setCurrentPath(value);
+    // }, [pathname, paths, setCurrentPath])
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setCurrentPath(newValue);
