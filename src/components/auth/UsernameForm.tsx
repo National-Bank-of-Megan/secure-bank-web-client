@@ -2,7 +2,7 @@ import {Box, Button, Paper, Stack, TextField, Typography,} from "@mui/material";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import useInput from "../../hook/use-input";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
-import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
 import Spinner from "../common/Spinner";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";

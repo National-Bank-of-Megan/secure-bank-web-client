@@ -8,7 +8,7 @@ import AddMoneyDialog from "./dialog/AddMoneyDialog";
 import AddFriendDialog from "./dialog/AddFriendDialog";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {Link} from "react-router-dom";
 import {Decimal} from "decimal.js";
 import {findCurrencyByName} from "../../common/transfer";

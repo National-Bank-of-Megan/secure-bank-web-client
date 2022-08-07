@@ -7,7 +7,7 @@ import authContext from "../../store/auth-context";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {

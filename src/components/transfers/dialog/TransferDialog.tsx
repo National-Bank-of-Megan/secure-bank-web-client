@@ -28,9 +28,9 @@ import useFetch, {RequestConfig} from "../../../hook/use-fetch";
 import {REST_PATH_AUTH, REST_PATH_TRANSFER} from "../../../constants/Constants";
 import AuthContext from "../../../store/auth-context";
 import jwt_decode from "jwt-decode";
-import JWT from "../../../models/jwt";
+import DecodedJWT from "../../../models/decodedJWT";
 import Spinner from "../../common/Spinner";
-import {AlertState} from "../../notofications/AlertSnackBar";
+import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from "decimal.js";
 
@@ -140,7 +140,7 @@ const TransferDialog: React.FC<{
             method: "POST",
             body: {
                 "title": titleValue,
-                "senderId": jwt_decode<JWT>(authCtx.authToken).sub,
+                "senderId": jwt_decode<DecodedJWT>(authCtx.authToken).sub,
                 "receiverAccountNumber": accountNumberValue,
                 "amount": amountValue,
                 "currency": props.selectedCurrencyName

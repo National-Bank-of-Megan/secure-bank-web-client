@@ -18,7 +18,7 @@ import useFetch, {RequestConfig} from "../../../hook/use-fetch";
 import {REST_PATH_AUTH} from "../../../constants/Constants";
 import Spinner from "../../common/Spinner";
 import {FavoriteReceiverResponse} from "../TotalBalanceContent";
-import {AlertState} from "../../notofications/AlertSnackBar";
+import {AlertState} from "../../notifications/AlertSnackBar";
 
 const AddFriendDialog: React.FC<{
     openAddFriendDialog: boolean;

@@ -9,7 +9,7 @@ import {UseStateType} from "../../models/custom-types/UseStateType";
 import {CURRENCIES, REST_PATH_EXCHANGE} from "../../constants/Constants";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
-import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 
 export enum Action {
     sell,

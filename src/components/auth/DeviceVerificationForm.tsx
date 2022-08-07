@@ -6,7 +6,7 @@ import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 
 const DeviceVerificationForm = () => {
     const [digitsRefs] = useState(() =>

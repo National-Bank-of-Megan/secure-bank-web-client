@@ -4,8 +4,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
 import Tab from '@mui/material/Tab';
-import {useLocation, useNavigate} from "react-router-dom";
-import NotificationsListPopover from "../notofications/NotificationListPopover";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import NotificationsListPopover from "../notifications/NotificationListPopover";
 import AuthContext from "../../store/auth-context";
 
 export default function Navbar() {
@@ -36,7 +36,12 @@ export default function Navbar() {
         setNotificationsPopover(null);
     };
 
+    const getUserInitials = () => {
+        return authCtx.isLoggedIn() ? authCtx.firstName.charAt(0) + authCtx.lastName.charAt(0) : "";
+    }
+
     const open = Boolean(notificationsPopover);
+    const userInitials = getUserInitials();
 
     return (
         <Box sx={{flexGrow: 1}}>
@@ -97,14 +102,16 @@ export default function Navbar() {
                             <NotificationsListPopover/>
                         </Popover>
 
-                        <IconButton
-                            size="large"
-                            aria-label="show 4 new mails"
-                            color="inherit"
-                        >
-                            <Avatar sx={{bgcolor: "primary.main", width: 34, height: 34}}><Typography
-                                color="secondary.light" sx={{fontSize: '15px'}}>MT</Typography></Avatar>
-                        </IconButton>
+                        <Link to="/account" style={{ textDecoration: 'none' }}>
+                            <IconButton
+                                size="large"
+                                aria-label="show 4 new mails"
+                                color="inherit"
+                            >
+                                <Avatar sx={{bgcolor: "primary.main", width: 34, height: 34}}><Typography
+                                    color="secondary.light" sx={{fontSize: '15px'}}>{userInitials}</Typography></Avatar>
+                            </IconButton>
+                        </Link>
 
                         <IconButton
                             size="large"

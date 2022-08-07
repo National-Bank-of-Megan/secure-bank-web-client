@@ -3,7 +3,7 @@ import {Button, Grid, IconButton, Stack, Typography} from '@mui/material';
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import {ContentCopy} from "@mui/icons-material";
-import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {SuccessfulRegistrationType} from "../../models/custom-types/SuccessfulRegistrationType";
 
 const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegistrationType }> = ({registrationResponseData}) => {

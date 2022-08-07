@@ -1,5 +1,5 @@
 import {Typography} from "@mui/material";
-import NotificationsList from "../components/notofications/NotificationsList";
+import NotificationsList from "../components/notifications/NotificationsList";
 
 const NotificationsPage = () => {
     return (

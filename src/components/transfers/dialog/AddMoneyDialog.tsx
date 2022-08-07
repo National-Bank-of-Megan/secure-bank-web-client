@@ -19,7 +19,7 @@ import {REST_PATH_AUTH} from "../../../constants/Constants";
 import React, {useEffect, useState} from "react";
 import Spinner from "../../common/Spinner";
 import {isValidAmount} from "../../../common/validation";
-import {AlertState} from "../../notofications/AlertSnackBar";
+import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from 'decimal.js';
 

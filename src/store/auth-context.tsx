@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import jwt_decode from "jwt-decode";
-import JWT from "../models/jwt";
+import DecodedJWT from "../models/decodedJWT";
 
 type AuthContextObj = {
     authToken: string;
     refreshToken: string;
+    firstName: string;
+    lastName: string;
     isLoggedIn: () => boolean;
     login: (authToken: string, refreshToken: string) => void;
     logout: () => void;
@@ -16,15 +18,14 @@ type AuthContextObj = {
 const AuthContext = React.createContext<AuthContextObj>({
     authToken: '',
     refreshToken: '',
+    firstName: '',
+    lastName: '',
     isLoggedIn: () => false,
-    login: (authToken, refreshToken) => {
-    },
-    logout: () => {
-    },
+    login: (authToken, refreshToken) => {},
+    logout: () => {},
     removeAuthTokenIfExpired: () => false,
     removeRefreshTokenIfExpired: () => false,
-    addAuthToken: (authToken) => {
-    }
+    addAuthToken: (authToken) => {}
 });
 
 interface Props {
@@ -61,8 +62,7 @@ export const AuthContextProvider: React.FC<Props> = ({children}) => {
     }
 
     const isLoggedIn = () => {
-
-        return !!authToken && !isTokenExpired(authToken);
+        return (!!authToken && !isTokenExpired(authToken)) || (!!refreshToken && !isTokenExpired(refreshToken));
     }
 
     const removeAuthTokenIfExpired = () => {
@@ -75,13 +75,13 @@ export const AuthContextProvider: React.FC<Props> = ({children}) => {
 
     const isTokenExpired = (token: string) => {
         const toMilliseconds = 1000;
-        const authTokenExpiration = jwt_decode<JWT>(token).exp;
+        const authTokenExpiration = jwt_decode<DecodedJWT>(token).exp;
         return authTokenExpiration * toMilliseconds <= new Date().getTime()
     }
 
     const loginHandler = (authToken: string, refreshToken: string) => {
         setAuthToken(authToken);
-        setRefreshToken(refreshToken)
+        setRefreshToken(refreshToken);
         localStorage.setItem(authTokenKey, authToken);
         localStorage.setItem(refreshTokenKey, refreshToken);
     }
@@ -97,10 +97,14 @@ export const AuthContextProvider: React.FC<Props> = ({children}) => {
     removeRefreshTokenIfExpired();
     const authTokenFullName = authToken ? authHeader + authToken : "";
     const refreshTokenFullName = refreshToken ? authHeader + refreshToken : "";
+    const firstName = authToken ? jwt_decode<DecodedJWT>(authToken).firstName : "";
+    const lastName = authToken ? jwt_decode<DecodedJWT>(authToken).lastName : "";
 
     const contextValue = {
         authToken: authTokenFullName,
         refreshToken: refreshTokenFullName,
+        firstName: firstName,
+        lastName: lastName,
         isLoggedIn: isLoggedIn,
         login: loginHandler,
         logout: logoutHandler,

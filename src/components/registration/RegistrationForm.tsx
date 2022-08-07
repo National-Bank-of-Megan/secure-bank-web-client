@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import useInput from "../../hook/use-input";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {Link, useNavigate} from "react-router-dom";
-import AlertSnackBar, {AlertState} from "../notofications/AlertSnackBar";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {isValidPassword} from "../../input-rules/is-valid-password";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
 import {isEmail} from "../../input-rules/is-email";
