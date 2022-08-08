@@ -69,7 +69,8 @@ const DeviceVerificationForm = () => {
             return;
         }
         dispatch(verifyOtp(clientId, code)).then(() => {
-                if (userAuth['status'] === 200) {
+            const status = authStore.getState().userAuth['status']
+                if (status === 200) {
                     navigate('/transfers', {replace: true})
                 }
             }

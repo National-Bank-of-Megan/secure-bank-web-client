@@ -1,4 +1,7 @@
 import {
+    REFRESH_TOKEN_EXPIRATION,
+    TOKEN_REFRESH_REQUEST,
+    TOKEN_REFRESH_SUCCESS,
     USER_AUTH_FAIL,
     USER_AUTH_REQUEST,
     USER_AUTH_SUCCESS,
@@ -36,9 +39,15 @@ export const userAuthenticationReducer = (state: UserState = {
         case USER_AUTH_FAIL:
             return {loading: false, error: action.payload, isAuthenticated: false, status: action.status}
         case USER_LOGOUT:
-            return {loading: false, error: '', isAuthenticated: false, authTokens: {}, status : -1}
+            return {loading: false, error: '', isAuthenticated: false, authTokens: {}, status: -1}
         case USER_PARTIAL_AUTH:
-            return {loading: false, error:'', isAuthenticated: false, authTokens: {}, status: action.status}
+            return {loading: false, error: '', isAuthenticated: false, authTokens: {}, status: action.status}
+        case TOKEN_REFRESH_REQUEST:
+            return {loading: true, isAuthenticated: true}
+        case REFRESH_TOKEN_EXPIRATION:
+            return {loading: false, error: '', isAuthenticated: false, authTokens: {}, status: -1}
+        case TOKEN_REFRESH_SUCCESS:
+            return {authTokens: {accessToken: action.payload}}
         default:
             return state;
 

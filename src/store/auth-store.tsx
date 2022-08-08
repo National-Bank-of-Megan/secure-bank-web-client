@@ -32,10 +32,6 @@ const authStore = configureStore({
 
 })
 
-const unsubscribe = authStore.subscribe(() =>
-    console.log('State after dispatch: ', authStore.getState().userAuth)
-)
-
 const persistor = persistStore(authStore)
 
 export default authStore;

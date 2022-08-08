@@ -30,10 +30,6 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
 
     const dispatch = useAppDispatch()
 
-    // const updateReduxState= useCallback(()=>{
-    //     userAuth = useSelector()
-    // },[userAuth])
-
     const getPassword = () => {
         let psw: string = ''
         password?.forEach(p => {
@@ -111,15 +107,13 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
            dispatch( login(props.data!.clientId, psw)).then(
                (response)=>{
 
-
-                   console.log('login perforemd')
-                   console.log(userAuth['status'])
-                   if (userAuth['status'] === 200) {
-                       alert('redirecting to trasgers ...')
+                  const status = authStore.getState().userAuth['status']
+                   if (status === 200) {
+                       console.log('redirecting to transfers page ...')
                        navigate('/transfers', {replace: true})
                    }
 
-                   if (userAuth.status === 206) {
+                   if (status === 206) {
                        console.log('redirecting to otp verification page ...')
                        let url = '/login/verify?clientId=' + props.data?.clientId;
                        navigate(url, {replace: true})

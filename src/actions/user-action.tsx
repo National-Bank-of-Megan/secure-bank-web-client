@@ -10,7 +10,6 @@ import {RootState} from "../store/auth-store";
 import {AnyAction} from "redux";
 import {REST_PATH_AUTH} from "../constants/Constants";
 import storage from "redux-persist/lib/storage";
-import FetchError from "../models/fetchError";
 
 const reduxAuthFetch = async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>, url :string, body : string) :Promise<void>=>{
 
@@ -37,64 +36,27 @@ const reduxAuthFetch = async (dispatch: ThunkDispatch<RootState, unknown, AnyAct
         })
         return;
     }
-
+    const status  = response.status;
     const data = await response.json();
     const authTokens = {accessToken: data.access_token, refreshToken: data.refresh_token}
 
     dispatch({
         type: USER_AUTH_SUCCESS,
-        payload: authTokens
+        payload: authTokens,
+        status : status
     })
 
 }
 
 export const   login = (clientId: string, password: string)   :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> => {
 
-    dispatch({
-        type: USER_AUTH_REQUEST
+    const url = REST_PATH_AUTH + "/web/login";
+    const body = JSON.stringify({
+        clientId : clientId,
+        password : password
     })
 
-    const response = await fetch(REST_PATH_AUTH + "/web/login", {
-        method: "POST",
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            clientId,
-            password
-        })
-    })
-
-    if (!response.ok) {
-        const text = await response.text() || 'Invalid credentials';
-        dispatch({
-            type: USER_AUTH_FAIL,
-            payload: text,
-            status: response.status
-        })
-        return Promise.reject(text)
-
-    }
-
-    if (response.status === 206) {
-        dispatch({
-            type: USER_PARTIAL_AUTH,
-            status: response.status
-        })
-        return Promise.resolve();
-    }
-
-    const data = await response.json();
-    const authTokens = {accessToken: data.access_token, refreshToken: data.refresh_token}
-
-    const status = response.status
-    alert('reducer '+status)
-   dispatch({
-        type: USER_AUTH_SUCCESS,
-        status : status,
-        payload: authTokens
-    })
-
-    return Promise.resolve();
-
+    await reduxAuthFetch(dispatch, url, body)
 
 
 }
@@ -102,19 +64,13 @@ export const   login = (clientId: string, password: string)   :ThunkAction<Promi
 export const logout = (): ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> => {
 
     dispatch({
-        type: USER_LOGOUT,
+        type: USER_LOGOUT
     });
 
     await storage.removeItem('persist: persist-key')
-
-
 }
 
 export const verifyOtp = (clientId :string, code :string) :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> =>{
-    dispatch({
-        type : USER_AUTH_REQUEST
-    })
-
     const body = JSON.stringify({
         clientId : clientId,
         code : code

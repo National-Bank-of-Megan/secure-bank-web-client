@@ -3,8 +3,11 @@ import FetchError from "../models/fetchError";
 import {useNavigate} from "react-router-dom";
 import {REST_PATH_AUTH} from "../constants/Constants";
 import {useSelector} from "react-redux";
-import {RootState} from "../store/auth-store";
+import authStore, {RootState} from "../store/auth-store";
 import {UserState} from "../reducers/user-reducer";
+import {useAppDispatch} from "./redux-hooks";
+import {isTokenValid, requestAuthTokenWithRefreshToken} from "../actions/token-action";
+import {logout} from "../actions/user-action";
 
 export type Headers = {
     [key: string]: any;
@@ -22,8 +25,9 @@ const useFetch = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<FetchError | null>(null);
     const navigate = useNavigate();
+    //redux
     const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
-
+    const dispatch = useAppDispatch()
     const {isAuthenticated} = userAuth;
 
     const sendRequest = useCallback(async <T, >(requestConfig: RequestConfig, applyData: (data: T) => void) => {
@@ -34,23 +38,28 @@ const useFetch = () => {
             requestConfig.headers = {};
         }
 
-        // if we want to set session max idle time, we should retrieve old authToken before we remove it and
-        // send it together with refreshToken to Backend API
+        const isAccessTokenValid = isTokenValid('accessToken');
+        const isRefreshTokenValid = isTokenValid('refreshToken');
+        console.log('Access token is :'+isAccessTokenValid)
+        console.log('Refresh token is :'+isRefreshTokenValid)
 
+        if(!isRefreshTokenValid){
+            console.log('Logging out, refresh token is expired');
+            await dispatch(logout());
+        }
 
 
         try {
-            if (isAuthenticated) {
-                //get access token from redux state
-                requestConfig.headers['Authorization'] = 'Bearer ' +userAuth.authTokens.accessToken;
-
+            if (isAccessTokenValid) requestConfig.headers['Authorization'] = userAuth.authTokens.accessToken;
+            else if (isRefreshTokenValid) {
+               dispatch(requestAuthTokenWithRefreshToken()).then((response)=>{
+                    // @ts-ignore
+                   requestConfig.headers['Authorization'] = userAuth.authTokens.accessToken;
+                })
             }
+            else if (!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
+                navigate('/login');
 
-
-            // if(!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
-            // {
-            //     navigate('/login');
-            // }
 
             const APIAddress = requestConfig.url;
             const response = await fetch(APIAddress, {
@@ -71,7 +80,7 @@ const useFetch = () => {
             setError(error as FetchError || new FetchError(500, "Something went wrong."));
         }
         setIsLoading(false);
-    }, [navigate]);
+    }, [navigate,dispatch,userAuth]);
 
 
     return {
