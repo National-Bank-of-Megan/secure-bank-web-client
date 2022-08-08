@@ -30,24 +30,22 @@ function App() {
             <CssBaseline>
                 <Layout>
                     <Routes>
-                            <>
-                                <Route path="/transfers" element={<PrivateRoute><TransferPage/></PrivateRoute>}/>
-                                <Route path="/exchange" element={<PrivateRoute><CurrencyExchangePage/></PrivateRoute>}/>
-                                <Route path="/history" element={<PrivateRoute><HistoryPage/></PrivateRoute>}/>
-                                <Route path="/account" element={<PrivateRoute><AccountPage/></PrivateRoute>}/>
-                                <Route path="/devices" element={<PrivateRoute><DevicesPage/></PrivateRoute>}/>
-                                <Route path='*' element={<Navigate to="/"/>}/>
-                            </>
+                        <Route path="/" element={<CustomRoute><MainPage/></CustomRoute>}/>
+                        <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
+                        <Route path="/signup/success"
+                               element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
                         {!isAuthenticated &&
                             <>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/login/verify" element={<DeviceVerificationPage/>}/>
-                                <Route path="/" element={<CustomRoute><MainPage/></CustomRoute>}/>
-                                <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
-                                <Route path="/signup/success"
-                                       element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
                             </>
                         }
+                        <Route path="/transfers" element={<PrivateRoute><TransferPage/></PrivateRoute>}/>
+                        <Route path="/exchange" element={<PrivateRoute><CurrencyExchangePage/></PrivateRoute>}/>
+                        <Route path="/history" element={<PrivateRoute><HistoryPage/></PrivateRoute>}/>
+                        <Route path="/account" element={<PrivateRoute><AccountPage/></PrivateRoute>}/>
+                        <Route path="/devices" element={<PrivateRoute><DevicesPage/></PrivateRoute>}/>
+                        <Route path='*' element={<Navigate to="/"/>}/>
                     </Routes>
                 </Layout>
             </CssBaseline>

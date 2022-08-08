@@ -54,7 +54,7 @@ const DeviceVerificationForm = () => {
         return () => {
             window.removeEventListener("keyup", handleKeyPress);
         };
-    }, []);
+    }, [digitsRefs,handleKeyPress]);
 
     const submitHandler = () => {
         const code = getCode();

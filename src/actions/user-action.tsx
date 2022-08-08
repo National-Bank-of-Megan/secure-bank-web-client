@@ -48,7 +48,7 @@ const reduxAuthFetch = async (dispatch: ThunkDispatch<RootState, unknown, AnyAct
 
 }
 
-export const login = (clientId: string, password: string)   :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> => {
+export const   login = (clientId: string, password: string)   :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> => {
 
     dispatch({
         type: USER_AUTH_REQUEST
@@ -79,8 +79,21 @@ export const login = (clientId: string, password: string)   :ThunkAction<Promise
             type: USER_PARTIAL_AUTH,
             status: response.status
         })
-      return;
+        return Promise.resolve();
     }
+
+    const data = await response.json();
+    const authTokens = {accessToken: data.access_token, refreshToken: data.refresh_token}
+
+    const status = response.status
+    alert('reducer '+status)
+   dispatch({
+        type: USER_AUTH_SUCCESS,
+        status : status,
+        payload: authTokens
+    })
+
+    return Promise.resolve();
 
 
 
@@ -107,6 +120,6 @@ export const verifyOtp = (clientId :string, code :string) :ThunkAction<Promise<v
         code : code
     })
 
-    const url = REST_PATH_AUTH + "/web/login/verify"
+    const url = REST_PATH_AUTH + "/web/login/verify?clientId="+clientId
     await reduxAuthFetch(dispatch, url, body);
 }

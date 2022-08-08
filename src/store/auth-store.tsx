@@ -17,14 +17,24 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, reducers)
 
-const initialState = {}
+const initialState = {
+
+}
 
 const authStore = configureStore({
     devTools: true,
     preloadedState: initialState,
-    reducer: persistedReducer
+    reducer: persistedReducer,
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({
+            serializableCheck: false,
+        })
 
 })
+
+const unsubscribe = authStore.subscribe(() =>
+    console.log('State after dispatch: ', authStore.getState().userAuth)
+)
 
 const persistor = persistStore(authStore)
 

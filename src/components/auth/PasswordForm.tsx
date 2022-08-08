@@ -1,5 +1,5 @@
 import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
-import React, {createRef, useEffect, useReducer, useState} from "react";
+import React, {createRef, useCallback, useEffect, useReducer, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate} from "react-router-dom";
 import Spinner from "../common/Spinner";
@@ -10,11 +10,13 @@ import {PasswordCombinationType} from "../../models/custom-types/PasswordCombina
 import {login} from "../../actions/user-action";
 import {UserState} from "../../reducers/user-reducer";
 import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
+import {useSelector} from "react-redux";
+import authStore, {RootState} from "../../store/auth-store";
 
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
-    const userAuth = useAppSelector((state) => state.userAuth)
-    // const {loading} = userAuth;
+    let userAuth = useSelector<RootState,UserState>((state :RootState)=>state.userAuth)
+    const [status, setStatus] = useState<number>(userAuth['status'])
     const navigate = useNavigate();
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
     const [errorMsg, setErrorMsg] = useState<string>('');
@@ -27,6 +29,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
     const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     const dispatch = useAppDispatch()
+
+    // const updateReduxState= useCallback(()=>{
+    //     userAuth = useSelector()
+    // },[userAuth])
 
     const getPassword = () => {
         let psw: string = ''
@@ -56,7 +62,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         )
 
         inputRefsArray[password![0]].current?.focus()
-    }, [inputRefsArray, password]);
+    }, [inputRefsArray, password, status, userAuth]);
 
     useEffect(() => {
         forceUpdate();
@@ -102,27 +108,35 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
             setErrorMsg('Fill all cells')
             setIsErrorMessageOpen(true);
         } else {
-            dispatch(login(props.data!.clientId, psw)).then(() => {
-                alert(userAuth['status'])
-                    if (userAuth['status'] === 200) {
-                        navigate('/transfers', {replace: true})
-                    }
+           dispatch( login(props.data!.clientId, psw)).then(
+               (response)=>{
 
-                    if (userAuth['status'] === 206) {
-                        let url = '/login/verify?clientId='+props.data?.clientId;
-                        navigate(url, {replace: true})
-                    }
 
-                }
-            ).catch((error) => {
-                setIsErrorMessageOpen(true);
-                setErrorMsg(error);
-                inputRefsArray.forEach(
-                    (ref) => {
-                        ref.current!.value = "";
-                    }
-                )
-            })
+                   console.log('login perforemd')
+                   console.log(userAuth['status'])
+                   if (userAuth['status'] === 200) {
+                       alert('redirecting to trasgers ...')
+                       navigate('/transfers', {replace: true})
+                   }
+
+                   if (userAuth.status === 206) {
+                       console.log('redirecting to otp verification page ...')
+                       let url = '/login/verify?clientId=' + props.data?.clientId;
+                       navigate(url, {replace: true})
+                   }
+               }
+           )
+                .catch((error) => {
+                    setIsErrorMessageOpen(true);
+                    setErrorMsg(error);
+                    inputRefsArray.forEach(
+                        (ref) => {
+                            ref.current!.value = "";
+                        }
+                    )
+                })
+
+
         }
     }
 
@@ -136,7 +150,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                <Spinner isLoading={false}/>
+                <Spinner isLoading={userAuth['loading']}/>
                 <AlertSnackBar message={errorMsg} severity="error"
                                alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
                 <Paper
