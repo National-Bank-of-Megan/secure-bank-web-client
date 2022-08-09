@@ -14,10 +14,18 @@ import {logout} from "./user-action";
 
 
 export const isTokenValid = (tokenName: string): boolean => {
-    const token = authStore.getState().userAuth['authTokens'][tokenName];
-    const toMilliseconds = 1000;
-    const authTokenExpiration = jwt_decode<DecodedJWT>(token).exp;
-    return authTokenExpiration * toMilliseconds <= new Date().getTime()
+    try {
+        const token = authStore.getState().userAuth['authTokens'][tokenName];
+        if(token === undefined) return false;
+        console.log(token)
+        const toMilliseconds = 1000;
+        const authTokenExpiration = jwt_decode<DecodedJWT>(token).exp;
+        console.log(authTokenExpiration)
+        console.log(new Date().getTime())
+        return authTokenExpiration * toMilliseconds >= new Date().getTime()
+    }catch(error){
+        return false;
+    }
 }
 
 export const requestAuthTokenWithRefreshToken = () :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void>=> {
@@ -25,10 +33,12 @@ export const requestAuthTokenWithRefreshToken = () :ThunkAction<Promise<void>, R
     const response = await fetch(url, {
         method: 'GET',
         headers: {
-            'Authorization': authStore.getState().userAuth['authTokens']['refreshToken']
+            'Authorization': 'Bearer '+authStore.getState().userAuth['authTokens']['refreshToken']
         }
     });
 
+    console.log('Got access token with refresh')
+    console.log(response)
     if (!response.ok) {
         dispatch({
             type: REFRESH_TOKEN_EXPIRATION
@@ -37,10 +47,13 @@ export const requestAuthTokenWithRefreshToken = () :ThunkAction<Promise<void>, R
         await storage.removeItem('persist: persist-key')
     }
 
+    const status  = response.status;
     const data = await response.json();
+    const authTokens = {accessToken: data.access_token, refreshToken: authStore.getState().userAuth['authTokens']['refreshToken']}
     dispatch({
         type: TOKEN_REFRESH_SUCCESS,
-        payload : data.refresh_token
+        payload : authTokens,
+        status : status
     })
 
 };

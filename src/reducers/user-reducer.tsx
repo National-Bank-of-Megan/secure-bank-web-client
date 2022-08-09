@@ -47,7 +47,7 @@ export const userAuthenticationReducer = (state: UserState = {
         case REFRESH_TOKEN_EXPIRATION:
             return {loading: false, error: '', isAuthenticated: false, authTokens: {}, status: -1}
         case TOKEN_REFRESH_SUCCESS:
-            return {authTokens: {accessToken: action.payload}}
+            return {authTokens:  action.payload, isAuthenticated: true, loading : false, status :action.status, error :''}
         default:
             return state;
 

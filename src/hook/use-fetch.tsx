@@ -50,11 +50,12 @@ const useFetch = () => {
 
 
         try {
-            if (isAccessTokenValid) requestConfig.headers['Authorization'] = userAuth.authTokens.accessToken;
+            if (isAccessTokenValid) requestConfig.headers['Authorization'] = 'Bearer '+userAuth.authTokens.accessToken;
             else if (isRefreshTokenValid) {
                dispatch(requestAuthTokenWithRefreshToken()).then((response)=>{
-                    // @ts-ignore
-                   requestConfig.headers['Authorization'] = userAuth.authTokens.accessToken;
+                   console.log(userAuth.authTokens['accessToken'])
+                   // @ts-ignore
+                   requestConfig.headers['Authorization'] = 'Bearer '+userAuth.authTokens['accessToken'];
                 })
             }
             else if (!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
@@ -80,7 +81,7 @@ const useFetch = () => {
             setError(error as FetchError || new FetchError(500, "Something went wrong."));
         }
         setIsLoading(false);
-    }, [navigate,dispatch,userAuth]);
+    }, [navigate]);
 
 
     return {
