@@ -8,6 +8,8 @@ import {UserState} from "../reducers/user-reducer";
 import {useAppDispatch} from "./redux-hooks";
 import {isTokenValid, requestAuthTokenWithRefreshToken} from "../actions/token-action";
 import {logout} from "../actions/user-action";
+import {ThunkDispatch} from "redux-thunk";
+import {AnyAction} from "redux";
 
 export type Headers = {
     [key: string]: any;
@@ -20,6 +22,7 @@ export type RequestConfig = {
     body?: {};
 };
 
+
 const useFetch = () => {
 
     const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +32,10 @@ const useFetch = () => {
     const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
     const dispatch = useAppDispatch()
     const {isAuthenticated} = userAuth;
+
+    const dispatchSynchronously = async (dispatch : ThunkDispatch<RootState, unknown, AnyAction>) =>  {
+        await dispatch(requestAuthTokenWithRefreshToken())
+    }
 
     const sendRequest = useCallback(async <T, >(requestConfig: RequestConfig, applyData: (data: T) => void) => {
         setIsLoading(true);
@@ -48,20 +55,23 @@ const useFetch = () => {
             await dispatch(logout());
         }
 
-
         try {
-            if (isAccessTokenValid) requestConfig.headers['Authorization'] = 'Bearer '+userAuth.authTokens.accessToken;
+            if (isAccessTokenValid) {
+                console.log('Sending request with valid access token')
+                requestConfig.headers['Authorization'] = 'Bearer '+userAuth.authTokens.accessToken;
+            }
             else if (isRefreshTokenValid) {
-               dispatch(requestAuthTokenWithRefreshToken()).then((response)=>{
-                   console.log(userAuth.authTokens['accessToken'])
+                console.log('getting access token form dispatch')
+
+                await dispatchSynchronously(dispatch)
                    // @ts-ignore
-                   requestConfig.headers['Authorization'] = 'Bearer '+userAuth.authTokens['accessToken'];
-                })
+                   requestConfig.headers['Authorization'] = 'Bearer '+authStore.getState().userAuth['authTokens']['accessToken'];
             }
             else if (!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
                 navigate('/login');
 
 
+            console.log('fetching request')
             const APIAddress = requestConfig.url;
             const response = await fetch(APIAddress, {
                 method: requestConfig.method ? requestConfig.method : 'GET',

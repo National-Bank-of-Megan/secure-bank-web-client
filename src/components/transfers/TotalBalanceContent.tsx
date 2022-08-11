@@ -161,8 +161,9 @@ const TotalBalanceContent = () => {
                         fontSize: "18px"
                     }}>Currency balance</InputLabel>
                     <Select value={selectedCurrency.currency} onChange={handleCurrencyChange}>
-                        {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
-                            <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
+                        {
+                            accountCurrencyBalanceList.map((accountCurrencyBalance) => (
+                            <MenuItem key={accountCurrencyBalanceList.indexOf(accountCurrencyBalance)} value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                         ))}
                     </Select>
                     {/*<List*/}

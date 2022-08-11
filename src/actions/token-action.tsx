@@ -17,11 +17,11 @@ export const isTokenValid = (tokenName: string): boolean => {
     try {
         const token = authStore.getState().userAuth['authTokens'][tokenName];
         if(token === undefined) return false;
-        console.log(token)
+        // console.log(token)
         const toMilliseconds = 1000;
         const authTokenExpiration = jwt_decode<DecodedJWT>(token).exp;
-        console.log(authTokenExpiration)
-        console.log(new Date().getTime())
+        // console.log(authTokenExpiration)
+        // console.log(new Date().getTime())
         return authTokenExpiration * toMilliseconds >= new Date().getTime()
     }catch(error){
         return false;
@@ -29,6 +29,7 @@ export const isTokenValid = (tokenName: string): boolean => {
 }
 
 export const requestAuthTokenWithRefreshToken = () :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void>=> {
+
     const url = REST_PATH_AUTH + "/web/token/refresh";
     const response = await fetch(url, {
         method: 'GET',
@@ -38,7 +39,6 @@ export const requestAuthTokenWithRefreshToken = () :ThunkAction<Promise<void>, R
     });
 
     console.log('Got access token with refresh')
-    console.log(response)
     if (!response.ok) {
         dispatch({
             type: REFRESH_TOKEN_EXPIRATION
@@ -49,6 +49,7 @@ export const requestAuthTokenWithRefreshToken = () :ThunkAction<Promise<void>, R
 
     const status  = response.status;
     const data = await response.json();
+    // console.log('received access token:\t'+data.access_token)
     const authTokens = {accessToken: data.access_token, refreshToken: authStore.getState().userAuth['authTokens']['refreshToken']}
     dispatch({
         type: TOKEN_REFRESH_SUCCESS,
