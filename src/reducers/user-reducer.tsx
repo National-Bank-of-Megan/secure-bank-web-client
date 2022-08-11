@@ -18,7 +18,7 @@ export interface UserState {
     authTokens: { accessToken?: string, refreshToken?: string }
 }
 
-interface Action {
+export interface Action {
     type: string,
     payload?: string,
     status: number
