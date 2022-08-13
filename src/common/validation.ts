@@ -22,6 +22,13 @@ export const shouldUpdateTransferInput = (value: string, userBalance: Decimal): 
     return shouldUpdateNumberInput(value) && hasEnoughMoney(userBalance, value);
 }
 
+export const shouldUpdateCode = (value: string): boolean => {
+    if (value.trim() === '') {
+        return true;
+    }
+    return parseFloat(value) >= 0.0 && value.trim().length < 6;
+}
+
 const isPositiveValue = (value: string): boolean => {
     const numericValue = parseFloat(value);
     return numericValue > 0;
