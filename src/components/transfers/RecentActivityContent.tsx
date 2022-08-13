@@ -31,7 +31,7 @@ const RecentActivityContent: React.FC<{ recent: TransactionType[] }> = ({recent}
             >
                 {
                     recent.map(r => {
-                        return <Transaction item={r}/>
+                        return <Transaction item={r} key={recent.indexOf(r)}/>
                     })
                 }
             </Box>

@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React from "react";
 import {CssBaseline, ThemeProvider} from "@mui/material";
 import MainPage from "./pages/MainPage";
 import Layout from "./components/layout/Layout";
@@ -11,15 +11,19 @@ import AccountPage from "./pages/AccountPage";
 import DevicesPage from "./pages/DevicesPage";
 import LoginPage from "./pages/LoginPage";
 import RegistrationPage from "./pages/RegistrationPage";
-import AuthContext from "./store/auth-context";
 import SuccessfulRegistrationPage from "./pages/SuccessfulRegistrationPage";
 import DeviceVerificationPage from "./pages/DeviceVerificationPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CustomRoute from "./components/auth/CustomRoute";
-import ChangePasswordPage from "./pages/ChangePasswordPage";
+import {RootState} from "./store/store";
+import {useSelector} from "react-redux";
+import {UserState} from "./reducers/user-reducer";
 
 function App() {
-    const authCtx = useContext(AuthContext);
+    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
+    const { isAuthenticated } = userAuth;
+
+
 
     return (
         <ThemeProvider theme={darkTheme}>
@@ -30,7 +34,7 @@ function App() {
                         <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
                         <Route path="/signup/success"
                                element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
-                        {!authCtx.isLoggedIn() &&
+                        {!isAuthenticated &&
                             <>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/login/verify" element={<DeviceVerificationPage/>}/>
@@ -41,7 +45,6 @@ function App() {
                         <Route path="/history" element={<PrivateRoute><HistoryPage/></PrivateRoute>}/>
                         <Route path="/account" element={<PrivateRoute><AccountPage/></PrivateRoute>}/>
                         <Route path="/devices" element={<PrivateRoute><DevicesPage/></PrivateRoute>}/>
-                        <Route path="/account/changePassword" element={<PrivateRoute><ChangePasswordPage/></PrivateRoute>}/>
                         <Route path='*' element={<Navigate to="/"/>}/>
                     </Routes>
                 </Layout>

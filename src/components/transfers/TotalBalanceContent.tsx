@@ -12,8 +12,15 @@ import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {Link} from "react-router-dom";
 import {Decimal} from "decimal.js";
 import {findCurrencyByName} from "../../common/transfer";
+import Spinner from "../common/Spinner";
+import AlertSnackBar from "../notofications/AlertSnackBar";
+import {TypedUseSelectorHook, useSelector} from "react-redux";
+import {RootState} from "../../store/store";
+import {UserState} from "../../reducers/user-reducer";
+import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
+import {fetchSubAccounts} from "../../actions/account-action";
 
-const availableCurrencies = {
+export const availableCurrencies = {
     'EUR': "€",
     'USD': "$",
     'PLN': "zł",
@@ -27,7 +34,7 @@ export type AccountCurrencyBalance = {
     balance: Decimal;
 };
 
-type AccountCurrencyBalanceResponse = {
+export type AccountCurrencyBalanceResponse = {
     currency: string;
     balance: Decimal;
 };
@@ -37,6 +44,8 @@ export type FavoriteReceiverResponse = {
     name: string;
     accountNumber: string;
 };
+
+//todo handle error loading subaccounts
 
 const TotalBalanceContent = () => {
     const [openTransferDialog, setOpenTransferDialog] = useState(false);
@@ -51,8 +60,8 @@ const TotalBalanceContent = () => {
         isOpen: false,
         message: ''
     });
-    
-    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
+
+    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>(selector['subAccounts']);
     const [favoriteReceiversList, setFavoriteReceiversList] = useState<FavoriteReceiverResponse[]>([]);
 
     const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("PLN");
@@ -68,6 +77,24 @@ const TotalBalanceContent = () => {
         sendRequest: sendFavoriteTransferReceiversRequest
     } = useFetch();
 
+    const [isAddMoneyErrorMessageOpen, setIsAddMoneyErrorMessageOpen] = useState(false);
+    const [isAddMoneySuccessMessageOpen, setIsAddMoneySuccessMessageOpen] = useState(false);
+    const [isAddFriendErrorMessageOpen, setIsAddFriendErrorMessageOpen] = useState(false);
+    const [isAddFriendSuccessMessageOpen, setIsAddFriendSuccessMessageOpen] = useState(false);
+
+
+
+    const selector= useAppSelector((state :RootState)=>state.account);
+    const dispatch = useAppDispatch()
+
+    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>(selector['subAccounts']);
+    const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
+        currency: accountCurrencyBalanceList[0].currency,
+        symbol: accountCurrencyBalanceList[0].symbol,
+        balance: accountCurrencyBalanceList[0].balance
+    });
+    //default currency for transfer
+    const [dialogCurrency, setDialogCurrency] = useState(selectedCurrency.currency);
 
     const handleTransferDialogOpen = () => {
         setOpenTransferDialog(true);
@@ -91,6 +118,12 @@ const TotalBalanceContent = () => {
             ? {...currency, balance: Decimal.sub(currency.balance, amountToCharge)} : currency))
     }
 
+    const findCurrencyByName = useCallback((selectedCurrencyName: string, loadedCurrencyBalances: AccountCurrencyBalance[]): AccountCurrencyBalance | undefined => {
+        return loadedCurrencyBalances.find((accountCurrencyBalance) => {
+            return accountCurrencyBalance.currency === selectedCurrencyName;
+        });
+    }, []);
+
     const handleCurrencyChange = (e: SelectChangeEvent) => {
         const selectedCurrencyName = e.target.value;
         setSelectedCurrencyName(selectedCurrencyName);
@@ -100,57 +133,19 @@ const TotalBalanceContent = () => {
         return `${accountCurrencyBalance.currency} - ${accountCurrencyBalance.balance} ${accountCurrencyBalance.symbol}`;
     }
 
-    useEffect(() => {
-        const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
-            const loadedCurrencyBalances: AccountCurrencyBalance[] = [];
-            for (const key in currenciesBalanceObj) {
-                loadedCurrencyBalances.push({
-                    currency: currenciesBalanceObj[key].currency,
-                    symbol: availableCurrencies[currenciesBalanceObj[key].currency as keyof typeof availableCurrencies],
-                    balance: currenciesBalanceObj[key].balance
-                });
-            }
 
-            setAccountCurrencyBalanceList(loadedCurrencyBalances);
-            setSubAccountsLoaded(true);
-        }
+    useEffect(()=>{
+        dispatch(fetchSubAccounts()).then(r => console.log('SubAccounts loaded ...'))
+    },[setAccountCurrencyBalanceList,dispatch])
 
         const fetchSubAccountsRequest: RequestConfig = {
             url: REST_PATH_AUTH + '/account/currency/all'
         };
 
         sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
-    }, [sendSubAccountsRequest]);
-
-    useEffect(() => {
-        const transformFavoriteReceivers = (favoriteReceiverObj: FavoriteReceiverResponse[]) => {
-            const loadedFavReceivers: FavoriteReceiverResponse[] = [];
-            for (const key in favoriteReceiverObj) {
-                loadedFavReceivers.push({
-                    id: favoriteReceiverObj[key].id,
-                    name: favoriteReceiverObj[key].name,
-                    accountNumber: favoriteReceiverObj[key].accountNumber
-                });
-            }
-
-            setFavoriteReceiversList(loadedFavReceivers);
-        }
-
-        const fetchFavoriteReceiversRequest: RequestConfig = {
-            url: REST_PATH_AUTH + "/account/receiver/all"
-        };
-
-        console.log("Pobieram favoriteReceivers")
-
-        sendFavoriteTransferReceiversRequest(fetchFavoriteReceiversRequest, transformFavoriteReceivers);
-    }, [sendFavoriteTransferReceiversRequest]);
-
-    const getAlertMessage = (message: string) => {
-        return message;
-    }
+    }, [findCurrencyByName, sendSubAccountsRequest]);
 
     return (
-        // TODO: generic AlertSnackBar for all cases
         <>
 
             <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
@@ -190,8 +185,34 @@ const TotalBalanceContent = () => {
                             <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                         ))}
                     </Select>
-                </FormControl>
+                    {/*<List*/}
+                    {/*    sx={{*/}
+                    {/*        width: '100%',*/}
+                    {/*        bgcolor: 'background.paper',*/}
 
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    {accountCurrencyBalanceList.map((accountCurrencyBalance) => {*/}
+                    {/*        return (*/}
+                    {/*            <>*/}
+                    {/*                <ListItem sx={{*/}
+                    {/*                    paddingTop: '10px',*/}
+                    {/*                    paddingBottom: '10px'*/}
+                    {/*                }}>*/}
+                    {/*                    <ListItemAvatar>*/}
+                    {/*                        <Avatar>*/}
+                    {/*                            <ImageIcon/>*/}
+                    {/*                        </Avatar>*/}
+                    {/*                    </ListItemAvatar>*/}
+                    {/*                    <ListItemText primary="Photos" secondary="Jan 9, 2014"/>*/}
+                    {/*                </ListItem>*/}
+                    {/*                <Divider component="li"/>*/}
+                    {/*            </>*/}
+                    {/*        );*/}
+                    {/*    })}*/}
+                    {/*</List>*/}
+
+                </FormControl>
                 <Box
                     sx={{
                         display: "flex",

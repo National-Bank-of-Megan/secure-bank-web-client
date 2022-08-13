@@ -6,6 +6,10 @@ import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
+import AlertSnackBar from "../notofications/AlertSnackBar";
+import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
+import {login, verifyOtp} from "../../actions/user-action";
+import store from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 
 const DeviceVerificationForm = () => {
@@ -23,6 +27,9 @@ const DeviceVerificationForm = () => {
     });
     const {isLoading, error, sendRequest: loginRequest} = useFetch();
 
+    //redux
+    const userAuth = useAppSelector((state) => state.userAuth)
+    const dispatch = useAppDispatch()
 
     const getCode = () => {
         let code = '';
@@ -60,10 +67,15 @@ const DeviceVerificationForm = () => {
         return () => {
             window.removeEventListener("keyup", handleKeyPress);
         };
-    }, [error]);
+    }, [digitsRefs,handleKeyPress]);
 
     const submitHandler = () => {
         const code = getCode();
+        if(clientId === null) {
+            setErrorMsg('No client id')
+            setIsErrorMessageOpen(true);
+            return;
+        }
         if (!isCodeValid(code)) {
             setErrorAlertState({
                 isOpen: true,
@@ -71,20 +83,28 @@ const DeviceVerificationForm = () => {
             });
             return;
         }
-        const loginRequestContent: RequestConfig = {
-            url: REST_PATH_AUTH + "/web/login/verify",
-            method: "POST",
-            body: {
-                "clientId": clientId,
-                "code": code
-            },
-            headers: {
-                'Content-Type': 'application/json'
+        dispatch(verifyOtp(clientId, code)).then(() => {
+            const status = store.getState().userAuth['status']
+                if (status === 200) {
+                    navigate('/transfers', {replace: true})
+                }
             }
-        };
-
-        loginRequest(loginRequestContent, () => navigate('/transfers'));
+        ).catch((error) => {
+            setIsErrorMessageOpen(true);
+            setErrorMsg(error);
+            digitsRefs.forEach(
+                (ref) => {
+                    ref.current!.value = "";
+                }
+            )
+        })
     }
+
+
+
+    const handleFocus = (index: number) => {
+        setCurrentIndex(index);
+    };
 
     return <>
         <Box
@@ -95,8 +115,11 @@ const DeviceVerificationForm = () => {
                 marginTop: "100px",
             }}
         >
-            <Spinner isLoading={isLoading}/>
-            <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
+            {/*<Spinner isLoading={isLoading}/>*/}
+            {/*<AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>*/}
+            <Spinner isLoading={userAuth["loading"]}/>
+            <AlertSnackBar message={errorMsg} severity={"error"}
+                           alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
             <Paper
                 sx={{
                     bgcolor: "background.paper",
@@ -126,16 +149,17 @@ const DeviceVerificationForm = () => {
                             columnGap: "5px"
                         }}
                     >
-                        {/*{*/}
-                        {/*    digitsRefs.map((ref, index) => {*/}
-                        {/*        return <PasswordCharacterInput*/}
-                        {/*            key={index}*/}
-                        {/*            index={index}*/}
-                        {/*            inputRef={ref}*/}
-                        {/*            */}
-                        {/*        />*/}
-                        {/*    })*/}
-                        {/*}*/}
+                        {
+                            digitsRefs.map((ref, index) => {
+                                return <PasswordCharacterInput
+                                    key={index}
+                                    index={index}
+                                    inputRef={ref}
+                                    handleInputFocus={handleFocus}
+                                    handleKeyPressed={() => {
+                                }}/>
+                            })
+                        }
                     </Stack>
 
                     <Button
@@ -145,6 +169,7 @@ const DeviceVerificationForm = () => {
                             width: "200px",
                             marginTop: "30px",
                         }}
+                        onClick={submitHandler}
 
                     >
                         Verify
