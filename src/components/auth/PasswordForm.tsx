@@ -1,5 +1,5 @@
 import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
-import React, {createRef, useCallback, useEffect, useReducer, useState} from "react";
+import React, {createRef, useEffect, useReducer, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate} from "react-router-dom";
 import Spinner from "../common/Spinner";
@@ -9,13 +9,13 @@ import AlertSnackBar from "../notofications/AlertSnackBar";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 import {login} from "../../actions/user-action";
 import {UserState} from "../../reducers/user-reducer";
-import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
+import {useAppDispatch} from "../../hook/redux-hooks";
 import {useSelector} from "react-redux";
-import authStore, {RootState} from "../../store/auth-store";
+import store, {RootState} from "../../store/store";
 
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
-    let userAuth = useSelector<RootState,UserState>((state :RootState)=>state.userAuth)
+    let userAuth = useSelector<RootState, UserState>((state: RootState) => state.userAuth)
     const [status, setStatus] = useState<number>(userAuth['status'])
     const navigate = useNavigate();
     const [isErrorMessageOpen, setIsErrorMessageOpen] = useState<boolean>(false);
@@ -104,22 +104,22 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
             setErrorMsg('Fill all cells')
             setIsErrorMessageOpen(true);
         } else {
-           dispatch( login(props.data!.clientId, psw)).then(
-               (response)=>{
+            dispatch(login(props.data!.clientId, psw)).then(
+                (response) => {
 
-                  const status = authStore.getState().userAuth['status']
-                   if (status === 200) {
-                       console.log('redirecting to transfers page ...')
-                       navigate('/transfers', {replace: true})
-                   }
+                    const status = store.getState().userAuth['status']
+                    if (status === 200) {
+                        console.log('redirecting to transfers page ...')
+                        navigate('/transfers', {replace: true})
+                    }
 
-                   if (status === 206) {
-                       console.log('redirecting to otp verification page ...')
-                       let url = '/login/verify?clientId=' + props.data?.clientId;
-                       navigate(url, {replace: true})
-                   }
-               }
-           )
+                    if (status === 206) {
+                        console.log('redirecting to otp verification page ...')
+                        let url = '/login/verify?clientId=' + props.data?.clientId;
+                        navigate(url, {replace: true})
+                    }
+                }
+            )
                 .catch((error) => {
                     setIsErrorMessageOpen(true);
                     setErrorMsg(error);

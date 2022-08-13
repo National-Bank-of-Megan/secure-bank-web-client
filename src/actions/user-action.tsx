@@ -6,7 +6,7 @@ import {
     USER_PARTIAL_AUTH
 } from "../constants/AuthConstants";
 import {ThunkAction, ThunkDispatch} from "redux-thunk";
-import {RootState} from "../store/auth-store";
+import {RootState} from "../store/store";
 import {AnyAction} from "redux";
 import {REST_PATH_AUTH} from "../constants/Constants";
 import storage from "redux-persist/lib/storage";

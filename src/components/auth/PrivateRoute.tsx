@@ -3,7 +3,7 @@ import {Navigate, useLocation} from 'react-router-dom'
 import AuthContext from "../../store/auth-context";
 import useRefreshToken from "../../hook/use-refresh";
 import {useSelector} from "react-redux";
-import {RootState} from "../../store/auth-store";
+import {RootState} from "../../store/store";
 import {UserState} from "../../reducers/user-reducer";
 
 type Props = {

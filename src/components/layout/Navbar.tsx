@@ -8,7 +8,7 @@ import {useLocation, useNavigate} from "react-router-dom";
 import NotificationsListPopover from "../notofications/NotificationListPopover";
 import AuthContext from "../../store/auth-context";
 import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../store/auth-store";
+import {RootState} from "../../store/store";
 import {UserState} from "../../reducers/user-reducer";
 import {logout} from "../../actions/user-action";
 import {useAppDispatch} from "../../hook/redux-hooks";

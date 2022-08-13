@@ -1,5 +1,5 @@
 import {ThunkAction, ThunkDispatch} from "redux-thunk";
-import authStore, {RootState} from "../store/auth-store";
+import store, {RootState} from "../store/store";
 import {AnyAction} from "redux";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../models/decodedJWT";
@@ -15,7 +15,7 @@ import {logout} from "./user-action";
 
 export const isTokenValid = (tokenName: string): boolean => {
     try {
-        const token = authStore.getState().userAuth['authTokens'][tokenName];
+        const token = store.getState().userAuth['authTokens'][tokenName];
         if(token === undefined) return false;
         // console.log(token)
         const toMilliseconds = 1000;
@@ -34,7 +34,7 @@ export const requestAuthTokenWithRefreshToken = () :ThunkAction<Promise<void>, R
     const response = await fetch(url, {
         method: 'GET',
         headers: {
-            'Authorization': 'Bearer '+authStore.getState().userAuth['authTokens']['refreshToken']
+            'Authorization': 'Bearer '+store.getState().userAuth['authTokens']['refreshToken']
         }
     });
 
@@ -50,7 +50,7 @@ export const requestAuthTokenWithRefreshToken = () :ThunkAction<Promise<void>, R
     const status  = response.status;
     const data = await response.json();
     // console.log('received access token:\t'+data.access_token)
-    const authTokens = {accessToken: data.access_token, refreshToken: authStore.getState().userAuth['authTokens']['refreshToken']}
+    const authTokens = {accessToken: data.access_token, refreshToken: store.getState().userAuth['authTokens']['refreshToken']}
     dispatch({
         type: TOKEN_REFRESH_SUCCESS,
         payload : authTokens,

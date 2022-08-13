@@ -23,7 +23,7 @@ const initialState = {
 
 }
 
-const authStore = configureStore({
+const store = configureStore({
     devTools: true,
     preloadedState: initialState,
     reducer: persistedReducer,
@@ -34,10 +34,10 @@ const authStore = configureStore({
 
 })
 
-const persistor = persistStore(authStore)
+const persistor = persistStore(store)
 
-export default authStore;
+export default store;
 export {persistor}
 
-export type RootState = ReturnType<typeof authStore.getState>
-export type AppDispatch = typeof authStore.dispatch
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch

@@ -10,14 +10,14 @@ export interface AccountState {
     loading: boolean,
     status: number,
     error?: string,
-    subAccounts: {}
+    subAccounts: [{}]
 }
 
 export const accountReducer = (state: AccountState = {
     status: -1,
     error: '',
     loading: false,
-    subAccounts: {}
+    subAccounts: [{}]
 }, action: Action) => {
     switch (action.type) {
         case SUB_ACCOUNTS_FETCH_REQUEST:
@@ -28,6 +28,8 @@ export const accountReducer = (state: AccountState = {
             return {loading: false, error: action.payload, status: action.status};
         case SUB_ACCOUNTS_UPDATE:
             return {loading: false, subAccounts: action.payload};
+        default:
+            return state;
     }
 
 }

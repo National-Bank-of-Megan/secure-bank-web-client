@@ -15,7 +15,7 @@ import SuccessfulRegistrationPage from "./pages/SuccessfulRegistrationPage";
 import DeviceVerificationPage from "./pages/DeviceVerificationPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CustomRoute from "./components/auth/CustomRoute";
-import {RootState} from "./store/auth-store";
+import {RootState} from "./store/store";
 import {useSelector} from "react-redux";
 import {UserState} from "./reducers/user-reducer";
 

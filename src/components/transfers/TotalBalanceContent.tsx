@@ -10,6 +10,11 @@ import useFetch, {Headers, RequestConfig} from "../../hook/use-fetch";
 import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
 import AlertSnackBar from "../notofications/AlertSnackBar";
+import {TypedUseSelectorHook, useSelector} from "react-redux";
+import {RootState} from "../../store/store";
+import {UserState} from "../../reducers/user-reducer";
+import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
+import {fetchSubAccounts} from "../../actions/account-action";
 
 export const currencies = [
     {
@@ -30,7 +35,7 @@ export const currencies = [
     },
 ];
 
-const availableCurrencies = {
+export const availableCurrencies = {
     'EUR': "€",
     'USD': "$",
     'PLN': "zł",
@@ -44,10 +49,12 @@ export type AccountCurrencyBalance = {
     balance: number;
 };
 
-type AccountCurrencyBalanceResponse = {
+export type AccountCurrencyBalanceResponse = {
     currency: string;
     balance: number;
 };
+
+//todo handle error loading subaccounts
 
 const TotalBalanceContent = () => {
     const [openTransferDialog, setOpenTransferDialog] = useState(false);
@@ -59,15 +66,18 @@ const TotalBalanceContent = () => {
     const [isAddFriendSuccessMessageOpen, setIsAddFriendSuccessMessageOpen] = useState(false);
 
 
-    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
-    const [dialogCurrency, setDialogCurrency] = useState("EUR");
-    const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
-        currency: "",
-        symbol: "",
-        balance: 0.0
-    });
 
-    const { isLoading, error, sendRequest: sendSubAccountsRequest } = useFetch();
+    const selector= useAppSelector((state :RootState)=>state.account);
+    const dispatch = useAppDispatch()
+
+    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>(selector['subAccounts']);
+    const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
+        currency: accountCurrencyBalanceList[0].currency,
+        symbol: accountCurrencyBalanceList[0].symbol,
+        balance: accountCurrencyBalanceList[0].balance
+    });
+    //default currency for transfer
+    const [dialogCurrency, setDialogCurrency] = useState(selectedCurrency.currency);
 
     const handleTransferDialogOpen = () => {
         setOpenTransferDialog(true);
@@ -102,31 +112,14 @@ const TotalBalanceContent = () => {
         return `${accountCurrencyBalance.currency} - ${accountCurrencyBalance.balance} ${accountCurrencyBalance.symbol}`;
     }
 
-    useEffect(() => {
-        const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
-            const loadedCurrencyBalances: AccountCurrencyBalance[] = [];
-            for (const key in currenciesBalanceObj) {
-                loadedCurrencyBalances.push({
-                    currency: currenciesBalanceObj[key].currency,
-                    symbol: availableCurrencies[currenciesBalanceObj[key].currency as keyof typeof availableCurrencies],
-                    balance: currenciesBalanceObj[key].balance
-                });
-            }
 
-            setAccountCurrencyBalanceList(loadedCurrencyBalances);
-            setSelectedCurrency(findCurrencyByName(DEFAULT_SELECTED_CURRENCY, loadedCurrencyBalances)!);
-        }
+    useEffect(()=>{
+        dispatch(fetchSubAccounts()).then(r => console.log('SubAccounts loaded ...'))
+    },[setAccountCurrencyBalanceList,dispatch])
 
-        const fetchSubAccountsRequest: RequestConfig = {
-            url: REST_PATH_AUTH + '/account/currency/all'
-        };
-
-        sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
-    }, [findCurrencyByName, sendSubAccountsRequest,setAccountCurrencyBalanceList,setSelectedCurrency,availableCurrencies]);
 
     return (
         <>
-            <Spinner isLoading={isLoading} />
             <AlertSnackBar alertState={{"state": isAddMoneyErrorMessageOpen, "setState": setIsAddMoneyErrorMessageOpen}}
                            severity="error"
                            message="Could not add money to your balance."/>

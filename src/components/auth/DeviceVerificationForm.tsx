@@ -9,7 +9,7 @@ import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
 import AlertSnackBar from "../notofications/AlertSnackBar";
 import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
 import {login, verifyOtp} from "../../actions/user-action";
-import authStore from "../../store/auth-store";
+import store from "../../store/store";
 
 const DeviceVerificationForm = () => {
     const [digitsRefs] = useState(() =>
@@ -69,7 +69,7 @@ const DeviceVerificationForm = () => {
             return;
         }
         dispatch(verifyOtp(clientId, code)).then(() => {
-            const status = authStore.getState().userAuth['status']
+            const status = store.getState().userAuth['status']
                 if (status === 200) {
                     navigate('/transfers', {replace: true})
                 }

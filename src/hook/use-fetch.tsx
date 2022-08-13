@@ -3,7 +3,7 @@ import FetchError from "../models/fetchError";
 import {useNavigate} from "react-router-dom";
 import {REST_PATH_AUTH} from "../constants/Constants";
 import {useSelector} from "react-redux";
-import authStore, {RootState} from "../store/auth-store";
+import store, {RootState} from "../store/store";
 import {UserState} from "../reducers/user-reducer";
 import {useAppDispatch} from "./redux-hooks";
 import {isTokenValid, requestAuthTokenWithRefreshToken} from "../actions/token-action";
@@ -65,7 +65,7 @@ const useFetch = () => {
 
                 await dispatchSynchronously(dispatch)
                    // @ts-ignore
-                   requestConfig.headers['Authorization'] = 'Bearer '+authStore.getState().userAuth['authTokens']['accessToken'];
+                   requestConfig.headers['Authorization'] = 'Bearer '+store.getState().userAuth['authTokens']['accessToken'];
             }
             else if (!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
                 navigate('/login');
