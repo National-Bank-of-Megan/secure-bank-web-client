@@ -1,8 +1,10 @@
+import Decimal from "decimal.js";
+
 export type CurrencyExchangeHistoryTypeResponse =
     {
-        amountBought: number;
+        amountBought: Decimal;
         currencyBought: string;
-        amountSold: number;
+        amountSold: Decimal;
         currencySold: string;
         orderedOn: Date;
     }

@@ -5,13 +5,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
 import Tab from '@mui/material/Tab';
 import {useLocation, useNavigate} from "react-router-dom";
-import NotificationsListPopover from "../notofications/NotificationListPopover";
 import AuthContext from "../../store/auth-context";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/store";
 import {UserState} from "../../reducers/user-reducer";
 import {logout} from "../../actions/user-action";
 import {useAppDispatch} from "../../hook/redux-hooks";
+import NotificationsListPopover from "../notifications/NotificationListPopover";
 
 export default function Navbar() {
     const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)

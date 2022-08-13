@@ -18,6 +18,7 @@ import CustomRoute from "./components/auth/CustomRoute";
 import {RootState} from "./store/store";
 import {useSelector} from "react-redux";
 import {UserState} from "./reducers/user-reducer";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 function App() {
     const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
@@ -45,6 +46,7 @@ function App() {
                         <Route path="/history" element={<PrivateRoute><HistoryPage/></PrivateRoute>}/>
                         <Route path="/account" element={<PrivateRoute><AccountPage/></PrivateRoute>}/>
                         <Route path="/devices" element={<PrivateRoute><DevicesPage/></PrivateRoute>}/>
+                        <Route path="/account/changePassword" element={<PrivateRoute><ChangePasswordPage/></PrivateRoute>}/>
                         <Route path='*' element={<Navigate to="/"/>}/>
                     </Routes>
                 </Layout>

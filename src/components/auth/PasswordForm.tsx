@@ -4,23 +4,20 @@ import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate} from "react-router-dom";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
-import {PASSWORD_MAX_LENGTH} from "../../constants/Constants";
-import AlertSnackBar from "../notofications/AlertSnackBar";
-import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 import {login} from "../../actions/user-action";
 import {UserState} from "../../reducers/user-reducer";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import {useSelector} from "react-redux";
 import store, {RootState} from "../../store/store";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
+import {PASSWORD_MAX_LENGTH} from "../../constants/Constants";
 
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
     let userAuth = useSelector<RootState, UserState>((state: RootState) => state.userAuth)
     const [status, setStatus] = useState<number>(userAuth['status'])
     const navigate = useNavigate();
-    const {isLoading, error, sendRequest: loginRequest} = useFetch();
     //  error handlers
     const [errorAlertState, setErrorAlertState] = useState<AlertState>({
         isOpen: false,
@@ -129,8 +126,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 }
             )
                 .catch((error) => {
-                    setIsErrorMessageOpen(true);
-                    setErrorMsg(error);
+                    setErrorAlertState({
+                        isOpen: true,
+                        message: error
+                    });
                     inputRefsArray.forEach(
                         (ref) => {
                             ref.current!.value = "";
@@ -152,7 +151,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                <Spinner isLoading={isLoading}/>
+                <Spinner isLoading={userAuth['loading']}/>
                 <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
                 <Paper
                     sx={{

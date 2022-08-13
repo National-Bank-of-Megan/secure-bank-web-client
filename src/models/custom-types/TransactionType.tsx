@@ -1,7 +1,9 @@
+import Decimal from "decimal.js";
+
 export  type TransactionType =
     {
         title: string;
         date: Date;
-        amount: number;
+        amount: Decimal;
         currency: string;
     };

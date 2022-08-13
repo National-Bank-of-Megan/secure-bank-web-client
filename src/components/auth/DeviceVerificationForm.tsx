@@ -6,11 +6,12 @@ import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar from "../notofications/AlertSnackBar";
+
 import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
 import {login, verifyOtp} from "../../actions/user-action";
 import store from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
+
 
 const DeviceVerificationForm = () => {
     const [digitsRefs] = useState(() =>
@@ -72,8 +73,10 @@ const DeviceVerificationForm = () => {
     const submitHandler = () => {
         const code = getCode();
         if(clientId === null) {
-            setErrorMsg('No client id')
-            setIsErrorMessageOpen(true);
+            setErrorAlertState({
+                isOpen: true,
+                message: 'No client id'
+            });
             return;
         }
         if (!isCodeValid(code)) {
@@ -90,8 +93,10 @@ const DeviceVerificationForm = () => {
                 }
             }
         ).catch((error) => {
-            setIsErrorMessageOpen(true);
-            setErrorMsg(error);
+            setErrorAlertState({
+                isOpen: true,
+                message: error
+            });
             digitsRefs.forEach(
                 (ref) => {
                     ref.current!.value = "";
@@ -115,11 +120,9 @@ const DeviceVerificationForm = () => {
                 marginTop: "100px",
             }}
         >
-            {/*<Spinner isLoading={isLoading}/>*/}
-            {/*<AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>*/}
             <Spinner isLoading={userAuth["loading"]}/>
-            <AlertSnackBar message={errorMsg} severity={"error"}
-                           alertState={{"state": isErrorMessageOpen, "setState": setIsErrorMessageOpen}}/>
+            <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
+
             <Paper
                 sx={{
                     bgcolor: "background.paper",

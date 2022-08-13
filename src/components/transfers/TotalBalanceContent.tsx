@@ -7,18 +7,12 @@ import TransferDialog from "./dialog/TransferDialog";
 import AddMoneyDialog from "./dialog/AddMoneyDialog";
 import AddFriendDialog from "./dialog/AddFriendDialog";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
-import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
-import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {Link} from "react-router-dom";
 import {Decimal} from "decimal.js";
-import {findCurrencyByName} from "../../common/transfer";
-import Spinner from "../common/Spinner";
-import AlertSnackBar from "../notofications/AlertSnackBar";
-import {TypedUseSelectorHook, useSelector} from "react-redux";
 import {RootState} from "../../store/store";
-import {UserState} from "../../reducers/user-reducer";
 import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
 import {fetchSubAccounts} from "../../actions/account-action";
+import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 
 export const availableCurrencies = {
     'EUR': "€",
@@ -60,11 +54,7 @@ const TotalBalanceContent = () => {
         isOpen: false,
         message: ''
     });
-
-    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>(selector['subAccounts']);
     const [favoriteReceiversList, setFavoriteReceiversList] = useState<FavoriteReceiverResponse[]>([]);
-
-    const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("PLN");
 
     const {
         isLoading: isSubAccountsLoading,
@@ -81,7 +71,7 @@ const TotalBalanceContent = () => {
     const [isAddMoneySuccessMessageOpen, setIsAddMoneySuccessMessageOpen] = useState(false);
     const [isAddFriendErrorMessageOpen, setIsAddFriendErrorMessageOpen] = useState(false);
     const [isAddFriendSuccessMessageOpen, setIsAddFriendSuccessMessageOpen] = useState(false);
-
+    const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("PLN");
 
 
     const selector= useAppSelector((state :RootState)=>state.account);
@@ -138,12 +128,6 @@ const TotalBalanceContent = () => {
         dispatch(fetchSubAccounts()).then(r => console.log('SubAccounts loaded ...'))
     },[setAccountCurrencyBalanceList,dispatch])
 
-        const fetchSubAccountsRequest: RequestConfig = {
-            url: REST_PATH_AUTH + '/account/currency/all'
-        };
-
-        sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
-    }, [findCurrencyByName, sendSubAccountsRequest]);
 
     return (
         <>

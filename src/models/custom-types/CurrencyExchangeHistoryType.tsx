@@ -1,8 +1,10 @@
+import Decimal from "decimal.js";
+
 export type CurrencyExchangeHistoryType =
     {
-        bought: number;
+        bought: Decimal;
         currencyBought: string;
-        sold: number;
+        sold: Decimal;
         currencySold: string;
         date: Date;
     };

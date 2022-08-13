@@ -1,6 +1,8 @@
+import Decimal from "decimal.js";
+
 export type DetailedTransactionTypeResponse = {
-    amount: number;
-    balanceAfter: number;
+    amount: Decimal;
+    balanceAfter: Decimal;
     currency: string;
     doneDate: Date;
     receiver: string;

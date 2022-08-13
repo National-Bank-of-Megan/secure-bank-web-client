@@ -1,10 +1,12 @@
+import Decimal from "decimal.js";
+
 export type DetailedTransactionType = {
     date: Date;
     title :string;
-    amount: number;
+    amount: Decimal;
     currency: string;
     status: string;
     receiver: string;
-    balanceAfterTransfer: number;
+    balanceAfterTransfer: Decimal;
 
 };
