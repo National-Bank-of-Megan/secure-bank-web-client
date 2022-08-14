@@ -1,4 +1,3 @@
-
 import {Add, ArrowForward, Cached, Favorite,} from "@mui/icons-material";
 import {Box, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography,} from "@mui/material";
 import React, {useCallback, useEffect, useState} from "react";
@@ -11,8 +10,9 @@ import {Link} from "react-router-dom";
 import {Decimal} from "decimal.js";
 import {RootState} from "../../store/store";
 import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
-import {fetchSubAccounts} from "../../actions/account-action";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
+import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
+import {SUB_ACCOUNTS_FETCH_FAILURE, SUB_ACCOUNTS_FETCH_SUCCESS} from "../../constants/AccountConstants";
 
 export const availableCurrencies = {
     'EUR': "€",
@@ -86,6 +86,7 @@ const TotalBalanceContent = () => {
     //default currency for transfer
     const [dialogCurrency, setDialogCurrency] = useState(selectedCurrency.currency);
 
+
     const handleTransferDialogOpen = () => {
         setOpenTransferDialog(true);
     };
@@ -125,17 +126,56 @@ const TotalBalanceContent = () => {
 
 
     useEffect(()=>{
-        dispatch(fetchSubAccounts()).then(
-            ()=>{
-                setAccountCurrencyBalanceList(selector['subAccounts'])
-                setSelectedCurrency({
-                    currency: accountCurrencyBalanceList[0].currency,
-                    symbol: accountCurrencyBalanceList[0].symbol,
-                    balance: accountCurrencyBalanceList[0].balance
-                })
+
+        const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
+            console.log(currenciesBalanceObj)
+            const loadedCurrencyBalances: AccountCurrencyBalance[] = [];
+            for (const key in currenciesBalanceObj) {
+                console.log(key)
+                loadedCurrencyBalances.push({
+                    currency: currenciesBalanceObj[key].currency,
+                    symbol: availableCurrencies[currenciesBalanceObj[key].currency as keyof typeof availableCurrencies],
+                    balance: new Decimal(currenciesBalanceObj[key].balance)
+                });
             }
-        )
-    },[setAccountCurrencyBalanceList,dispatch,selector, setSelectedCurrency])
+
+            setAccountCurrencyBalanceList(loadedCurrencyBalances);
+            setSelectedCurrency(findCurrencyByName(DEFAULT_SELECTED_CURRENCY, loadedCurrencyBalances)!);
+
+
+
+            dispatch({
+                type: SUB_ACCOUNTS_FETCH_SUCCESS,
+                status: 200,
+                payload: loadedCurrencyBalances
+            })
+        }
+
+        const fetchSubAccountsRequest: RequestConfig = {
+            url: REST_PATH_AUTH + '/account/currency/all'
+        };
+
+        sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
+
+        if(subAccountsError){
+            dispatch({
+                type: SUB_ACCOUNTS_FETCH_FAILURE,
+                error: subAccountsError,
+                status: 403
+            })
+        }
+
+        // dispatch(fetchSubAccounts()).then(
+        //     ()=>{
+        //         setAccountCurrencyBalanceList(selector['subAccounts'])
+        //         setSelectedCurrency({
+        //             currency: accountCurrencyBalanceList[0].currency,
+        //             symbol: accountCurrencyBalanceList[0].symbol,
+        //             balance: accountCurrencyBalanceList[0].balance
+        //         })
+        //     }
+        // )
+    },[findCurrencyByName, sendSubAccountsRequest,subAccountsError])
 
 
     return (

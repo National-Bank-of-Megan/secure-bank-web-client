@@ -10,6 +10,8 @@ import {CURRENCIES, REST_PATH_EXCHANGE} from "../../constants/Constants";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
+import {useAppSelector} from "../../hook/redux-hooks";
+import {RootState} from "../../store/store";
 
 export enum Action {
     sell,
@@ -17,6 +19,7 @@ export enum Action {
 }
 
 const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom: UseStateType<IExchangeData>, rates: { [name: string]: number } }> = ({
+
                                                                                                                                                           top,
                                                                                                                                                           bottom,rates
 }) => {
@@ -31,6 +34,8 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
     });
     const conversionRate = rates[bottom.state.currency];
     const [isArrowUp, setIsArrowUp] = useState<boolean>(false);
+
+    const selector= useAppSelector((state :RootState)=>state.account);
 
     const handleAmountChange = useCallback((newAmount: number, actionSettingNewAmount: Action) => {
         if (top.state.action === actionSettingNewAmount) {
