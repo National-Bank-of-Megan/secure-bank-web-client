@@ -2,11 +2,12 @@ import {Accordion, AccordionDetails, AccordionSummary, Box, Divider, Typography,
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {DetailedTransactionType} from "../../models/custom-types/DetailedTransactionType";
 import React from "react";
+import Decimal from "decimal.js";
 
 const TransactionDetailed: React.FC<{ item: DetailedTransactionType }> = ({item}) => {
 
     const getChar = () => {
-        if (item.amount > 0) return '+'
+        if (item.amount > new Decimal(0.00)) return '+'
         else return ''
 
     }

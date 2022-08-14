@@ -77,11 +77,11 @@ const TotalBalanceContent = () => {
     const selector= useAppSelector((state :RootState)=>state.account);
     const dispatch = useAppDispatch()
 
-    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>(selector['subAccounts']);
+    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
     const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
-        currency: accountCurrencyBalanceList[0].currency,
-        symbol: accountCurrencyBalanceList[0].symbol,
-        balance: accountCurrencyBalanceList[0].balance
+        currency: '',
+        symbol: '',
+        balance: new Decimal(0.00)
     });
     //default currency for transfer
     const [dialogCurrency, setDialogCurrency] = useState(selectedCurrency.currency);
@@ -125,8 +125,17 @@ const TotalBalanceContent = () => {
 
 
     useEffect(()=>{
-        dispatch(fetchSubAccounts()).then(r => console.log('SubAccounts loaded ...'))
-    },[setAccountCurrencyBalanceList,dispatch])
+        dispatch(fetchSubAccounts()).then(
+            ()=>{
+                setAccountCurrencyBalanceList(selector['subAccounts'])
+                setSelectedCurrency({
+                    currency: accountCurrencyBalanceList[0].currency,
+                    symbol: accountCurrencyBalanceList[0].symbol,
+                    balance: accountCurrencyBalanceList[0].balance
+                })
+            }
+        )
+    },[setAccountCurrencyBalanceList,dispatch,selector, setSelectedCurrency])
 
 
     return (

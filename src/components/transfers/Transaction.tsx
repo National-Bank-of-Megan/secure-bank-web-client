@@ -1,11 +1,12 @@
 import {Box, Card, CardContent, Typography} from "@mui/material";
 import {TransactionType} from "../../models/custom-types/TransactionType";
 import React from "react";
+import Decimal from "decimal.js";
 
 const Transaction: React.FC<{ item: TransactionType }> = ({item}) => {
 
     const getChar = () => {
-        if (item.amount > 0) return '+'
+        if (item.amount> new Decimal(0)) return '+'
         else return ''
 
     }

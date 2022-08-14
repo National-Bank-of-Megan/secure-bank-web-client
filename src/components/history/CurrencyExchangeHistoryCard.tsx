@@ -14,7 +14,7 @@ const CurrencyExchangeHistoryCard: React.FC<{ item: CurrencyExchangeHistoryType 
                 }}>
                     <Box>
                         <Typography variant="h5"
-                                    color="success.main">{'+' + item.bought.toFixed(2) + ' ' + item.currencyBought}</Typography>
+                                    color="success.main">{'+' + item.bought.toString() + ' ' + item.currencyBought}</Typography>
                         <Typography variant="body2" color="text.secondary">
                             {item.date.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short",hour : "numeric",minute :"numeric"})}
                         </Typography></Box>
@@ -22,7 +22,7 @@ const CurrencyExchangeHistoryCard: React.FC<{ item: CurrencyExchangeHistoryType 
                         alignSelf: 'center'
                     }}>
                         <Typography variant="h5" color="error">
-                            {'-' + item.sold.toFixed(2) + ' ' + item.currencySold}
+                            {'-' + item.sold.toString() + ' ' + item.currencySold}
                         </Typography> </Box>
                 </Box>
             </CardContent>

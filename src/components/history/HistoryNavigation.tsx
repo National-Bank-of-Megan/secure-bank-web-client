@@ -1,14 +1,30 @@
-import {ArrowDropDown} from "@mui/icons-material";
-import {Box, Button, FormControl, OutlinedInput, Paper, Tab, Tabs,} from "@mui/material";
+import {
+    Box,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Paper,
+    Select,
+    SelectChangeEvent,
+    Tab,
+    Tabs,
+} from "@mui/material";
 import React from "react";
+import {UseStateType} from "../../models/custom-types/UseStateType";
+
+const sortingTypes: string[] = [
+    'None', 'Newest to oldest', 'Oldest to newest'
+]
+
 
 
 //todo poprawic typ handleBrowsingChange
-const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: any }> = ({
-                                                                                                   currentlyBrowsing,
-                                                                                                   handleBrowsingChange
-                                                                                               }) => {
-
+const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: any, state: UseStateType<string> }> = ({
+                                                                                                                                currentlyBrowsing,
+                                                                                                                                handleBrowsingChange,
+                                                                                                                                state
+                                                                                                                            }) => {
 
     return (
         <>
@@ -41,16 +57,24 @@ const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingCha
                 >
                     <OutlinedInput placeholder="Search..."/>
                 </FormControl>
-                <Button
-                    variant="contained"
-                    endIcon={<ArrowDropDown sx={{transform: "scale(1.5)"}}/>}
-                    sx={{
-                        width: "130px",
-                        height: "40px",
-                    }}
-                >
-                    Date
-                </Button>
+                <FormControl>
+                    <InputLabel id="sortBy">Sort</InputLabel>
+                    <Select
+                        sx={{width: '200px'}}
+                        labelId="Sort by"
+                        id="sortBy"
+                        value={state.state}
+                        onChange={(e: SelectChangeEvent) => {
+                            state.setState(e.target.value)
+                        }}
+                    >
+                        {
+                            sortingTypes.map((type) => {
+                                return <MenuItem value={type}>{type}</MenuItem>
+                            })
+                        }
+                    </Select>
+                </FormControl>
             </Box>
         </>
     );

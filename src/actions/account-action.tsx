@@ -9,6 +9,7 @@ import {
 import {SUB_ACCOUNTS_FETCH_FAILURE, SUB_ACCOUNTS_FETCH_SUCCESS} from "../constants/AccountConstants";
 import {Headers} from "../hook/use-fetch";
 import store, {RootState} from "../store/store";
+import Decimal from "decimal.js";
 
 const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
     console.log(currenciesBalanceObj)
@@ -18,7 +19,7 @@ const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceRespon
         loadedCurrencyBalances.push({
             currency: currenciesBalanceObj[key].currency,
             symbol: availableCurrencies[currenciesBalanceObj[key].currency as keyof typeof availableCurrencies],
-            balance: currenciesBalanceObj[key].balance
+            balance: new Decimal(currenciesBalanceObj[key].balance)
         });
     }
 

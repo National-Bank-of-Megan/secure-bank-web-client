@@ -11,6 +11,7 @@ import HistoryNavigation from "./HistoryNavigation";
 import {Typography} from "@mui/material";
 import {DetailedTransactionTypeResponse} from "../../models/custom-types/DetailedTransactionTypeResponse";
 import {wait} from "@testing-library/user-event/dist/utils";
+import exchangeList from "./ExchangeList";
 
 const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (event: React.SyntheticEvent, newCurrent: string) => void }> = (props) => {
     const {
@@ -26,18 +27,50 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
     const [currencyExchangeHistory, setCurrencyExchangeHistory] = useState<CurrencyExchangeHistoryType[]>([]);
     const [recentTransfers, setRecentTransfers] = useState<DetailedTransactionType[]>([]);
 
+    const [currentSortType, setCurrentSortType] = useState<string>( 'None')
+
+    const sortAscending = (data :CurrencyExchangeHistoryType[] | DetailedTransactionType[]) =>{
+        return data.slice().sort(function(first, second) {
+            return Number(first.date) - Number(second.date);
+        });
+    }
+
+    const sortDescending = (data :CurrencyExchangeHistoryType[] | DetailedTransactionType[]) =>{
+        return data.slice().sort(function(first, second) {
+            return Number(second.date) - Number(first.date);
+        });
+    }
+
+    const getSortedData = (data :CurrencyExchangeHistoryType[] | DetailedTransactionType[], sortType : string)=>{
+        switch(sortType) {
+            case 'Oldest to newest':
+                return sortDescending(data);
+            case 'Newest to oldest':
+                return sortAscending(data);
+            default:
+                return data;
+        }
+    }
+
 
     const returnHistory = () => {
+        let data =[]
         if (props.currentlyBrowsing === 'transfers') {
+            data = getSortedData(recentTransfers,currentSortType);
             if (recentTransfers.length === 0)
                 return <Typography variant="h4" color="primary.main">You do not have any transfers</Typography>
             else
-                return <OperationsList history={recentTransfers}/>
+                { // @ts-ignore
+                    return <OperationsList history={data}/>
+                }
         } else {
+            data = getSortedData(currencyExchangeHistory,currentSortType);
             if (currencyExchangeHistory.length === 0)
                 return <Typography variant="h4" color="primary.main">You do not have any currency exchanges</Typography>
             else
-                return <ExchangeList history={currencyExchangeHistory}/>
+                { // @ts-ignore
+                    return <ExchangeList history={data}/>
+                }
         }
     }
 
@@ -98,7 +131,9 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
 
             {/*add error handler*/}
             <HistoryNavigation currentlyBrowsing={props.currentlyBrowsing}
-                               handleBrowsingChange={props.handleBrowsingChange}/>
+                               handleBrowsingChange={props.handleBrowsingChange}
+                               state = {{"state" : currentSortType, "setState" : setCurrentSortType}}
+            />
             <Spinner isLoading={isLoadingExchangeHistory || isLoadingDetailedTransaction}/>
             {returnHistory()}
         </>
