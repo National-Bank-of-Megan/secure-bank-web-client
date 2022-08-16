@@ -139,6 +139,7 @@ const TotalBalanceContent = () => {
                 });
             }
 
+            setSubAccountsLoaded(true);
             setAccountCurrencyBalanceList(loadedCurrencyBalances);
             setSelectedCurrency(findCurrencyByName(DEFAULT_SELECTED_CURRENCY, loadedCurrencyBalances)!);
 
@@ -175,7 +176,7 @@ const TotalBalanceContent = () => {
         //         })
         //     }
         // )
-    },[findCurrencyByName, sendSubAccountsRequest,subAccountsError])
+    },[findCurrencyByName, sendSubAccountsRequest,subAccountsError,setSubAccountsLoaded])
 
 
     return (

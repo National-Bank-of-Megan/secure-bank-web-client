@@ -33,6 +33,8 @@ import Spinner from "../../common/Spinner";
 import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from "decimal.js";
+import {useAppSelector} from "../../../hook/redux-hooks";
+import {RootState} from "../../../store/store";
 
 const TransferDialog: React.FC<{
     openTransferDialog: boolean;
@@ -45,7 +47,7 @@ const TransferDialog: React.FC<{
     setSuccessAlertState: (alertState: AlertState) => void;
     updateCurrencyBalance: (currencyName: string, amountToCharge: Decimal) => void;
 }> = (props) => {
-    const authCtx = useContext(AuthContext);
+    const selector= useAppSelector((state :RootState)=>state.userAuth);
     const appTheme = useTheme();
     const {isLoading, error, sendRequest: makeTransferRequest} = useFetch();
 
@@ -140,7 +142,7 @@ const TransferDialog: React.FC<{
             method: "POST",
             body: {
                 "title": titleValue,
-                "senderId": jwt_decode<DecodedJWT>(authCtx.authToken).sub,
+                "senderId": jwt_decode<DecodedJWT>(selector['authTokens']['accessToken']).sub,
                 "receiverAccountNumber": accountNumberValue,
                 "amount": amountValue,
                 "currency": props.selectedCurrencyName

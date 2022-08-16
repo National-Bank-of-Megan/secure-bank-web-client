@@ -83,13 +83,13 @@ const CurrencyExchangeCard: React.FC<{
 
                         </Select>
                     </FormControl>
-                    <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{marginTop: "20px"}}
-                    >
-                        May 21, 2022
-                    </Typography>
+                    {/*<Typography*/}
+                    {/*    variant="body2"*/}
+                    {/*    color='error'*/}
+                    {/*    sx={{marginTop: "20px"}}*/}
+                    {/*>*/}
+                    {/*    { props.exchange.state.canExchangeBeMade ? 'You do not have enough '+props.exchange.state.currency : ''}*/}
+                    {/*</Typography>*/}
                 </Box>
 
                 <TextField

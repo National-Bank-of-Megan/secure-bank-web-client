@@ -6,14 +6,15 @@ import ExchangeRatesTable from "../components/currency-exchange/ExchangeRatesTab
 import {CURRENCIES} from "../constants/Constants";
 
 export interface IExchangeData {
+    canExchangeBeMade: boolean
     currency: string,
     amount: number,
     action: Action
 }
 
 const CurrencyExchangePage = () => {
-    const [top, setTop] = useState<IExchangeData>({currency: 'PLN', amount: 0.00, action: Action.sell})
-    const [bottom, setBottom] = useState<IExchangeData>({currency: 'USD', amount: 0.00, action: Action.buy})
+    const [top, setTop] = useState<IExchangeData>({currency: 'PLN', amount: 0.00, action: Action.sell, canExchangeBeMade: true})
+    const [bottom, setBottom] = useState<IExchangeData>({currency: 'USD', amount: 0.00, action: Action.buy, canExchangeBeMade :true})
     const [isCurrencyServiceDisabled, setIsCurrencyServiceDisabled] = useState<boolean>(false);
 
     const {getCurrencyRates, error, isLoading, rates} = useFetchCurrencyRates(top.currency);
