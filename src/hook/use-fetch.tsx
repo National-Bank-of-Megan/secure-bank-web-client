@@ -35,15 +35,15 @@ const useFetch = () => {
         // send it together with refreshToken to Backend API
         const authTokenExpired = authCtx.removeAuthTokenIfExpired();
         const refreshTokenExpired = authCtx.removeRefreshTokenIfExpired();
-        const isLoggedIn = !authTokenExpired;
-        console.log("is user logged in? " + isLoggedIn)
+        console.log("is auth token expired? " + !authTokenExpired)
 
         try {
-            if (isLoggedIn) {
+            if (!authTokenExpired) {
                 requestConfig.headers['Authorization'] = authCtx.authToken;
             } else if (!refreshTokenExpired) {
                 requestConfig.headers['Authorization'] = await requestAuthTokenWithRefreshToken();
             } else if (!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register"))) {
+                authCtx.logout();
                 navigate('/login');
             }
 
