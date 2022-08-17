@@ -1,7 +1,7 @@
 import {Avatar, Box, Button, Divider, FormHelperText, Grid, Stack, Typography} from "@mui/material";
 import ButtonStyles from "../styles/ButtonStyles";
 import AccountInfo from "../components/account/AccountInfo";
-import {useLocation} from "react-router-dom";
+import {Link, useLocation} from "react-router-dom";
 import AlertSnackBar, {AlertState} from "../components/notifications/AlertSnackBar";
 import React, {Dispatch, useEffect, useState} from "react";
 
@@ -55,8 +55,8 @@ const AccountPage = () => {
                         <FormHelperText>We’ll send you a link to your current email address.</FormHelperText>
                     </Box>
                     <Box>
-                        <Button variant="outlined" color="error">
-                            change password
+                        <Button component={Link} to="changePassword" variant="outlined" color="error">
+                            Change password
                         </Button>
                     </Box>
     

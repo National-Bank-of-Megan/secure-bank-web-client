@@ -26,7 +26,7 @@ export const shouldUpdateCode = (value: string): boolean => {
     if (value.trim() === '') {
         return true;
     }
-    return parseFloat(value) >= 0.0 && value.trim().length < 6;
+    return parseFloat(value) >= 0.0 && value.trim().length <= 6;
 }
 
 const isPositiveValue = (value: string): boolean => {
