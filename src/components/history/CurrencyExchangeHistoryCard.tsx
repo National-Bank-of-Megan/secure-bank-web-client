@@ -7,7 +7,9 @@ const CurrencyExchangeHistoryCard: React.FC<{ item: CurrencyExchangeHistoryType 
 
     return (
         <Card>
-            <CardContent>
+            <CardContent sx={{
+                padding: '24px 28px'
+            }}>
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'space-between'

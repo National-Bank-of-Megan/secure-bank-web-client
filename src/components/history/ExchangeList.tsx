@@ -1,6 +1,6 @@
 import CurrencyExchangeHistoryCard from "./CurrencyExchangeHistoryCard";
 import React, {useEffect, useState} from "react";
-import {Pagination, Stack} from "@mui/material";
+import {Box, Pagination, Stack} from "@mui/material";
 import {CurrencyExchangeHistoryType} from "../../models/custom-types/CurrencyExchangeHistoryType";
 import {UseStateType} from "../../models/custom-types/UseStateType";
 import PaginationController from "../common/PaginationController";
@@ -16,7 +16,14 @@ const ExchangeList: React.FC<{ history: CurrencyExchangeHistoryType[] }> = ({his
         endIndex: numberPerPage
     })
 
-    return (<Stack spacing={2}>
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                rowGap: "18px",
+            }}
+        >
             {
                 history.slice(pagination.startIndex, pagination.endIndex).map(i => {
                     return <CurrencyExchangeHistoryCard item={i}/>
@@ -28,7 +35,7 @@ const ExchangeList: React.FC<{ history: CurrencyExchangeHistoryType[] }> = ({his
                 numberPerPage={numberPerPage}
                 dataLength={length}
             />
-        </Stack>
+        </Box>
     )
 }
 
