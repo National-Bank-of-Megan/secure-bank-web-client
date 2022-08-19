@@ -35,7 +35,7 @@ const useFetch = () => {
         // send it together with refreshToken to Backend API
         const authTokenExpired = authCtx.removeAuthTokenIfExpired();
         const refreshTokenExpired = authCtx.removeRefreshTokenIfExpired();
-        console.log("is auth token expired? " + !authTokenExpired)
+        console.log("is auth token expired? " + authTokenExpired)
 
         try {
             if (!authTokenExpired) {

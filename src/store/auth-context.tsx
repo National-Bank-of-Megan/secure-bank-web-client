@@ -93,12 +93,14 @@ export const AuthContextProvider: React.FC<Props> = ({children}) => {
         localStorage.removeItem(refreshTokenKey);
     }
 
-    removeAuthTokenIfExpired();
-    removeRefreshTokenIfExpired();
+    // removeAuthTokenIfExpired();
+    // removeRefreshTokenIfExpired();
     const authTokenFullName = authToken ? authHeader + authToken : "";
     const refreshTokenFullName = refreshToken ? authHeader + refreshToken : "";
     const firstName = authToken ? jwt_decode<DecodedJWT>(authToken).firstName : "";
     const lastName = authToken ? jwt_decode<DecodedJWT>(authToken).lastName : "";
+
+    console.log("Blabla111")
 
     const contextValue = {
         authToken: authTokenFullName,
