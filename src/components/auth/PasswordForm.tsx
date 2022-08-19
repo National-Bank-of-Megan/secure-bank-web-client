@@ -151,7 +151,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                <Spinner isLoading={userAuth['loading']}/>
+                <Spinner isLoading={ store.getState().userAuth['loading']}/>
                 <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
                 <Paper
                     sx={{

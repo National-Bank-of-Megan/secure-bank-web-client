@@ -4,8 +4,12 @@ import React, {useState} from "react";
 import {DetailedTransactionType} from "../../models/custom-types/DetailedTransactionType";
 import {PaginationDataType} from "../../models/custom-types/PaginationDataType";
 import PaginationController from "../common/PaginationController";
+import ServerError from "../notifications/ServerError";
 
-const OperationsList: React.FC<{ history: DetailedTransactionType[] }> = ({history}) => {
+const OperationsList: React.FC<{ history: DetailedTransactionType[], serverError: boolean }> = ({
+                                                                                                    history,
+                                                                                                    serverError
+                                                                                                }) => {
     const numberPerPage = 5;
     const length = history.length;
     const nPages: number = Math.ceil(length / numberPerPage);
@@ -21,19 +25,27 @@ const OperationsList: React.FC<{ history: DetailedTransactionType[] }> = ({histo
                 display: "flex",
                 flexDirection: "column",
                 rowGap: "18px",
+                marginTop: '80px'
             }}
         >
             {
-                history.slice(pagination.startIndex,pagination.endIndex).map(item => {
-                    return <TransactionDetailed item={item}/>
-                })
+                serverError && <ServerError/>
             }
-            <PaginationController
-                page={{"state": pagination, "setState": setPagination}}
-                numberOfPages={nPages}
-                numberPerPage={numberPerPage}
-                dataLength={length}
-            />
+            {
+                !serverError && <>
+                    {
+                        history.slice(pagination.startIndex, pagination.endIndex).map(item => {
+                            return <TransactionDetailed item={item}/>
+                        })
+                    }
+                    <PaginationController
+                        page={{"state": pagination, "setState": setPagination}}
+                        numberOfPages={nPages}
+                        numberPerPage={numberPerPage}
+                        dataLength={length}
+                    />
+                </>
+            }
 
         </Box>
     );
