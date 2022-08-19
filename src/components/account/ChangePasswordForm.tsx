@@ -1,4 +1,4 @@
-import {Button, Grid, Paper, TextField, Typography} from "@mui/material";
+import {Box, Button, Grid, Paper, TextField, Typography} from "@mui/material";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import useInput from "../../hook/use-input";
@@ -8,6 +8,7 @@ import {shouldUpdateCode} from "../../common/validation";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {REST_PATH_AUTH} from "../../constants/Constants";
 import {AlertState} from "../notifications/AlertSnackBar";
+import {isNotEmpty} from "../../input-rules/is-not-empty";
 
 const ChangePasswordForm: React.FC<{
     setIsChangingPassword: Dispatch<SetStateAction<boolean>>;
@@ -35,7 +36,16 @@ const ChangePasswordForm: React.FC<{
         setIsTouched: setIsOldPasswordTouched,
         valueChangeHandler: oldPasswordChangeHandler,
         inputBlurHandler: oldPasswordBlurHandler
-    } = useInput(isValidPassword);
+    } = useInput(isNotEmpty);
+
+    const isSameAsOldPassword = (comparedPassword: string) => {
+        return comparedPassword === oldPasswordValue;
+    }
+
+    const isNewPasswordValid = (newPassword: string) => {
+        return isValidPassword(newPassword) && !isSameAsOldPassword(newPassword);
+    }
+
     const {
         value: newPasswordValue,
         isValid: newPasswordValueIsValid,
@@ -43,10 +53,10 @@ const ChangePasswordForm: React.FC<{
         setIsTouched: setIsNewPasswordTouched,
         valueChangeHandler: newPasswordChangeHandler,
         inputBlurHandler: newPasswordBlurHandler
-    } = useInput(isValidPassword);
+    } = useInput(isNewPasswordValid);
 
-    const isSameAsPassword = (confirmPassword: string) => {
-        return confirmPassword === newPasswordValue;
+    const isSameAsNewPassword = (comparedPassword: string) => {
+        return comparedPassword === newPasswordValue;
     }
 
     const {
@@ -56,7 +66,7 @@ const ChangePasswordForm: React.FC<{
         setIsTouched: setIsConfirmNewPasswordTouched,
         valueChangeHandler: confirmNewPasswordChangeHandler,
         inputBlurHandler: confirmNewPasswordBlurHandler
-    } = useInput(isSameAsPassword);
+    } = useInput(isSameAsNewPassword);
 
     const {
         value: oneTimePasswordValue,
@@ -115,90 +125,105 @@ const ChangePasswordForm: React.FC<{
         changePasswordRequest(changePasswordRequestContent, handleSuccessfulChangePassword);
     }
 
+    let newPasswordErrorMessage;
+    if (newPasswordHasError) {
+        if (!isValidPassword(newPasswordValue)) {
+            newPasswordErrorMessage = 'Too weak password.';
+        } else if (isSameAsOldPassword(oldPasswordValue)) {
+            newPasswordErrorMessage = 'New password cannot be the same as the old one.';
+        }
+    }
+
     return (
         <>
             <Paper style={{
                 marginLeft: "auto",
                 marginRight: "auto",
-                width: '800px'
+                width: '700px'
             }}>
-                <Grid container spacing={4} sx={{justifyContent: 'center', paddingBottom: 5, paddingTop: 5}}>
-                    <Grid item xs={12} sx={{textAlign: 'center'}}>
-                        <Typography variant="h3" color="primary">Change your password</Typography>
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            error={oldPasswordHasError}
-                            onChange={oldPasswordChangeHandler}
-                            onBlur={oldPasswordBlurHandler}
-                            value={oldPasswordValue}
-                            label="Old password"
-                            size="medium"
-                            variant="standard"
-                            helperText={oldPasswordHasError ? "Invalid password." : ''}
-                            fullWidth
-                            type="password"
-                        />
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        padding: "35px 0",
+                        gap: "30px",
+                        width: "500px",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                    }}
+                >
 
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            error={newPasswordHasError}
-                            onChange={newPasswordChangeHandler}
-                            onBlur={newPasswordBlurHandler}
-                            value={newPasswordValue}
-                            label="New password"
-                            size="medium"
-                            variant="standard"
-                            helperText={newPasswordHasError ? "Too weak password." : ''}
-                            fullWidth
-                            type="password"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            error={confirmNewPasswordHasError}
-                            onChange={confirmNewPasswordChangeHandler}
-                            onBlur={confirmNewPasswordBlurHandler}
-                            value={confirmNewPasswordValue}
-                            label="Confirm new password"
-                            size="medium"
-                            variant="standard"
-                            helperText={confirmNewPasswordHasError ? "Passwords do not match." : ''}
-                            fullWidth
-                            type="password"
-                        />
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <TextField
-                            InputProps={{
-                                inputProps: { min: 0 }
-                            }}
-                            error={oneTimePasswordHasError}
-                            onChange={oneTimePasswordChangeHandler}
-                            onBlur={oneTimePasswordBlurHandler}
-                            value={oneTimePasswordValue}
-                            label="Password"
-                            size="medium"
-                            variant="standard"
-                            helperText={oneTimePasswordHasError ? "Too weak password." : ''}
-                            fullWidth
-                            type="number"
-                            sx={{
-                                '& .MuiInput-input': {
-                                    '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
-                                        '-webkit-appearance': 'none',
-                                    }
+                    <Typography variant="h3" color="primary">Change your password</Typography>
+                    <TextField
+                        error={oldPasswordHasError}
+                        onChange={oldPasswordChangeHandler}
+                        onBlur={oldPasswordBlurHandler}
+                        value={oldPasswordValue}
+                        label="Old password"
+                        size="medium"
+                        variant="standard"
+                        helperText={oldPasswordHasError ? "Incorrect password format." : ''}
+                        fullWidth
+                        type="password"
+                    />
+
+
+
+                    <TextField
+                        error={newPasswordHasError}
+                        onChange={newPasswordChangeHandler}
+                        onBlur={newPasswordBlurHandler}
+                        value={newPasswordValue}
+                        label="New password"
+                        size="medium"
+                        variant="standard"
+                        helperText={newPasswordHasError ? newPasswordErrorMessage : ''}
+                        fullWidth
+                        type="password"
+                    />
+
+
+                    <TextField
+                        error={confirmNewPasswordHasError}
+                        onChange={confirmNewPasswordChangeHandler}
+                        onBlur={confirmNewPasswordBlurHandler}
+                        value={confirmNewPasswordValue}
+                        label="Confirm new password"
+                        size="medium"
+                        variant="standard"
+                        helperText={confirmNewPasswordHasError ? "Passwords do not match." : ''}
+                        fullWidth
+                        type="password"
+                    />
+
+
+                    <TextField
+                        InputProps={{
+                            inputProps: { min: 0 }
+                        }}
+                        error={oneTimePasswordHasError}
+                        onChange={oneTimePasswordChangeHandler}
+                        onBlur={oneTimePasswordBlurHandler}
+                        value={oneTimePasswordValue}
+                        label="One time password"
+                        size="medium"
+                        variant="standard"
+                        helperText={oneTimePasswordHasError ? "Incorrect one time password format." : ''}
+                        fullWidth
+                        type="number"
+                        sx={{
+                            '& .MuiInput-input': {
+                                '&::-webkit-outer-spin-button, &::-webkit-inner-spin-button': {
+                                    '-webkit-appearance': 'none',
                                 }
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sx={{marginRight: 5, marginLeft: 5}}>
-                        <Button onClick={changePasswordHandler} sx={{width: "350px"}} variant="contained" size="large">
-                            Change password
-                        </Button>
-                    </Grid>
-                </Grid>
+                            }
+                        }}
+                    />
+                    <Button onClick={changePasswordHandler} sx={{width: "350px", marginTop: '15px'}} variant="contained" size="large">
+                        Change password
+                    </Button>
+                </Box>
             </Paper>
         </>
     );
