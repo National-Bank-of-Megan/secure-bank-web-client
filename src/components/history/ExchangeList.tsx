@@ -1,12 +1,15 @@
 import CurrencyExchangeHistoryCard from "./CurrencyExchangeHistoryCard";
-import React, {useEffect, useState} from "react";
-import {Box, Pagination, Stack} from "@mui/material";
+import React, {useState} from "react";
+import {Stack} from "@mui/material";
 import {CurrencyExchangeHistoryType} from "../../models/custom-types/CurrencyExchangeHistoryType";
-import {UseStateType} from "../../models/custom-types/UseStateType";
 import PaginationController from "../common/PaginationController";
 import {PaginationDataType} from "../../models/custom-types/PaginationDataType";
+import ServerError from "../notifications/ServerError";
 
-const ExchangeList: React.FC<{ history: CurrencyExchangeHistoryType[] }> = ({history}) => {
+const ExchangeList: React.FC<{ history: CurrencyExchangeHistoryType[], serverError: boolean }> = ({
+                                                                                                      history,
+                                                                                                      serverError
+                                                                                                  }) => {
     const numberPerPage = 5;
     const length = history.length;
     const nPages: number = Math.ceil(length / numberPerPage);
@@ -16,26 +19,28 @@ const ExchangeList: React.FC<{ history: CurrencyExchangeHistoryType[] }> = ({his
         endIndex: numberPerPage
     })
 
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                rowGap: "18px",
-            }}
-        >
+    return (<Stack spacing={2} sx={{  marginTop: '80px'}}>
+
             {
-                history.slice(pagination.startIndex, pagination.endIndex).map(i => {
-                    return <CurrencyExchangeHistoryCard item={i}/>
-                })
+                serverError && <ServerError/>
             }
-            <PaginationController
-                page={{"state": pagination, "setState": setPagination}}
-                numberOfPages={nPages}
-                numberPerPage={numberPerPage}
-                dataLength={length}
-            />
-        </Box>
+
+            {
+                !serverError && <>
+                    {
+                        history.slice(pagination.startIndex, pagination.endIndex).map(i => {
+                            return <CurrencyExchangeHistoryCard item={i}/>
+                        })
+                    }
+                    <PaginationController
+                        page={{"state": pagination, "setState": setPagination}}
+                        numberOfPages={nPages}
+                        numberPerPage={numberPerPage}
+                        dataLength={length}
+                    />
+                </>
+            }
+        </Stack>
     )
 }
 

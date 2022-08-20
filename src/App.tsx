@@ -20,10 +20,10 @@ import {useSelector} from "react-redux";
 import {UserState} from "./reducers/user-reducer";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
 
+
 function App() {
     const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
     const { isAuthenticated } = userAuth;
-
 
 
     return (

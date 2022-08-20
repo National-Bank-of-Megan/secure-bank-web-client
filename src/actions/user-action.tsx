@@ -50,6 +50,10 @@ const reduxAuthFetch = async (dispatch: ThunkDispatch<RootState, unknown, AnyAct
 
 export const   login = (clientId: string, password: string)   :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> => {
 
+    dispatch({
+        type: USER_AUTH_REQUEST
+    })
+
     const url = REST_PATH_AUTH + "/web/login";
     const body = JSON.stringify({
         clientId : clientId,

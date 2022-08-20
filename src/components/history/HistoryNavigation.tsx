@@ -27,7 +27,7 @@ const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingCha
                                                                                                                             }) => {
 
     return (
-        <>
+        <Box>
             <Paper sx={{bgcolor: "background.paper"}}>
                 <Tabs
                     value={currentlyBrowsing}
@@ -76,7 +76,7 @@ const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingCha
                     </Select>
                 </FormControl>
             </Box>
-        </>
+        </Box>
     );
 };
 
