@@ -1,16 +1,15 @@
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import React, {useEffect, useState} from "react";
-import {CurrencyExchangeHistoryType} from "../../models/custom-types/CurrencyExchangeHistoryType";
-import {DetailedTransactionType} from "../../models/custom-types/DetailedTransactionType";
 import OperationsList from "./OperationsList";
 import ExchangeList from "./ExchangeList";
-import {CurrencyExchangeHistoryTypeResponse} from "../../models/custom-types/CurrencyExchangeHistoryTypeResponse";
 import {REST_PATH_EXCHANGE, REST_PATH_TRANSFER} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
 import HistoryNavigation from "./HistoryNavigation";
 import {Box, CircularProgress, Typography} from "@mui/material";
 import {DetailedTransactionTypeResponse} from "../../models/custom-types/DetailedTransactionTypeResponse";
-import RelativeSpinner from "../common/RelativeSpinner";
+import CurrencyExchangeHistory from "../../models/currencyExchangeHistory";
+import DetailedTransaction from "../../models/detailedTransaction";
+import CurrencyExchangeHistoryResponse from "../../models/currencyExchangeHistoryResponse";
 
 const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (event: React.SyntheticEvent, newCurrent: string) => void }> = (props) => {
     const {
@@ -23,24 +22,24 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
         error: errorDetailedTransaction,
         sendRequest: sendDetailedTransactionHistoryRequest
     } = useFetch();
-    const [currencyExchangeHistory, setCurrencyExchangeHistory] = useState<CurrencyExchangeHistoryType[]>([]);
-    const [recentTransfers, setRecentTransfers] = useState<DetailedTransactionType[]>([]);
+    const [currencyExchangeHistory, setCurrencyExchangeHistory] = useState<CurrencyExchangeHistory[]>([]);
+    const [recentTransfers, setRecentTransfers] = useState<DetailedTransaction[]>([]);
 
     const [currentSortType, setCurrentSortType] = useState<string>('None')
 
-    const sortAscending = (data: CurrencyExchangeHistoryType[] | DetailedTransactionType[]) => {
+    const sortAscending = (data: CurrencyExchangeHistory[] | DetailedTransaction[]) => {
         return data.slice().sort(function (first, second) {
-            return Number(first.date) - Number(second.date);
+            return Number(first.requestDate) - Number(second.requestDate);
         });
     }
 
-    const sortDescending = (data: CurrencyExchangeHistoryType[] | DetailedTransactionType[]) => {
+    const sortDescending = (data: CurrencyExchangeHistory[] | DetailedTransaction[]) => {
         return data.slice().sort(function (first, second) {
-            return Number(second.date) - Number(first.date);
+            return Number(second.requestDate) - Number(first.requestDate);
         });
     }
 
-    const getSortedData = (data: CurrencyExchangeHistoryType[] | DetailedTransactionType[], sortType: string) => {
+    const getSortedData = (data: CurrencyExchangeHistory[] | DetailedTransaction[], sortType: string) => {
         switch (sortType) {
             case 'Oldest to newest':
                 return sortDescending(data);
@@ -75,11 +74,11 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
 
 
         //  fetching currency exchange history
-        const transformCurrencyExchangeHistory = (currencyExchangeHistoryObj: CurrencyExchangeHistoryTypeResponse[]) => {
-            const history: CurrencyExchangeHistoryType[] = [];
+        const transformCurrencyExchangeHistory = (currencyExchangeHistoryObj: CurrencyExchangeHistoryResponse[]) => {
+            const history: CurrencyExchangeHistory[] = [];
             for (const key in currencyExchangeHistoryObj) {
                 history.push({
-                    date: new Date(currencyExchangeHistoryObj[key].orderedOn),
+                    requestDate: new Date(currencyExchangeHistoryObj[key].requestDate),
                     bought: currencyExchangeHistoryObj[key].amountBought,
                     currencyBought: currencyExchangeHistoryObj[key].currencyBought,
                     sold: currencyExchangeHistoryObj[key].amountSold,
@@ -98,11 +97,11 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
 
         //    fetching transaction history
         const transformDetailedTransactionHistory = (detailedTransactionTypeObj: DetailedTransactionTypeResponse[]) => {
-            const history: DetailedTransactionType[] = [];
+            const history: DetailedTransaction[] = [];
             for (const key in detailedTransactionTypeObj) {
                 //todo co zorbic requested date
                 history.push({
-                    date: new Date(detailedTransactionTypeObj[key].doneDate),
+                    requestDate: new Date(detailedTransactionTypeObj[key].doneDate),
                     title: detailedTransactionTypeObj[key].title,
                     amount: detailedTransactionTypeObj[key].amount,
                     currency: detailedTransactionTypeObj[key].currency,

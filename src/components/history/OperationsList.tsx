@@ -1,12 +1,12 @@
 import {Box} from "@mui/material";
 import TransactionDetailed from "../transfers/TransactionDetailed";
 import React, {useState} from "react";
-import {DetailedTransactionType} from "../../models/custom-types/DetailedTransactionType";
 import {PaginationDataType} from "../../models/custom-types/PaginationDataType";
 import PaginationController from "../common/PaginationController";
 import ServerError from "../notifications/ServerError";
+import DetailedTransaction from "../../models/detailedTransaction";
 
-const OperationsList: React.FC<{ history: DetailedTransactionType[], serverError: boolean }> = ({
+const OperationsList: React.FC<{ history: DetailedTransaction[], serverError: boolean }> = ({
                                                                                                     history,
                                                                                                     serverError
                                                                                                 }) => {

@@ -1,9 +1,9 @@
 import {Box, Card, CardContent, Typography} from "@mui/material";
-import {TransactionType} from "../../models/custom-types/TransactionType";
 import React from "react";
 import Decimal from "decimal.js";
+import TransactionSummary from "../../models/transactionSummary";
 
-const Transaction: React.FC<{ item: TransactionType }> = ({item}) => {
+const Transaction: React.FC<{ item: TransactionSummary }> = ({item}) => {
 
     const getChar = () => {
         if (item.amount> new Decimal(0)) return '+'
@@ -12,17 +12,22 @@ const Transaction: React.FC<{ item: TransactionType }> = ({item}) => {
     }
     return (
         <Card>
-            <CardContent>
+            <CardContent sx={{
+                padding: '24px 28px',
+                height: '100px',
+            }}>
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'space-between'
                 }}>
                     <Box>
                         <Typography variant="h5">{item.title}</Typography>
-                        <Typography variant="body2" color="text.secondary">{item.date.toLocaleDateString('en-us', {
+                        <Typography variant="body2" color="text.secondary">{new Date(item.requestDate).toLocaleDateString('en-us', {
                             year: "numeric",
                             day: "numeric",
-                            month: "short"
+                            month: "short",
+                            hour: "numeric",
+                            minute: "numeric"
                         })}</Typography>
                     </Box>
                     <Box sx={{

@@ -188,130 +188,107 @@ const TotalBalanceContent = () => {
                            severity="success" />
 
 
-            <Typography variant="h2" color="primary.main">
-                Total balance
-            </Typography>
-            <Typography variant="h2" fontWeight="200" sx={{mt: "10px"}}>
-                15.750,89 PLN
-            </Typography>
-            <Box
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    width: "380px",
-                }}
-            >
-                <FormControl
-                    variant="standard"
-                    sx={{
-                        m: 1,
-                        minWidth: 120,
-                        marginTop: "88px",
-                        marginBottom: "88px",
-                    }}
-                >
-                    <InputLabel sx={{
-                        color: "primary.main",
-                        fontSize: "18px"
-                    }}>Currency balance</InputLabel>
-                    <Select value={selectedCurrencyName} onChange={handleCurrencyChange}>
-                        {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
-                            <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
-                        ))}
-                    </Select>
-                    {/*<List*/}
-                    {/*    sx={{*/}
-                    {/*        width: '100%',*/}
-                    {/*        bgcolor: 'background.paper',*/}
-
-                    {/*    }}*/}
-                    {/*>*/}
-                    {/*    {accountCurrencyBalanceList.map((accountCurrencyBalance) => {*/}
-                    {/*        return (*/}
-                    {/*            <>*/}
-                    {/*                <ListItem sx={{*/}
-                    {/*                    paddingTop: '10px',*/}
-                    {/*                    paddingBottom: '10px'*/}
-                    {/*                }}>*/}
-                    {/*                    <ListItemAvatar>*/}
-                    {/*                        <Avatar>*/}
-                    {/*                            <ImageIcon/>*/}
-                    {/*                        </Avatar>*/}
-                    {/*                    </ListItemAvatar>*/}
-                    {/*                    <ListItemText primary="Photos" secondary="Jan 9, 2014"/>*/}
-                    {/*                </ListItem>*/}
-                    {/*                <Divider component="li"/>*/}
-                    {/*            </>*/}
-                    {/*        );*/}
-                    {/*    })}*/}
-                    {/*</List>*/}
-
-                </FormControl>
-                <Box
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        rowGap: "40px",
-                    }}
-                >
+            <Box sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "100%"
+            }}>
+                <Box>
+                    <Typography variant="h2" color="primary.main" letterSpacing="0.045em">
+                        Total balance
+                    </Typography>
+                    <Typography variant="h2" fontWeight="200" sx={{mt: "10px"}}>
+                        15.750,89 PLN
+                    </Typography>
+                </Box>
+                <Box>
+                    <FormControl
+                        variant="standard"
+                        sx={{
+                            m: 1,
+                            minWidth: "370px"
+                        }}
+                    >
+                        <InputLabel sx={{
+                            color: "primary.main",
+                            fontSize: "18px"
+                        }}>Currency balance</InputLabel>
+                        <Select value={selectedCurrencyName} onChange={handleCurrencyChange}>
+                            {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
+                                <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+                <Box>
                     <Box
                         sx={{
                             display: "flex",
-                            justifyContent: "space-between",
+                            flexDirection: "column",
+                            rowGap: "40px",
+                            width: "385px"
                         }}
                     >
-                        <Fab
-                            color="primary"
-                            variant="extended"
-                            aria-label="transfer"
-                            size="large"
-                            sx={buttonStyles}
-                            onClick={handleAddMoneyDialogOpen}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                            }}
                         >
-                            <Add sx={{mr: 1}}/>
-                            Add money
-                        </Fab>
-                        <Fab
-                            color="error"
-                            variant="extended"
-                            aria-label="transfer"
-                            size="large"
-                            sx={buttonStyles}
-                            onClick={handleTransferDialogOpen}
+                            <Fab
+                                color="primary"
+                                variant="extended"
+                                aria-label="transfer"
+                                size="large"
+                                sx={buttonStyles}
+                                onClick={handleAddMoneyDialogOpen}
+                            >
+                                <Add sx={{mr: 1}}/>
+                                Add money
+                            </Fab>
+                            <Fab
+                                color="error"
+                                variant="extended"
+                                aria-label="transfer"
+                                size="large"
+                                sx={buttonStyles}
+                                onClick={handleTransferDialogOpen}
+                            >
+                                <ArrowForward sx={{mr: 1}}/>
+                                Transfer
+                            </Fab>
+                        </Box>
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                            }}
                         >
-                            <ArrowForward sx={{mr: 1}}/>
-                            Transfer
-                        </Fab>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        <Fab
-                            component={Link}
-                            to="/exchange"
-                            color="primary"
-                            variant="extended"
-                            aria-label="transfer"
-                            size="large"
-                            sx={buttonStyles}
-                        >
-                            <Cached sx={{mr: 1}}/>
-                            Exchange
-                        </Fab>
-                        <Fab
-                            color="success"
-                            variant="extended"
-                            aria-label="transfer"
-                            size="large"
-                            sx={buttonStyles}
-                            onClick={handleAddFriendDialogOpen}
-                        >
-                            <Favorite sx={{mr: 1}}/>
-                            Add Friend
-                        </Fab>
+                            <Fab
+                                component={Link}
+                                to="/exchange"
+                                color="primary"
+                                variant="extended"
+                                aria-label="transfer"
+                                size="large"
+                                sx={buttonStyles}
+                            >
+                                <Cached sx={{mr: 1}}/>
+                                Exchange
+                            </Fab>
+                            <Fab
+                                color="success"
+                                variant="extended"
+                                aria-label="transfer"
+                                size="large"
+                                sx={buttonStyles}
+                                onClick={handleAddFriendDialogOpen}
+                            >
+                                <Favorite sx={{mr: 1}}/>
+                                Add Friend
+                            </Fab>
+                        </Box>
                     </Box>
                 </Box>
             </Box>

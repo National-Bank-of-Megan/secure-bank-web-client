@@ -1,16 +1,12 @@
 import {Grid} from "@mui/material";
 import RecentActivityContent from "../components/transfers/RecentActivityContent";
 import TotalBalanceContent from "../components/transfers/TotalBalanceContent";
-import {TransactionType} from "../models/custom-types/TransactionType";
 import Decimal from "decimal.js";
+import MoneyBalanceOperation from "../models/moneyBalanceOperation";
+import TransactionSummary from "../models/transactionSummary";
 
 const TransferPage = () => {
-    const recentTransfers: TransactionType[] = [
-        {title: 'Spotify', date: new Date(2022, 0O5, 12), amount: new Decimal(-20.00), currency: 'PLN'},
-        {title: 'Spotify', date: new Date(2022, 0O5, 12), amount: new Decimal(20.00), currency: 'PLN'},
-        {title: 'Spotify', date: new Date(2022, 0O5, 12), amount: new Decimal(20.00), currency: 'PLN'},
-        {title: 'Spotify', date: new Date(2022, 0O5, 12), amount: new Decimal(20.00), currency: 'PLN'}
-    ]
+
     return (
         <Grid
             rowSpacing={2}
@@ -24,7 +20,7 @@ const TransferPage = () => {
                 <TotalBalanceContent/>
             </Grid>
             <Grid item xs={6}>
-                <RecentActivityContent recent={recentTransfers}/>
+                <RecentActivityContent />
             </Grid>
         </Grid>
     );

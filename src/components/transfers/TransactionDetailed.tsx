@@ -1,10 +1,10 @@
 import {Accordion, AccordionDetails, AccordionSummary, Box, Divider, Typography,} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {DetailedTransactionType} from "../../models/custom-types/DetailedTransactionType";
 import React from "react";
 import Decimal from "decimal.js";
+import DetailedTransaction from "../../models/detailedTransaction";
 
-const TransactionDetailed: React.FC<{ item: DetailedTransactionType }> = ({item}) => {
+const TransactionDetailed: React.FC<{ item: DetailedTransaction }> = ({item}) => {
 
     const getChar = () => {
         if (item.amount > new Decimal(0.00)) return '+'
@@ -17,10 +17,9 @@ const TransactionDetailed: React.FC<{ item: DetailedTransactionType }> = ({item}
             sx={{
                 padding: "12px",
                 borderRadius: "4px",
-
                 "&:before": {
                     display: "none",
-                },
+                }
             }}
         >
             <AccordionSummary expandIcon={<ExpandMoreIcon/>}>
@@ -34,7 +33,7 @@ const TransactionDetailed: React.FC<{ item: DetailedTransactionType }> = ({item}
                     <Box>
                         <Typography variant="h5">{item.title}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                            {item.date.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short", hour : "numeric",minute :"numeric"})}
+                            {item.requestDate.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short", hour : "numeric",minute :"numeric"})}
                         </Typography>
                     </Box>
                     <Box
@@ -98,7 +97,7 @@ const TransactionDetailed: React.FC<{ item: DetailedTransactionType }> = ({item}
                             {item.receiver}
                         </Typography>
                         <Typography>
-                            {item.date.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short"})}
+                            {item.requestDate.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short"})}
                         </Typography>
                         <Typography>
                             {item.currency + ' ' + item.balanceAfterTransfer.toFixed(2)}
