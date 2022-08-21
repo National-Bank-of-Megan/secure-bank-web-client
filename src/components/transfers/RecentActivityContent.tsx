@@ -22,6 +22,7 @@ const RecentActivityContent = () => {
                 if (moneyBalanceOperationObjects[key].hasOwnProperty('receiver')) {
                     const fetchedTransaction = moneyBalanceOperationObjects[key] as TransactionSummary;
                     loadedMoneyBalanceOperationList.push(new TransactionSummary(
+                        fetchedTransaction.transferType,
                         fetchedTransaction.title,
                         fetchedTransaction.requestDate,
                         fetchedTransaction.amount,

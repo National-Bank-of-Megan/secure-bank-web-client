@@ -26,6 +26,7 @@ export type RequestConfig = {
 const useFetch = () => {
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadedSuccessfully, setIsLoadedSuccessfully] = useState(false);
     const [error, setError] = useState<FetchError | null>(null);
     const navigate = useNavigate();
     //redux
@@ -87,8 +88,10 @@ const useFetch = () => {
             const responseText = await response.text();
             let data: T = responseText === "" ? {} : JSON.parse(responseText);
             applyData(data);
+            setIsLoadedSuccessfully(true);
         } catch (error) {
             setError(error as FetchError || new FetchError(500, "Something went wrong."));
+            setIsLoadedSuccessfully(false);
         }
         setIsLoading(false);
     }, [navigate]);

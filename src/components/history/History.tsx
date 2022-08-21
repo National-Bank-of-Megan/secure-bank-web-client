@@ -101,11 +101,13 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
             for (const key in detailedTransactionTypeObj) {
                 //todo co zorbic requested date
                 history.push({
+                    transferType: detailedTransactionTypeObj[key].transferType,
                     requestDate: new Date(detailedTransactionTypeObj[key].doneDate),
                     title: detailedTransactionTypeObj[key].title,
                     amount: detailedTransactionTypeObj[key].amount,
                     currency: detailedTransactionTypeObj[key].currency,
                     status: detailedTransactionTypeObj[key].status,
+                    sender: detailedTransactionTypeObj[key].sender,
                     receiver: detailedTransactionTypeObj[key].receiver,
                     balanceAfterTransfer: detailedTransactionTypeObj[key].balanceAfter
                 })

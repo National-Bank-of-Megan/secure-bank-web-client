@@ -2,14 +2,10 @@ import {Box, Card, CardContent, Typography} from "@mui/material";
 import React from "react";
 import Decimal from "decimal.js";
 import TransactionSummary from "../../models/transactionSummary";
+import {getAmountMathSymbol} from "../../common/transfer";
 
 const Transaction: React.FC<{ item: TransactionSummary }> = ({item}) => {
 
-    const getChar = () => {
-        if (item.amount> new Decimal(0)) return '+'
-        else return ''
-
-    }
     return (
         <Card>
             <CardContent sx={{
@@ -34,7 +30,9 @@ const Transaction: React.FC<{ item: TransactionSummary }> = ({item}) => {
                         alignSelf: 'center'
                     }}>
                         <Typography variant="body1"
-                                    color="text.primary">    {getChar() + item.amount.toFixed(2) + ' ' + item.currency}</Typography>
+                                    color="text.primary">
+                            {getAmountMathSymbol(item) + ' ' + item.amount.toFixed(2) + ' ' + item.currency}
+                        </Typography>
                     </Box>
                 </Box>
             </CardContent>

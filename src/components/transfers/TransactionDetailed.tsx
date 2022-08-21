@@ -3,14 +3,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
 import Decimal from "decimal.js";
 import DetailedTransaction from "../../models/detailedTransaction";
+import {getAmountMathSymbol} from "../../common/transfer";
+import {TRANSFER_TYPE_RECEIVED} from "../../constants/Constants";
 
 const TransactionDetailed: React.FC<{ item: DetailedTransaction }> = ({item}) => {
 
-    const getChar = () => {
-        if (item.amount > new Decimal(0.00)) return '+'
-        else return ''
+    const receiverOrSender = item.transferType === TRANSFER_TYPE_RECEIVED ? "Sender" : "Receiver";
+    const receiverOrSenderValue = item.transferType === TRANSFER_TYPE_RECEIVED ? item.sender : item.receiver;
 
-    }
     return (
         <Accordion
             disableGutters
@@ -43,7 +43,7 @@ const TransactionDetailed: React.FC<{ item: DetailedTransaction }> = ({item}) =>
                         }}
                     >
                         <Typography variant="body1" color="text.primary">
-                            {getChar() + item.amount.toFixed(2)}
+                            {getAmountMathSymbol(item) + ' ' + item.amount.toFixed(2) + ' ' + item.currency}
                         </Typography>
                     </Box>
                 </Box>
@@ -71,13 +71,10 @@ const TransactionDetailed: React.FC<{ item: DetailedTransaction }> = ({item}) =>
                             Amount
                         </Typography>
                         <Typography>
-                            Receiver
+                            {receiverOrSender}
                         </Typography>
                         <Typography>
                             Date
-                        </Typography>
-                        <Typography>
-                            Balance after transfer
                         </Typography>
                     </Box>
                     <Box sx={{
@@ -91,17 +88,18 @@ const TransactionDetailed: React.FC<{ item: DetailedTransaction }> = ({item}) =>
                             {item.status}
                         </Typography>
                         <Typography>
-                            {getChar() + item.amount.toFixed(2) + ' ' + item.currency}
+                            {getAmountMathSymbol(item) + ' ' + item.amount.toFixed(2) + ' ' + item.currency}
                         </Typography>
                         <Typography>
-                            {item.receiver}
+                            {receiverOrSenderValue}
                         </Typography>
-                        <Typography>
-                            {item.requestDate.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short"})}
-                        </Typography>
-                        <Typography>
-                            {item.currency + ' ' + item.balanceAfterTransfer.toFixed(2)}
-                        </Typography>
+                        <Typography>{item.requestDate.toLocaleDateString('en-us', {
+                            year: "numeric",
+                            day: "numeric",
+                            month: "short",
+                            hour: "numeric",
+                            minute: "numeric"
+                        })}</Typography>
                     </Box>
                 </Box>
             </AccordionDetails>
