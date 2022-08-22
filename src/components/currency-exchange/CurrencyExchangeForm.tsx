@@ -156,7 +156,7 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
         if (!!error) {
             setErrorAlertState({
                 isOpen: true,
-                message: "Could not exchange currency."
+                message: error.message
             })
         }
     }, [error, setErrorAlertState])

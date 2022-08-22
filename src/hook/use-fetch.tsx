@@ -82,7 +82,9 @@ const useFetch = () => {
 
             console.log(response)
             if (!response.ok) {
-                throw new FetchError(response.status, await response.text());
+                const errorBody = await response.json();
+                const errorMessage = await errorBody.message;
+                throw new FetchError(response.status, errorMessage);
             }
 
             const responseText = await response.text();
@@ -90,6 +92,7 @@ const useFetch = () => {
             applyData(data);
             setIsLoadedSuccessfully(true);
         } catch (error) {
+            console.log(error);
             setError(error as FetchError || new FetchError(500, "Something went wrong."));
             setIsLoadedSuccessfully(false);
         }

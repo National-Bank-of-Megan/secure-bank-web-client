@@ -122,7 +122,7 @@ const RegistrationForm = () => {
             console.log(error.message);
             setErrorAlertState({
                 isOpen: true,
-                message: "This email has already been taken."
+                message: error.message
             });
             setIsRegistering(false);
         }

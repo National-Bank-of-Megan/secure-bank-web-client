@@ -56,7 +56,7 @@ const AddFriendDialog: React.FC<{
             console.log(error.message);
             props.setErrorAlertState({
                 isOpen: true,
-                message: "Could not add new receiver."
+                message: error.message
             });
             setIsProcessingAddFavoriteReceiverRequest(false);
         }

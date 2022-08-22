@@ -16,7 +16,7 @@ const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegist
         navigator.clipboard.writeText(registrationResponseData.clientId);
         setSuccessAlertState({
             isOpen: true,
-            message: "Copied!"
+            message: "ID copied!"
         });
     }
 

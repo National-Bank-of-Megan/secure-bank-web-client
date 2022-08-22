@@ -56,7 +56,7 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData: Dispa
         if (!!error) {
             setErrorAlertState({
                 isOpen: true,
-                message: 'Invalid client ID'
+                message: error.message
             });
             setIsGettingCombination(false);
         }

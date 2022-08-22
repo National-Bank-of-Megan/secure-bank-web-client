@@ -86,7 +86,7 @@ const TransferDialog: React.FC<{
             console.log(error.message);
             props.setErrorAlertState({
                 isOpen: true,
-                message: "Could not transfer money."
+                message: error.message
             });
         }
     }, [error, props.setErrorAlertState])
@@ -142,7 +142,6 @@ const TransferDialog: React.FC<{
             method: "POST",
             body: {
                 "title": titleValue,
-                "senderId": jwt_decode<DecodedJWT>(selector['authTokens']['accessToken']).sub,
                 "receiverAccountNumber": accountNumberValue,
                 "amount": amountValue,
                 "currency": props.selectedCurrencyName

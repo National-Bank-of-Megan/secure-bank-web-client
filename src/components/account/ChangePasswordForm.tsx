@@ -23,7 +23,7 @@ const ChangePasswordForm: React.FC<{
             console.log(error.message);
             props.setErrorAlertState({
                 isOpen: true,
-                message: "Something went wrong"
+                message: error.message
             });
             props.setIsChangingPassword(false);
         }

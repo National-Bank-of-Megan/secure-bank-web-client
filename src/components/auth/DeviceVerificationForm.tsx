@@ -57,7 +57,7 @@ const DeviceVerificationForm = () => {
         if (!!error) {
             setErrorAlertState({
                 isOpen: true,
-                message: 'Incorrect password.'
+                message: error.message
             });
             return;
         }

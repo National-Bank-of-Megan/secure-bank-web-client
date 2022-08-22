@@ -60,7 +60,7 @@ const AddMoneyDialog: React.FC<{
             console.log(error.message);
             props.setErrorAlertState({
                 isOpen: true,
-                message: "Could not add money to your balance."
+                message: error.message
             });
             setIsProcessingAddingMoneyRequest(false);
         }
