@@ -29,7 +29,7 @@ const DeviceVerificationForm = () => {
     const {isLoading, error, sendRequest: loginRequest} = useFetch();
 
     //redux
-    const userAuth = useAppSelector((state) => state.userAuth)
+    const userAuth = useAppSelector((state) => state.userAuthentication)
     const dispatch = useAppDispatch()
 
     const getCode = () => {
@@ -87,7 +87,7 @@ const DeviceVerificationForm = () => {
             return;
         }
         dispatch(verifyOtp(clientId, code)).then(() => {
-            const status = store.getState().userAuth['status']
+            const status = store.getState().userAuthentication['status']
                 if (status === 200) {
                     navigate('/transfers', {replace: true})
                 }
@@ -120,7 +120,7 @@ const DeviceVerificationForm = () => {
                 marginTop: "100px",
             }}
         >
-            <Spinner isLoading={userAuth["loading"]}/>
+            <Spinner isLoading={false}/>
             <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
 
             <Paper

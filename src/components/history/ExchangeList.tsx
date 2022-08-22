@@ -1,12 +1,12 @@
 import CurrencyExchangeHistoryCard from "./CurrencyExchangeHistoryCard";
 import React, {useState} from "react";
-import {Box, Stack} from "@mui/material";
+import {Stack} from "@mui/material";
+import {CurrencyExchangeHistoryType} from "../../models/custom-types/CurrencyExchangeHistoryType";
 import PaginationController from "../common/PaginationController";
 import {PaginationDataType} from "../../models/custom-types/PaginationDataType";
 import ServerError from "../notifications/ServerError";
-import CurrencyExchangeHistory from "../../models/currencyExchangeHistory";
 
-const ExchangeList: React.FC<{ history: CurrencyExchangeHistory[], serverError: boolean }> = ({
+const ExchangeList: React.FC<{ history: CurrencyExchangeHistoryType[], serverError: boolean }> = ({
                                                                                                       history,
                                                                                                       serverError
                                                                                                   }) => {
@@ -19,15 +19,7 @@ const ExchangeList: React.FC<{ history: CurrencyExchangeHistory[], serverError: 
         endIndex: numberPerPage
     })
 
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                rowGap: "18px",
-                marginTop: '80px'
-            }}
-        >
+    return (<Stack spacing={2} sx={{  marginTop: '50px'}}>
 
             {
                 serverError && <ServerError/>
@@ -48,7 +40,7 @@ const ExchangeList: React.FC<{ history: CurrencyExchangeHistory[], serverError: 
                     />
                 </>
             }
-        </Box>
+        </Stack>
     )
 }
 

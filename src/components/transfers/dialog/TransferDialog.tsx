@@ -35,6 +35,8 @@ import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from "decimal.js";
 import {useAppSelector} from "../../../hook/redux-hooks";
 import {RootState} from "../../../store/store";
+import {useSelector} from "react-redux";
+import {UserAuthenticationSliceType} from "../../../store/slice-types/UserAuthenticationSliceType";
 
 const TransferDialog: React.FC<{
     openTransferDialog: boolean;
@@ -47,7 +49,7 @@ const TransferDialog: React.FC<{
     setSuccessAlertState: (alertState: AlertState) => void;
     updateCurrencyBalance: (currencyName: string, amountToCharge: Decimal) => void;
 }> = (props) => {
-    const selector= useAppSelector((state :RootState)=>state.userAuth);
+    const selector= useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
     const appTheme = useTheme();
     const {isLoading, error, sendRequest: makeTransferRequest} = useFetch();
 
@@ -86,7 +88,7 @@ const TransferDialog: React.FC<{
             console.log(error.message);
             props.setErrorAlertState({
                 isOpen: true,
-                message: error.message
+                message: "Could not transfer money."
             });
         }
     }, [error, props.setErrorAlertState])
@@ -142,6 +144,8 @@ const TransferDialog: React.FC<{
             method: "POST",
             body: {
                 "title": titleValue,
+                //todo decode jwt
+                "senderId": 111,
                 "receiverAccountNumber": accountNumberValue,
                 "amount": amountValue,
                 "currency": props.selectedCurrencyName

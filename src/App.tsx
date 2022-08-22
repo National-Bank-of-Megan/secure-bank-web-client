@@ -17,13 +17,14 @@ import PrivateRoute from "./components/auth/PrivateRoute";
 import CustomRoute from "./components/auth/CustomRoute";
 import {RootState} from "./store/store";
 import {useSelector} from "react-redux";
-import {UserState} from "./reducers/user-reducer";
+
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import {UserAuthenticationSliceType} from "./store/slice-types/UserAuthenticationSliceType";
 
 
 function App() {
-    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
-    const { isAuthenticated } = userAuth;
+    const userAuth = useSelector<RootState,UserAuthenticationSliceType>((state) => state.userAuthentication)
+    const isAuthenticated  = false;
 
 
     return (

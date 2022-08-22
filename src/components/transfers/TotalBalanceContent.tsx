@@ -74,7 +74,7 @@ const TotalBalanceContent = () => {
     const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("PLN");
 
 
-    const selector= useAppSelector((state :RootState)=>state.account);
+    const selector= useAppSelector((state :RootState)=>state.userAuthentication);
     const dispatch = useAppDispatch()
 
     const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);

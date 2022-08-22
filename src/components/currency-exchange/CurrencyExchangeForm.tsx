@@ -13,6 +13,9 @@ import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {useAppSelector} from "../../hook/redux-hooks";
 import {RootState} from "../../store/store";
 import {findCurrencyByName} from "../../common/transfer";
+import {useSelector} from "react-redux";
+import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
+
 
 export enum Action {
     sell,
@@ -38,15 +41,15 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
     const conversionRate = rates[bottom.state.currency];
     const [isArrowUp, setIsArrowUp] = useState<boolean>(false);
 
-    const selector = useAppSelector((state: RootState) => state.account);
+    const selector = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication);
 
     const getSubAccountBalance = (currency: string) => {
         let x = null;
-        let subAccounts: [] = selector['subAccounts'];
-        subAccounts.forEach((sub) => {
-            console.log('Loop ' + (sub['currency'] === bottom.state.currency))
-            if (sub['currency'] === bottom.state.currency) x = sub['balance']
-        })
+        let subAccounts: [] = [];
+        // subAccounts.forEach((sub) => {
+        //     console.log('Loop ' + (sub['currency'] === bottom.state.currency))
+        //     if (sub['currency'] === bottom.state.currency) x = sub['balance']
+        // })
         //todo handle service diabled
         if (x === null) setServiceDisabled(true);
 

@@ -125,8 +125,7 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
 
     }, [sendCurrencyExchangeHistoryRequest, setCurrencyExchangeHistory, setRecentTransfers, sendDetailedTransactionHistoryRequest])
     return (
-        <Box sx={{position: 'relative',padding: '70px 180px 20px', height : '100%'}}>
-            {/*add error handler*/}
+        <Box sx={{position :'relative',padding: '70px 180px 20px', height : '100%', minHeight :'100vh'}}>
             <HistoryNavigation currentlyBrowsing={props.currentlyBrowsing}
                                handleBrowsingChange={props.handleBrowsingChange}
                                state={{"state": currentSortType, "setState": setCurrentSortType}}

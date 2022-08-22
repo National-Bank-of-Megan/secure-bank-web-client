@@ -8,14 +8,14 @@ import {useLocation, useNavigate} from "react-router-dom";
 import AuthContext from "../../store/auth-context";
 import {useDispatch, useSelector} from "react-redux";
 import {RootState} from "../../store/store";
-import {UserState} from "../../reducers/user-reducer";
 import {logout} from "../../actions/user-action";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
+import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
 
 export default function Navbar() {
-    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
-    const { isAuthenticated } = userAuth;
+    const userAuth = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
+    const  isAuthenticated= false;
     const dispatch = useAppDispatch()
 
     const {pathname} = useLocation();

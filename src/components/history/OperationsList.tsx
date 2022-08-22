@@ -22,10 +22,11 @@ const OperationsList: React.FC<{ history: DetailedTransaction[], serverError: bo
     return (
         <Box
             sx={{
+                position :'relative',
                 display: "flex",
                 flexDirection: "column",
                 rowGap: "18px",
-                marginTop: '80px'
+                marginTop: '50px'
             }}
         >
             {
