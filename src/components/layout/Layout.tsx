@@ -1,7 +1,6 @@
 import Navbar from "./Navbar";
 import React, {useState} from "react";
 import ContainerContext from "../../store/container-context";
-import {Box, Container, Grid} from "@mui/material";
 
 
 export default function Layout(props: any) {

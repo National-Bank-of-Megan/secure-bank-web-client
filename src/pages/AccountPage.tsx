@@ -1,10 +1,9 @@
-import {Avatar, Box, Button, Divider, FormHelperText, Grid, Stack, Typography} from "@mui/material";
+import {Box, Button, Divider, FormHelperText, Stack, Typography} from "@mui/material";
 import ButtonStyles from "../styles/ButtonStyles";
 import AccountInfo from "../components/account/AccountInfo";
 import {Link, useLocation} from "react-router-dom";
 import AlertSnackBar, {AlertState} from "../components/notifications/AlertSnackBar";
-import React, {Dispatch, useEffect, useState} from "react";
-
+import React, {useState} from "react";
 
 
 //todo refactor

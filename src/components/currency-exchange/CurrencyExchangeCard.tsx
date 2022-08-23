@@ -1,11 +1,10 @@
-import {Box, Card, CardContent, SelectChangeEvent, TextField, Typography} from "@mui/material";
+import {Box, Card, CardContent, SelectChangeEvent, TextField} from "@mui/material";
 import exchangeCurrencyCardStyles from "../../styles/exchangeCurrencyCardStyles";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import React from "react";
 import NumberFormat, {InputAttributes} from "react-number-format";
-import {CURRENCIES} from "../../constants/Constants";
 import {Action} from "./CurrencyExchangeForm";
 import {UseStateType} from "../../models/custom-types/UseStateType";
 import {IExchangeData} from "../../pages/CurrencyExchangePage";

@@ -2,13 +2,12 @@ import {Box, Button, Paper, Stack, Typography} from "@mui/material";
 import React, {createRef, useEffect, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import useFetch, {RequestConfig} from "../../hook/use-fetch";
+import useFetch from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
-import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
+import {CODE_LENGTH} from "../../constants/Constants";
 
 import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
-import {login, verifyOtp} from "../../actions/user-action";
 import store from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 
@@ -86,23 +85,23 @@ const DeviceVerificationForm = () => {
             });
             return;
         }
-        dispatch(verifyOtp(clientId, code)).then(() => {
-            const status = store.getState().userAuthentication['status']
-                if (status === 200) {
-                    navigate('/transfers', {replace: true})
-                }
-            }
-        ).catch((error) => {
-            setErrorAlertState({
-                isOpen: true,
-                message: error
-            });
-            digitsRefs.forEach(
-                (ref) => {
-                    ref.current!.value = "";
-                }
-            )
-        })
+        // dispatch(verifyOtp(clientId, code)).then(() => {
+        //     const status = store.getState().userAuthentication['status']
+        //         if (status === 200) {
+        //             navigate('/transfers', {replace: true})
+        //         }
+        //     }
+        // ).catch((error) => {
+        //     setErrorAlertState({
+        //         isOpen: true,
+        //         message: error
+        //     });
+        //     digitsRefs.forEach(
+        //         (ref) => {
+        //             ref.current!.value = "";
+        //         }
+        //     )
+        // })
     }
 
 

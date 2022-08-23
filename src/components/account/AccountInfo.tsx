@@ -1,4 +1,4 @@
-import {Avatar, Box, Grid, Stack, Typography} from "@mui/material";
+import {Avatar, Grid, Stack} from "@mui/material";
 import {useContext, useEffect, useState} from "react";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import AccountContext from "../../store/account-context";

@@ -1,6 +1,8 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAction, createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
+import store from "../store";
+
 
 export const authenticate = createAsyncThunk(
     'userAuthentication/authenticate',
@@ -22,6 +24,7 @@ export const authenticate = createAsyncThunk(
         })
     }
 )
+
 
 
 export const userAuthenticationSlice = createSlice({
@@ -55,28 +58,26 @@ export const userAuthenticationSlice = createSlice({
                 state.status = payload.payload.status
                 // @ts-ignore
                 state.authTokens = payload.payload.status === 200 ? {
+                    // @ts-ignore
                     accessToken: payload.payload.data.access_token,
+                    // @ts-ignore
                     refreshToken: payload.payload.data.access_token
                 } : null;
             })
+
     },
 
     reducers: {
 
-        isUserLoggedIn: (state) => {
-            const token = state.authTokens.accessToken;
-            if(token === undefined) return false;
-            // console.log(token)
-            const toMilliseconds = 1000;
-            const authTokenExpiration = jwt_decode<DecodedJWT>(token!).exp;
-            return authTokenExpiration * toMilliseconds >= new Date().getTime()
-        },
-
         logout: (state) => {
+            console.log('logging out ...')
             state.status = -1;
             state.authTokens.accessToken = null;
             state.authTokens.refreshToken = null;
-        }
+            state.isLoading = false;
+        },
+
+
     }
 
 })

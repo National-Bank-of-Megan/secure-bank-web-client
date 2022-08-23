@@ -2,7 +2,6 @@ import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
 import React, {createRef, useEffect, useReducer, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate} from "react-router-dom";
-import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
 import {useAppDispatch} from "../../hook/redux-hooks";
@@ -156,7 +155,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 }}
             >
                 {/*todo correct*/}
-                <Spinner isLoading={store.getState().userAuthentication.isLoading}/>
+                {/*<Spinner isLoading={store.getState().userAuthentication.isLoading}/>*/}
                 <AlertSnackBar severity={"error"}
                                alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
                 <Paper

@@ -5,7 +5,7 @@ import ExchangeList from "./ExchangeList";
 import {REST_PATH_EXCHANGE, REST_PATH_TRANSFER} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
 import HistoryNavigation from "./HistoryNavigation";
-import {Box, CircularProgress, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import {DetailedTransactionTypeResponse} from "../../models/custom-types/DetailedTransactionTypeResponse";
 import CurrencyExchangeHistory from "../../models/currencyExchangeHistory";
 import DetailedTransaction from "../../models/detailedTransaction";

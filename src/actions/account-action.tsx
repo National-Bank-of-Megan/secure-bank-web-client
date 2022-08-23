@@ -1,15 +1,6 @@
 import {ThunkAction, ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
-import {REST_PATH_AUTH} from "../constants/Constants";
-import {
-    AccountCurrencyBalance,
-    AccountCurrencyBalanceResponse,
-    availableCurrencies
-} from "../components/transfers/TotalBalanceContent";
-import {SUB_ACCOUNTS_FETCH_FAILURE, SUB_ACCOUNTS_FETCH_SUCCESS} from "../constants/AccountConstants";
-import {Headers} from "../hook/use-fetch";
-import store, {RootState} from "../store/store";
-import Decimal from "decimal.js";
+import {RootState} from "../store/store";
 
 // const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
 //     console.log(currenciesBalanceObj)

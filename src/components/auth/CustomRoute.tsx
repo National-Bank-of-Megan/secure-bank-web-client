@@ -1,9 +1,8 @@
-import React, {useContext} from "react";
-import AuthContext from "../../store/auth-context";
-import useRefreshToken from "../../hook/use-refresh";
+import React from "react";
 import {useSelector} from "react-redux";
 import {RootState} from "../../store/store";
 import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
+import {isUserLoggedIn} from "../../store/slice/userAuthenticationSlice";
 
 
 type Props = {
@@ -12,7 +11,7 @@ type Props = {
 
 const CustomRoute: React.FC<Props> = ({children}) => {
     const userAuth = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
-    const  isAuthenticated =true;
+    const  isAuthenticated =isUserLoggedIn().payload.isUserLoggedIn;
 
 
 

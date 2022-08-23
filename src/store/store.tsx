@@ -6,7 +6,6 @@ import {persistReducer, persistStore} from 'redux-persist'
 import {userAuthenticationSlice} from "./slice/userAuthenticationSlice";
 
 
-
 const reducers = combineReducers({
     userAuthentication: userAuthenticationSlice.reducer,
 

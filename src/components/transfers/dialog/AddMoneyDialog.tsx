@@ -5,12 +5,11 @@ import {
     DialogActions,
     DialogContent,
     FormControl,
-    Input,
-    InputLabel,
     MenuItem,
     Paper,
     TextField,
-    Typography, useTheme,
+    Typography,
+    useTheme,
 } from "@mui/material";
 import {AccountCurrencyBalance} from "../TotalBalanceContent";
 import useInput from "../../../hook/use-input";
@@ -22,8 +21,6 @@ import {isValidAmount} from "../../../common/validation";
 import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from 'decimal.js';
-import {useAppSelector} from "../../../hook/redux-hooks";
-import {RootState} from "../../../store/store";
 
 const AddMoneyDialog: React.FC<{
     openAddMoneyDialog: boolean;

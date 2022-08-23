@@ -1,7 +1,6 @@
 import {Accordion, AccordionDetails, AccordionSummary, Box, Divider, Typography,} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
-import Decimal from "decimal.js";
 import DetailedTransaction from "../../models/detailedTransaction";
 import {getAmountMathSymbol} from "../../common/transfer";
 import {TRANSFER_TYPE_RECEIVED} from "../../constants/Constants";

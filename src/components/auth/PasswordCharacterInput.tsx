@@ -1,6 +1,6 @@
 import {OutlinedInput, Stack, SxProps, Theme, Typography} from "@mui/material";
-import { grey } from "@mui/material/colors";
-import React, {RefObject, SetStateAction, useEffect} from "react";
+import {grey} from "@mui/material/colors";
+import React, {RefObject} from "react";
 
 const PasswordCharacterInput: React.FC<{ index: number, inputRef: RefObject<HTMLInputElement>, handleKeyPressed: (e: React.KeyboardEvent<HTMLInputElement>) => void,
                                          handleInputFocus: (index: number) => void }> = (props) => {

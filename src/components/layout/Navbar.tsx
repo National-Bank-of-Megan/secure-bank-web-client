@@ -1,17 +1,16 @@
-import React, {SyntheticEvent, useContext, useEffect, useMemo, useState} from "react";
+import React, {SyntheticEvent, useEffect, useMemo, useState} from "react";
 import {AppBar, Avatar, Badge, Box, Paper, Popover, Tabs, Toolbar, Typography} from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
 import Tab from '@mui/material/Tab';
 import {useLocation, useNavigate} from "react-router-dom";
-import AuthContext from "../../store/auth-context";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {RootState} from "../../store/store";
-import {logout} from "../../actions/user-action";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
 import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
+import {userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
 
 export default function Navbar() {
     const userAuth = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
@@ -44,7 +43,7 @@ export default function Navbar() {
     };
 
     const handleLogout = (e :SyntheticEvent)=>{
-        dispatch(logout())
+        dispatch(userAuthenticationActions.logout)
     }
 
     const open = Boolean(notificationsPopover);

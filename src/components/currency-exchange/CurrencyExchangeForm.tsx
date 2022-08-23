@@ -10,7 +10,6 @@ import {CURRENCIES, REST_PATH_EXCHANGE} from "../../constants/Constants";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
-import {useAppSelector} from "../../hook/redux-hooks";
 import {RootState} from "../../store/store";
 import {findCurrencyByName} from "../../common/transfer";
 import {useSelector} from "react-redux";
