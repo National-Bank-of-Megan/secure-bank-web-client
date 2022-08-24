@@ -2,31 +2,41 @@ import store from "../store";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
-import {userAuthenticationActions} from "../slice/userAuthenticationSlice";
+import {logout} from "../slice/userAuthenticationSlice";
 
-const UserAuthenticationService = () => {
+const UserAuthenticationService = {
 
-    const dispatch = useAppDispatch()
+    isTokenValid: function (tokenName: string): boolean {
+        try {
+            // @ts-ignore
+            const token = store.getState().userAuthentication.authTokens[tokenName];
+            console.log('Token found ' + token)
+            const toMilliseconds = 1000;
+            const authTokenExpiration = jwt_decode<DecodedJWT>(token).exp;
+            return authTokenExpiration * toMilliseconds >= new Date().getTime()
+        } catch (error) {
+            return false;
+        }
+    },
 
-    const isTokenValid = (tokenName: string): boolean => {
-        // @ts-ignore
-        const token = store.getState().userAuthentication.authTokens[tokenName];
-        console.log('Token found ' + token)
-        if (token === undefined) return false
-        const toMilliseconds = 1000;
-        const authTokenExpiration = jwt_decode<DecodedJWT>(token).exp;
-        return authTokenExpiration * toMilliseconds >= new Date().getTime()
+    isUserLoggedIn: function (): boolean {
+        try {
+            const accessToken = store.getState().userAuthentication.authTokens.accessToken;
+            const refreshToken = store.getState().userAuthentication.authTokens.refreshToken;
+            if (accessToken === null || refreshToken === null) {
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                useAppDispatch()(logout());
+                return false;
+            }
+            console.log('IS USER LOGGED IN? ' + ((!!accessToken && this.isTokenValid('accessToken')) || (refreshToken && this.isTokenValid('refreshToken'))))
+            const isLoggedIn = ((!!accessToken && this.isTokenValid('accessToken')) || (refreshToken && this.isTokenValid('refreshToken')));
+            // eslint-disable-next-line react-hooks/rules-of-hooks
+            if (!isLoggedIn) useAppDispatch()(logout())
+            return isLoggedIn === null ? false : isLoggedIn;
+        } catch (error) {
+            return false;
+        }
     }
-
-    const isUserLoggedIn = (): boolean => {
-        const accessToken = store.getState().userAuthentication.authTokens.accessToken;
-        const refreshToken = store.getState().userAuthentication.authTokens.refreshToken;
-        console.log('IS USER LOGGED IN? ' + ((!!accessToken && isTokenValid('accessToken')) || (refreshToken && isTokenValid('refreshToken'))))
-        const isLoggedIn = ((!!accessToken && isTokenValid('accessToken')) || (refreshToken && isTokenValid('refreshToken')));
-        if (!isLoggedIn) dispatch(userAuthenticationActions.logout)
-        return isLoggedIn === null ? false : isLoggedIn;
-    };
-
 }
 
 export default UserAuthenticationService

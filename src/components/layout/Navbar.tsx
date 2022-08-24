@@ -10,11 +10,11 @@ import {RootState} from "../../store/store";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
 import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
-import {userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
+import {logout, userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
+import UserAuthenticationService from "../../store/service/UserAuthenticationService";
 
 export default function Navbar() {
-    const userAuth = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
-    const  isAuthenticated= false;
+    const  isAuthenticated= UserAuthenticationService.isUserLoggedIn();
     const dispatch = useAppDispatch()
 
     const {pathname} = useLocation();
@@ -43,7 +43,7 @@ export default function Navbar() {
     };
 
     const handleLogout = (e :SyntheticEvent)=>{
-        dispatch(userAuthenticationActions.logout)
+        dispatch(logout())
     }
 
     const open = Boolean(notificationsPopover);

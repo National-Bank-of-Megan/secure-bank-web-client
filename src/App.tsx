@@ -31,7 +31,7 @@ function App() {
                         <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
                         <Route path="/signup/success"
                                element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
-                        {!UserAuthenticationService. &&
+                        {!UserAuthenticationService.isUserLoggedIn() &&
                             <>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/login/verify" element={<DeviceVerificationPage/>}/>

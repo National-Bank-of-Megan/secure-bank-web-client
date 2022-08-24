@@ -7,7 +7,7 @@ import {PasswordCombinationType} from "../../models/custom-types/PasswordCombina
 import {useAppDispatch} from "../../hook/redux-hooks";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
-import {authenticate} from "../../store/slice/userAuthenticationSlice";
+import {authenticate, sendRequest} from "../../store/slice/userAuthenticationSlice";
 import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
 import store, {RootState} from "../../store/store";
 import {useSelector} from "react-redux";
@@ -111,9 +111,9 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 password: psw
             })
 
-            dispatch(authenticate({
-                body: body, url: REST_PATH_AUTH + '/web/login'
-            })).then(
+            dispatch(sendRequest(
+                { body : body, url : REST_PATH_AUTH + '/web/login', method : 'POST'}
+            )).then(
                 (response) => {
 
                     const status = store.getState().userAuthentication.status

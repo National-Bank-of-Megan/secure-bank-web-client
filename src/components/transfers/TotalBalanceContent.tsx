@@ -127,44 +127,44 @@ const TotalBalanceContent = () => {
 
     useEffect(()=>{
 
-        const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
-            console.log(currenciesBalanceObj)
-            const loadedCurrencyBalances: AccountCurrencyBalance[] = [];
-            for (const key in currenciesBalanceObj) {
-                console.log(key)
-                loadedCurrencyBalances.push({
-                    currency: currenciesBalanceObj[key].currency,
-                    symbol: availableCurrencies[currenciesBalanceObj[key].currency as keyof typeof availableCurrencies],
-                    balance: new Decimal(currenciesBalanceObj[key].balance)
-                });
-            }
-
-            setSubAccountsLoaded(true);
-            setAccountCurrencyBalanceList(loadedCurrencyBalances);
-            setSelectedCurrency(findCurrencyByName(DEFAULT_SELECTED_CURRENCY, loadedCurrencyBalances)!);
-
-
-
-            dispatch({
-                type: SUB_ACCOUNTS_FETCH_SUCCESS,
-                status: 200,
-                payload: loadedCurrencyBalances
-            })
-        }
-
-        const fetchSubAccountsRequest: RequestConfig = {
-            url: REST_PATH_AUTH + '/account/currency/all'
-        };
-
-        sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
-
-        if(subAccountsError){
-            dispatch({
-                type: SUB_ACCOUNTS_FETCH_FAILURE,
-                error: subAccountsError,
-                status: 403
-            })
-        }
+        // const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
+        //     console.log(currenciesBalanceObj)
+        //     const loadedCurrencyBalances: AccountCurrencyBalance[] = [];
+        //     for (const key in currenciesBalanceObj) {
+        //         console.log(key)
+        //         loadedCurrencyBalances.push({
+        //             currency: currenciesBalanceObj[key].currency,
+        //             symbol: availableCurrencies[currenciesBalanceObj[key].currency as keyof typeof availableCurrencies],
+        //             balance: new Decimal(currenciesBalanceObj[key].balance)
+        //         });
+        //     }
+        //
+        //     setSubAccountsLoaded(true);
+        //     setAccountCurrencyBalanceList(loadedCurrencyBalances);
+        //     setSelectedCurrency(findCurrencyByName(DEFAULT_SELECTED_CURRENCY, loadedCurrencyBalances)!);
+        //
+        //
+        //
+        //     dispatch({
+        //         type: SUB_ACCOUNTS_FETCH_SUCCESS,
+        //         status: 200,
+        //         payload: loadedCurrencyBalances
+        //     })
+        // }
+        //
+        // const fetchSubAccountsRequest: RequestConfig = {
+        //     url: REST_PATH_AUTH + '/account/currency/all'
+        // };
+        //
+        // sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
+        //
+        // if(subAccountsError){
+        //     dispatch({
+        //         type: SUB_ACCOUNTS_FETCH_FAILURE,
+        //         error: subAccountsError,
+        //         status: 403
+        //     })
+        // }
 
         // dispatch(fetchSubAccounts()).then(
         //     ()=>{

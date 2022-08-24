@@ -8,7 +8,8 @@ import {useAppDispatch} from "./redux-hooks";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {UserAuthenticationSliceType} from "../store/slice-types/UserAuthenticationSliceType";
-import {isTokenValid, userAuthenticationActions} from "../store/slice/userAuthenticationSlice";
+import { userAuthenticationActions} from "../store/slice/userAuthenticationSlice";
+import UserAuthenticationService from "../store/service/UserAuthenticationService";
 
 export type Headers = {
     [key: string]: any;
@@ -45,12 +46,12 @@ const useFetch = () => {
             requestConfig.headers = {};
         }
 
-        const isAccessTokenValid = isTokenValid('accessToken').payload.isTokenValid;
-        const isRefreshTokenValid = isTokenValid('refreshToken').payload.isTokenValid;
+        const isAccessTokenValid = UserAuthenticationService.isTokenValid('accessToken');
+        const isRefreshTokenValid = UserAuthenticationService.isTokenValid('refreshToken');
 
         if(!isRefreshTokenValid){
             console.log('Logging out, refresh token is expired');
-            dispatch(userAuthenticationActions.logout());
+            // dispatch(userAuthenticationActions.logout);
         }
 
         try {
@@ -63,10 +64,10 @@ const useFetch = () => {
 
                 await dispatchSynchronously(dispatch)
                    // @ts-ignore
-                   requestConfig.headers['Authorization'] = 'Bearer '+store.getState().userAuth['authTokens']['accessToken'];
+                   requestConfig.headers['Authorization'] = 'Bearer '+store.getState().userAuth.authTokens.refreshToken;
             }
             else
-            if (!(requestConfig.url.startsWith(REST_PATH_AUTH + "/web/login") || requestConfig.url.startsWith(REST_PATH_AUTH + "/web/register")))
+            if (!(requestConfig.url.startsWith(REST_PATH_AUTH)))
                 navigate('/login');
 
 
@@ -86,6 +87,7 @@ const useFetch = () => {
             }
 
             const responseText = await response.text();
+            console.log('Use fetch response: '+responseText)
             let data: T = responseText === "" ? {} : JSON.parse(responseText);
             applyData(data);
             setIsLoadedSuccessfully(true);

@@ -1,6 +1,7 @@
 import React from 'react'
 import {Navigate, useLocation} from 'react-router-dom'
-import {isUserLoggedIn} from "../../store/slice/userAuthenticationSlice";
+import UserAuthenticationService from "../../store/service/UserAuthenticationService";
+
 
 type Props = {
     [x: string]: any;
@@ -8,7 +9,7 @@ type Props = {
 
 const PrivateRoute: React.FC<Props> = ({children}) => {
     const location = useLocation();
-    const isAuthenticated  = isUserLoggedIn().payload.isUserLoggedIn
+    const isAuthenticated  = UserAuthenticationService.isUserLoggedIn();
 
 
     if (!isAuthenticated) {
