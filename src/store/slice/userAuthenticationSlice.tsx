@@ -4,25 +4,33 @@ import storage from "redux-persist/lib/storage";
 export const sendRequest = createAsyncThunk(
     'userAuthentication/sendRequest',
     async (request: { body: string, url: string, method: string }, dispatch) => {
-        console.log(request.url)
         console.log('=== INSIDE SEND REQUEST ACTION ===');
         const response = await fetch(request.url, {
             method: request.method,
             headers: {'Content-Type': 'application/json'},
             body: request.body
         })
+        console.log(response)
 
-        const status = response.status
-        console.log('status :' + status)
-        console.log(status === 206)
-        if (status === 200 || status === 206) return dispatch.fulfillWithValue({
-            status: status,
-            data: await response.json() || null
-        });
-        else return dispatch.rejectWithValue({
-            status: response.status,
-            error: await response.text() || 'Invalid credentials'
-        })
+        const status = response.status;
+
+        if (status === 206 || status === 200) {
+            console.log('sendRequest: dispatch.fulfillWithValue');
+            console.log('=== PARSING RESPONSE (EXTRACTING TOKENS) ===');
+            let tokens  = status == 206 ? null : await response.json();
+            return dispatch.fulfillWithValue({
+                status: status,
+                data: tokens
+            });
+        }
+        else {
+            console.log('sendRequest: dispatch.rejectWithValue');
+            return dispatch.rejectWithValue({
+                status: response.status,
+                error: await response.text() || 'Invalid credentials'
+            })
+        }
+
     }
 )
 
@@ -39,37 +47,6 @@ export const logout = createAction(
             },
         }
     })
-//
-
-
-//     state.status = -1;
-// state.authTokens.accessToken = null;
-// state.authTokens.refreshToken = null;
-// state.isLoading = false;
-// dispatchSynchronously
-
-
-export const authenticate = createAsyncThunk(
-    'userAuthentication/authenticate',
-    async (data: { body: string, url: string }, dispatch) => {
-        console.log('authenticating...')
-
-        const response = await fetch(data.url, {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: data.body
-        })
-
-        const status = response.status
-        console.log('status :' + status)
-        if (status === 200) return dispatch.fulfillWithValue({status: status, data: await response.json()});
-        if (status === 206) return dispatch.fulfillWithValue(await response.json());
-        return dispatch.rejectWithValue({
-            status: response.status,
-            error: await response.text() || 'Invalid credentials'
-        })
-    }
-)
 
 const dispatchSynchronously = async () => {
     await storage.removeItem('persist: persist-key')
@@ -113,7 +90,7 @@ export const userAuthenticationSlice = createSlice({
                     // @ts-ignore
                     accessToken: payload.payload.data.access_token,
                     // @ts-ignore
-                    refreshToken: payload.payload.data.access_token
+                    refreshToken: payload.payload.data.refresh_token
                 } : null;
             })
             .addCase(logout,(state)=>{
@@ -127,7 +104,9 @@ export const userAuthenticationSlice = createSlice({
     },
 
     reducers: {
-
+        setAccessToken : (state, payload)=>{
+            state.authTokens.accessToken = payload.payload
+        }
     }
 
 })

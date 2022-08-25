@@ -68,11 +68,11 @@ const DeviceVerificationForm = () => {
         return () => {
             window.removeEventListener("keyup", handleKeyPress);
         };
-    }, [digitsRefs,handleKeyPress]);
+    }, [digitsRefs, handleKeyPress]);
 
     const submitHandler = () => {
         const code = getCode();
-        if(clientId === null) {
+        if (clientId === null) {
             setErrorAlertState({
                 isOpen: true,
                 message: 'No client id'
@@ -87,29 +87,32 @@ const DeviceVerificationForm = () => {
             return;
         }
 
-        const body =JSON.stringify({
+        const body = JSON.stringify({
             clientId: clientId,
             code: code
         })
 
         dispatch(sendRequest(
-            { body : body, url : REST_PATH_AUTH + '/login/verify', method : 'POST'}
-        ))
+            {body: body, url: REST_PATH_AUTH + '/web/login/verify', method: 'POST'}
+        )).then((response) => {
 
-        if(store.getState().userAuthentication.error){
-                digitsRefs.forEach(
-                    (ref) => {
-                        ref.current!.value = "";
-                    }
-                )
-            setErrorAlertState({
-                isOpen: true,
-                message: store.getState().userAuthentication.error!
-            });
-        }
+            if(store.getState().userAuthentication.status == 200)  navigate('/transfers', {replace: true});
+
+                if (store.getState().userAuthentication.error) {
+                    digitsRefs.forEach(
+                        (ref) => {
+                            ref.current!.value = "";
+                        }
+                    )
+                    setErrorAlertState({
+                        isOpen: true,
+                        message: store.getState().userAuthentication.error!
+                    });
+                }
+            }
+        )
 
     }
-
 
 
     const handleFocus = (index: number) => {
@@ -165,7 +168,7 @@ const DeviceVerificationForm = () => {
                                     inputRef={ref}
                                     handleInputFocus={handleFocus}
                                     handleKeyPressed={() => {
-                                }}/>
+                                    }}/>
                             })
                         }
                     </Stack>

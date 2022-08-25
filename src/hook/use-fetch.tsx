@@ -8,8 +8,9 @@ import {useAppDispatch} from "./redux-hooks";
 import {ThunkDispatch} from "redux-thunk";
 import {AnyAction} from "redux";
 import {UserAuthenticationSliceType} from "../store/slice-types/UserAuthenticationSliceType";
-import { userAuthenticationActions} from "../store/slice/userAuthenticationSlice";
+import {logout, userAuthenticationActions} from "../store/slice/userAuthenticationSlice";
 import UserAuthenticationService from "../store/service/UserAuthenticationService";
+import useRefreshToken from "./use-refresh";
 
 export type Headers = {
     [key: string]: any;
@@ -29,14 +30,10 @@ const useFetch = () => {
     const [isLoadedSuccessfully, setIsLoadedSuccessfully] = useState(false);
     const [error, setError] = useState<FetchError | null>(null);
     const navigate = useNavigate();
-    //redux
+    //redux;
     const userAuth = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
-    const dispatch = useAppDispatch()
-
-
-    const dispatchSynchronously = async (dispatch : ThunkDispatch<RootState, unknown, AnyAction>) =>  {
-    //   t
-    }
+    const dispatch = useAppDispatch();
+    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
 
     const sendRequest = useCallback(async <T, >(requestConfig: RequestConfig, applyData: (data: T) => void) => {
         setIsLoading(true);
@@ -51,7 +48,7 @@ const useFetch = () => {
 
         if(!isRefreshTokenValid){
             console.log('Logging out, refresh token is expired');
-            // dispatch(userAuthenticationActions.logout);
+            dispatch(logout());
         }
 
         try {
@@ -61,10 +58,8 @@ const useFetch = () => {
             }
             else if (isRefreshTokenValid) {
                 console.log('getting access token form dispatch')
-
-                await dispatchSynchronously(dispatch)
                    // @ts-ignore
-                   requestConfig.headers['Authorization'] = 'Bearer '+store.getState().userAuth.authTokens.refreshToken;
+                   requestConfig.headers['Authorization'] = 'Bearer ' +await requestAuthTokenWithRefreshToken();
             }
             else
             if (!(requestConfig.url.startsWith(REST_PATH_AUTH)))
