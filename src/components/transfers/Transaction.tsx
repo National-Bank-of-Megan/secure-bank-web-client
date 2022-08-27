@@ -1,6 +1,5 @@
 import {Box, Card, CardContent, Typography} from "@mui/material";
 import React from "react";
-import Decimal from "decimal.js";
 import TransactionSummary from "../../models/transactionSummary";
 import {getAmountMathSymbol} from "../../common/transfer";
 

@@ -15,16 +15,12 @@ import SuccessfulRegistrationPage from "./pages/SuccessfulRegistrationPage";
 import DeviceVerificationPage from "./pages/DeviceVerificationPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
 import CustomRoute from "./components/auth/CustomRoute";
-import {RootState} from "./store/store";
-import {useSelector} from "react-redux";
-import {UserState} from "./reducers/user-reducer";
+
 import ChangePasswordPage from "./pages/ChangePasswordPage";
+import UserAuthenticationService from "./store/service/UserAuthenticationService";
 
 
 function App() {
-    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
-    const { isAuthenticated } = userAuth;
-
 
     return (
         <ThemeProvider theme={darkTheme}>
@@ -35,7 +31,7 @@ function App() {
                         <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
                         <Route path="/signup/success"
                                element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
-                        {!isAuthenticated &&
+                        {!UserAuthenticationService.isUserLoggedIn() &&
                             <>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/login/verify" element={<DeviceVerificationPage/>}/>

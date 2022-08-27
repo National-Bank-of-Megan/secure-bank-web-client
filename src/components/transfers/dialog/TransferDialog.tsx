@@ -10,31 +10,30 @@ import {
     MenuItem,
     Paper,
     TextField,
-    Typography, useTheme,
+    Typography,
+    useTheme,
 } from "@mui/material";
-import React, {useContext, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import MyContactsDrawer from "../MyContactsDrawer";
 import {AccountCurrencyBalance, FavoriteReceiverResponse} from "../TotalBalanceContent";
 import useInput from "../../../hook/use-input";
 import {isValidAccountNumber} from "../../../input-rules/is-valid-account-number";
 import {isNotEmpty} from "../../../input-rules/is-not-empty";
-import {
-    isValidAmount,
-    shouldUpdateTransferInput
-} from "../../../common/validation";
+import {isValidAmount, shouldUpdateTransferInput} from "../../../common/validation";
 import {removeErrorIfFieldEmpty} from "../../../common/input";
 import useTransferInput from "../../../hook/use-transfer-input";
 import useFetch, {RequestConfig} from "../../../hook/use-fetch";
-import {REST_PATH_AUTH, REST_PATH_TRANSFER} from "../../../constants/Constants";
-import AuthContext from "../../../store/auth-context";
-import jwt_decode from "jwt-decode";
-import DecodedJWT from "../../../models/decodedJWT";
+import {REST_PATH_TRANSFER} from "../../../constants/Constants";
 import Spinner from "../../common/Spinner";
 import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from "decimal.js";
-import {useAppSelector} from "../../../hook/redux-hooks";
-import {RootState} from "../../../store/store";
+import store, {RootState} from "../../../store/store";
+import {useSelector} from "react-redux";
+import {UserAuthenticationSliceType} from "../../../store/slice-types/UserAuthenticationSliceType";
+import {useAppDispatch} from "../../../hook/redux-hooks";
+import DecodedJWT from "../../../models/decodedJWT";
+import jwt_decode from "jwt-decode";
 
 const TransferDialog: React.FC<{
     openTransferDialog: boolean;
@@ -47,9 +46,11 @@ const TransferDialog: React.FC<{
     setSuccessAlertState: (alertState: AlertState) => void;
     updateCurrencyBalance: (currencyName: string, amountToCharge: Decimal) => void;
 }> = (props) => {
-    const selector= useAppSelector((state :RootState)=>state.userAuth);
+
+
     const appTheme = useTheme();
     const {isLoading, error, sendRequest: makeTransferRequest} = useFetch();
+    const dispatch = useAppDispatch()
 
     const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
     const {
@@ -86,7 +87,7 @@ const TransferDialog: React.FC<{
             console.log(error.message);
             props.setErrorAlertState({
                 isOpen: true,
-                message: error.message
+                message: "Could not transfer money."
             });
         }
     }, [error, props.setErrorAlertState])
@@ -129,6 +130,7 @@ const TransferDialog: React.FC<{
             isOpen: true,
             message: "Transfer successful."
         });
+
     }
 
     const makeTransferHandler = () => {
@@ -137,11 +139,15 @@ const TransferDialog: React.FC<{
             return;
         }
 
+        console.log('----- '+jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).sub+' -------')
+
         const makeTransferRequestContent: RequestConfig = {
             url: REST_PATH_TRANSFER,
             method: "POST",
             body: {
                 "title": titleValue,
+                //todo decode jwt
+                "senderId": jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).sub,
                 "receiverAccountNumber": accountNumberValue,
                 "amount": amountValue,
                 "currency": props.selectedCurrencyName

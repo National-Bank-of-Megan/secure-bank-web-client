@@ -1,15 +1,16 @@
 import {combineReducers} from "redux";
 
 import {configureStore} from "@reduxjs/toolkit";
-import {userAuthenticationReducer} from "../reducers/user-reducer";
 import storage from 'redux-persist/lib/storage'
 import {persistReducer, persistStore} from 'redux-persist'
-import {accountReducer} from "../reducers/account-reducer";
+import {userAuthenticationSlice} from "./slice/userAuthenticationSlice";
+import {subaccountBalanceSlice} from "./slice/subaccountBalanceSlice";
 
 
 const reducers = combineReducers({
-    userAuth: userAuthenticationReducer,
-    account : accountReducer
+    userAuthentication: userAuthenticationSlice.reducer,
+    subaccountBalance : subaccountBalanceSlice.reducer
+
 })
 
 const persistConfig = {
@@ -19,19 +20,14 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, reducers)
 
-const initialState = {
-
-}
-
 const store = configureStore({
     devTools: true,
-    preloadedState: initialState,
+    preloadedState : {},
     reducer: persistedReducer,
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
             serializableCheck: false,
         })
-
 })
 
 const persistor = persistStore(store)

@@ -16,7 +16,7 @@ const PaginationController: React.FC<{ page: UseStateType<PaginationDataType>, n
     return (
         <Stack>
             <Pagination
-                sx={{alignSelf: "center", marginTop: "15px"}}
+                sx={{alignSelf: "center", marginTop: "15px", marginBottom :"20px"}}
                 count={props.numberOfPages}
                 page={props.page.state.page}
                 onChange={handleChange}

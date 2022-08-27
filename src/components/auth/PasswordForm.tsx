@@ -2,21 +2,20 @@ import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
 import React, {createRef, useEffect, useReducer, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate} from "react-router-dom";
-import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {PasswordCombinationType} from "../../models/custom-types/PasswordCombinationType";
-import {login} from "../../actions/user-action";
-import {UserState} from "../../reducers/user-reducer";
 import {useAppDispatch} from "../../hook/redux-hooks";
-import {useSelector} from "react-redux";
-import store, {RootState} from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
-import {PASSWORD_MAX_LENGTH} from "../../constants/Constants";
+import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
+import {sendRequest} from "../../store/slice/userAuthenticationSlice";
+import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
+import store, {RootState} from "../../store/store";
+import {useSelector} from "react-redux";
 
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
-    let userAuth = useSelector<RootState, UserState>((state: RootState) => state.userAuth)
-    const [status, setStatus] = useState<number>(userAuth['status'])
+    let userAuthentication = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
+    const [status, setStatus] = useState<number>(200)
     const navigate = useNavigate();
     //  error handlers
     const [errorAlertState, setErrorAlertState] = useState<AlertState>({
@@ -61,7 +60,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         )
 
         inputRefsArray[password![0]].current?.focus()
-    }, [inputRefsArray, password, status, userAuth]);
+    }, [inputRefsArray, password, status]);
 
     useEffect(() => {
         forceUpdate();
@@ -71,10 +70,8 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         const pressedButton = e.key;
         if (pressedButton.length === 1 && pressedButton.match(/^[0-9A-Za-z]+$/)) {
             setCurrentIndex((prevIndex) => {
-                let letterIndex = password!.indexOf(prevIndex)
-                console.log(letterIndex);
+                let letterIndex = password!.indexOf(prevIndex);
                 let nextIndex = letterIndex < password!.length - 1 ? letterIndex + 1 : letterIndex;
-                console.log(nextIndex);
                 if (nextIndex < password!.length) {
                     const nextInput = inputRefsArray?.[password![nextIndex]]?.current;
                     nextInput?.focus();
@@ -109,10 +106,19 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 message: 'Fill all cells.'
             });
         } else {
-            dispatch(login(props.data!.clientId, psw)).then(
+            const body =JSON.stringify({
+                clientId: props.data!.clientId,
+                password: psw
+            })
+
+            dispatch(sendRequest(
+                { body : body, url : REST_PATH_AUTH + '/web/login', method : 'POST'}
+            )).then(
                 (response) => {
 
-                    const status = store.getState().userAuth['status']
+                    console.log('auth request performed')
+                    const status = store.getState().userAuthentication.status
+
                     if (status === 200) {
                         console.log('redirecting to transfers page ...')
                         navigate('/transfers', {replace: true})
@@ -123,22 +129,20 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                         let url = '/login/verify?clientId=' + props.data?.clientId;
                         navigate(url, {replace: true})
                     }
-                }
-            )
-                .catch((error) => {
+
                     setErrorAlertState({
                         isOpen: true,
-                        message: error
+                        message: store.getState().userAuthentication.error!
                     });
                     inputRefsArray.forEach(
                         (ref) => {
                             ref.current!.value = "";
                         }
                     )
-                })
-
-
+                }
+            )
         }
+
     }
 
     return (
@@ -151,8 +155,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                <Spinner isLoading={ store.getState().userAuth['loading']}/>
-                <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
+                {/*todo correct*/}
+                {/*<Spinner isLoading={store.getState().userAuthentication.isLoading}/>*/}
+                <AlertSnackBar severity={"error"}
+                               alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
                 <Paper
                     sx={{
                         bgcolor: "background.paper",

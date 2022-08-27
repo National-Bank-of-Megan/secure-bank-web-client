@@ -1,6 +1,6 @@
 // covers only component
 
-import {Backdrop, Box, CircularProgress} from "@mui/material";
+import {Backdrop, CircularProgress} from "@mui/material";
 import React from "react";
 
 const RelativeSpinner: React.FC<{ isLoading: boolean, zIndex?: number }> = ({isLoading, zIndex}) => {

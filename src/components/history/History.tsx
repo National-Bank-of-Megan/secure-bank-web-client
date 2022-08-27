@@ -5,7 +5,7 @@ import ExchangeList from "./ExchangeList";
 import {REST_PATH_EXCHANGE, REST_PATH_TRANSFER} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
 import HistoryNavigation from "./HistoryNavigation";
-import {Box, CircularProgress, Typography} from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import {DetailedTransactionTypeResponse} from "../../models/custom-types/DetailedTransactionTypeResponse";
 import CurrencyExchangeHistory from "../../models/currencyExchangeHistory";
 import DetailedTransaction from "../../models/detailedTransaction";
@@ -125,8 +125,7 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
 
     }, [sendCurrencyExchangeHistoryRequest, setCurrencyExchangeHistory, setRecentTransfers, sendDetailedTransactionHistoryRequest])
     return (
-        <Box sx={{position: 'relative',padding: '70px 180px 20px', height : '100%'}}>
-            {/*add error handler*/}
+        <Box sx={{position :'relative',padding: '70px 180px 20px', height : '100%', minHeight :'100vh'}}>
             <HistoryNavigation currentlyBrowsing={props.currentlyBrowsing}
                                handleBrowsingChange={props.handleBrowsingChange}
                                state={{"state": currentSortType, "setState": setCurrentSortType}}

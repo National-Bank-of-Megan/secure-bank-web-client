@@ -1,6 +1,6 @@
 import History from "../components/history/History";
 import React, {useContext, useLayoutEffect, useState} from "react";
-import {Container, Grid} from "@mui/material";
+import {Grid} from "@mui/material";
 import ContainerContext from "../store/container-context";
 
 const HistoryPage = () => {

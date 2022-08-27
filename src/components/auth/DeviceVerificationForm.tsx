@@ -2,15 +2,15 @@ import {Box, Button, Paper, Stack, Typography} from "@mui/material";
 import React, {createRef, useEffect, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import useFetch, {RequestConfig} from "../../hook/use-fetch";
+import useFetch from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
 
 import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
-import {login, verifyOtp} from "../../actions/user-action";
 import store from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
+import {sendRequest} from "../../store/slice/userAuthenticationSlice";
 
 
 const DeviceVerificationForm = () => {
@@ -29,7 +29,7 @@ const DeviceVerificationForm = () => {
     const {isLoading, error, sendRequest: loginRequest} = useFetch();
 
     //redux
-    const userAuth = useAppSelector((state) => state.userAuth)
+    const userAuth = useAppSelector((state) => state.userAuthentication)
     const dispatch = useAppDispatch()
 
     const getCode = () => {
@@ -68,11 +68,11 @@ const DeviceVerificationForm = () => {
         return () => {
             window.removeEventListener("keyup", handleKeyPress);
         };
-    }, [digitsRefs,handleKeyPress]);
+    }, [digitsRefs, handleKeyPress]);
 
     const submitHandler = () => {
         const code = getCode();
-        if(clientId === null) {
+        if (clientId === null) {
             setErrorAlertState({
                 isOpen: true,
                 message: 'No client id'
@@ -86,25 +86,33 @@ const DeviceVerificationForm = () => {
             });
             return;
         }
-        dispatch(verifyOtp(clientId, code)).then(() => {
-            const status = store.getState().userAuth['status']
-                if (status === 200) {
-                    navigate('/transfers', {replace: true})
+
+        const body = JSON.stringify({
+            clientId: clientId,
+            code: code
+        })
+
+        dispatch(sendRequest(
+            {body: body, url: REST_PATH_AUTH + '/web/login/verify', method: 'POST'}
+        )).then((response) => {
+
+            if(store.getState().userAuthentication.status == 200)  navigate('/transfers', {replace: true});
+
+                if (store.getState().userAuthentication.error) {
+                    digitsRefs.forEach(
+                        (ref) => {
+                            ref.current!.value = "";
+                        }
+                    )
+                    setErrorAlertState({
+                        isOpen: true,
+                        message: store.getState().userAuthentication.error!
+                    });
                 }
             }
-        ).catch((error) => {
-            setErrorAlertState({
-                isOpen: true,
-                message: error
-            });
-            digitsRefs.forEach(
-                (ref) => {
-                    ref.current!.value = "";
-                }
-            )
-        })
-    }
+        )
 
+    }
 
 
     const handleFocus = (index: number) => {
@@ -120,7 +128,7 @@ const DeviceVerificationForm = () => {
                 marginTop: "100px",
             }}
         >
-            <Spinner isLoading={userAuth["loading"]}/>
+            <Spinner isLoading={false}/>
             <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
 
             <Paper
@@ -160,7 +168,7 @@ const DeviceVerificationForm = () => {
                                     inputRef={ref}
                                     handleInputFocus={handleFocus}
                                     handleKeyPressed={() => {
-                                }}/>
+                                    }}/>
                             })
                         }
                     </Stack>

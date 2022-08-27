@@ -1,18 +1,23 @@
-import React, {useContext} from "react";
-import AuthContext from "../../store/auth-context";
+import React from "react";
+
+import UserAuthenticationService from "../../store/service/UserAuthenticationService";
 import useRefreshToken from "../../hook/use-refresh";
-import {useSelector} from "react-redux";
-import {RootState} from "../../store/store";
-import {UserState} from "../../reducers/user-reducer";
+
 
 type Props = {
     [x: string]: any;
 }
 
 const CustomRoute: React.FC<Props> = ({children}) => {
-    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
-    const { isAuthenticated } = userAuth;
+    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
 
+    if(!UserAuthenticationService.isUserLoggedIn() && UserAuthenticationService.isTokenValid('refreshToken')){
+        try{
+            requestAuthTokenWithRefreshToken();
+        }catch(error :any){
+            console.log("Something went wrong - " + error.msg);
+        }
+    }
 
 
     return children;

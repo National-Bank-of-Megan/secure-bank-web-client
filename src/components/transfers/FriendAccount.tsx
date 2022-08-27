@@ -1,5 +1,4 @@
 import {Divider, ListItem, ListItemButton, ListItemText} from "@mui/material";
-import FriendAccountData from "../../models/friendAccount";
 import {FavoriteReceiverResponse} from "./TotalBalanceContent";
 import {Dispatch, SetStateAction} from "react";
 

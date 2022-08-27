@@ -1,9 +1,6 @@
 import * as React from 'react';
 import {DataGrid, GridColDef, GridRowsProp} from '@mui/x-data-grid';
-import useFetchCurrencyRates from "../../hook/use-fetch-currency-rates";
-import {CURRENCIES} from "../../constants/Constants";
 import Spinner from "../common/Spinner";
-import {useEffect, useState} from "react";
 
 const ExchangeRatesTable: React.FC<{ currentCurrency: string, data :GridRowsProp, isLoading :boolean }> = ({currentCurrency, data, isLoading}) => {
 

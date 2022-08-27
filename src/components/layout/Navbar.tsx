@@ -1,21 +1,20 @@
-import React, {SyntheticEvent, useContext, useEffect, useMemo, useState} from "react";
+import React, {SyntheticEvent, useEffect, useMemo, useState} from "react";
 import {AppBar, Avatar, Badge, Box, Paper, Popover, Tabs, Toolbar, Typography} from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
 import Tab from '@mui/material/Tab';
 import {useLocation, useNavigate} from "react-router-dom";
-import AuthContext from "../../store/auth-context";
-import {useDispatch, useSelector} from "react-redux";
-import {RootState} from "../../store/store";
-import {UserState} from "../../reducers/user-reducer";
-import {logout} from "../../actions/user-action";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
+import {logout, userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
+import UserAuthenticationService from "../../store/service/UserAuthenticationService";
+import jwt_decode from "jwt-decode";
+import DecodedJWT from "../../models/decodedJWT";
+import store from "../../store/store";
 
 export default function Navbar() {
-    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
-    const { isAuthenticated } = userAuth;
+    const  isAuthenticated= UserAuthenticationService.isUserLoggedIn();
     const dispatch = useAppDispatch()
 
     const {pathname} = useLocation();
@@ -29,6 +28,11 @@ export default function Navbar() {
         const value = paths.indexOf(pathname);
         setCurrentPath(value);
     }, [pathname, paths, setCurrentPath])
+
+    const getUserInitials = () => {
+        return UserAuthenticationService.isUserLoggedIn() ? jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).firstName.charAt(0)
+            + jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).lastName.charAt(0) : "";
+    }
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setCurrentPath(newValue);
@@ -44,7 +48,8 @@ export default function Navbar() {
     };
 
     const handleLogout = (e :SyntheticEvent)=>{
-        dispatch(logout())
+        UserAuthenticationService.logout()
+        navigate('/login')
     }
 
     const open = Boolean(notificationsPopover);
@@ -113,7 +118,7 @@ export default function Navbar() {
                         color="inherit"
                     >
                         <Avatar sx={{bgcolor: "primary.main", width: 34, height: 34}}><Typography
-                            color="secondary.light" sx={{fontSize: '15px'}}>MT</Typography></Avatar>
+                            color="secondary.light" sx={{fontSize: '15px'}}>{getUserInitials()}</Typography></Avatar>
                     </IconButton>
 
                     <IconButton

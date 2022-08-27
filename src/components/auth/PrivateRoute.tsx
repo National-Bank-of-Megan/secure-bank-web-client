@@ -1,10 +1,8 @@
-import React, {useContext} from 'react'
+import React from 'react'
 import {Navigate, useLocation} from 'react-router-dom'
-import AuthContext from "../../store/auth-context";
+import UserAuthenticationService from "../../store/service/UserAuthenticationService";
 import useRefreshToken from "../../hook/use-refresh";
-import {useSelector} from "react-redux";
-import {RootState} from "../../store/store";
-import {UserState} from "../../reducers/user-reducer";
+
 
 type Props = {
     [x: string]: any;
@@ -12,12 +10,17 @@ type Props = {
 
 const PrivateRoute: React.FC<Props> = ({children}) => {
     const location = useLocation();
-    const userAuth = useSelector<RootState, UserState>((state) => state.userAuth)
-    const { isAuthenticated } = userAuth;
+    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
 
+    if(!UserAuthenticationService.isUserLoggedIn() && UserAuthenticationService.isTokenValid('refreshToken')){
+        try{
+            requestAuthTokenWithRefreshToken();
+        }catch(error :any){
+            console.log("Something went wrong - " + error.msg);
+        }
+    }
 
-    if (!isAuthenticated) {
-        console.log('not authenticated')
+    if (!UserAuthenticationService.isUserLoggedIn()) {
         return <Navigate to="/login" state={{from: location}}/>;
     }
 

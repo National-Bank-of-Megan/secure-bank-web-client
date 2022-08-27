@@ -1,31 +1,35 @@
-import {Avatar, Box, Grid, Stack, Typography} from "@mui/material";
+import {Avatar, Grid, Stack} from "@mui/material";
 import {useContext, useEffect, useState} from "react";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import AccountContext from "../../store/account-context";
 import {REST_PATH_AUTH} from "../../constants/Constants";
 import {AccountData} from "../../common/account";
 import AccountInfoField from "./AccountInfoField";
-import AuthContext from "../../store/auth-context";
+import UserAuthenticationService from "../../store/service/UserAuthenticationService";
+import jwt_decode from "jwt-decode";
+import DecodedJWT from "../../models/decodedJWT";
+import store from "../../store/store";
 
 const AccountInfo = () => {
     const { isLoading, error, sendRequest: fetchAccountData } = useFetch();
     const accountCtx = useContext(AccountContext);
-    const authCtx = useContext(AuthContext);
     const [accountDataLoaded, setAccountDataLoaded] = useState(false);
 
     const accountData = accountCtx.accountData;
 
     const getUserInitials = () => {
-        return authCtx.isLoggedIn() ? authCtx.firstName.charAt(0) + authCtx.lastName.charAt(0) : "";
+        return UserAuthenticationService.isUserLoggedIn() ? jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).firstName.charAt(0) + jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).lastName.charAt(0) : "";
     }
 
     useEffect(() => {
+        console.log('%%%%% '+accountData?.firstName)
         const transformAccountData = (response: AccountData) => {
+            console.log(response)
             accountCtx.setAccountData(response);
             setAccountDataLoaded(true);
         }
 
-        if (accountCtx.accountData == null) {
+        if (accountCtx.accountData === null || accountCtx.accountData === undefined) {
             const fetchAccountDataRequest: RequestConfig = {
                 url: REST_PATH_AUTH + "/account/profile"
             }

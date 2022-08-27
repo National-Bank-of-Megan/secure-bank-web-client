@@ -1,9 +1,6 @@
 import {Grid} from "@mui/material";
 import RecentActivityContent from "../components/transfers/RecentActivityContent";
 import TotalBalanceContent from "../components/transfers/TotalBalanceContent";
-import Decimal from "decimal.js";
-import MoneyBalanceOperation from "../models/moneyBalanceOperation";
-import TransactionSummary from "../models/transactionSummary";
 
 const TransferPage = () => {
 

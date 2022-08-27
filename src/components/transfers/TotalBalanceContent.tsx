@@ -8,11 +8,11 @@ import AddFriendDialog from "./dialog/AddFriendDialog";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {Link} from "react-router-dom";
 import {Decimal} from "decimal.js";
-import {RootState} from "../../store/store";
-import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
+import store from "../../store/store";
+import {useAppDispatch} from "../../hook/redux-hooks";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
-import {DEFAULT_SELECTED_CURRENCY, REST_PATH_AUTH} from "../../constants/Constants";
-import {SUB_ACCOUNTS_FETCH_FAILURE, SUB_ACCOUNTS_FETCH_SUCCESS} from "../../constants/AccountConstants";
+import {REST_PATH_AUTH} from "../../constants/Constants";
+import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
 
 export const availableCurrencies = {
     'EUR': "€",
@@ -72,12 +72,9 @@ const TotalBalanceContent = () => {
     const [isAddFriendErrorMessageOpen, setIsAddFriendErrorMessageOpen] = useState(false);
     const [isAddFriendSuccessMessageOpen, setIsAddFriendSuccessMessageOpen] = useState(false);
     const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("PLN");
-
-
-    const selector= useAppSelector((state :RootState)=>state.account);
     const dispatch = useAppDispatch()
 
-    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
+    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>(store.getState().subaccountBalance.subaccounts);
     const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
         currency: '',
         symbol: '',
@@ -100,13 +97,15 @@ const TotalBalanceContent = () => {
     };
 
     const addCurrencyBalance = (currencyName: string, amountToAdd: string) => {
-        setAccountCurrencyBalanceList(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
-                                                ? {...currency, balance: Decimal.add(currency.balance, amountToAdd)} : currency))
+        dispatch(subaccountBalanceActions.setSubaccountsBalance(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
+            ? {...currency, balance: Decimal.add(currency.balance, amountToAdd)} : currency)))
+        setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
     }
 
     const chargeCurrencyBalance = (currencyName: string, amountToCharge: Decimal) => {
-        setAccountCurrencyBalanceList(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
-            ? {...currency, balance: Decimal.sub(currency.balance, amountToCharge)} : currency))
+        dispatch(subaccountBalanceActions.setSubaccountsBalance(accountCurrencyBalanceList.map(currency => currency.currency === currencyName
+            ? {...currency, balance: Decimal.sub(currency.balance, amountToCharge)} : currency)))
+        setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
     }
 
     const findCurrencyByName = useCallback((selectedCurrencyName: string, loadedCurrencyBalances: AccountCurrencyBalance[]): AccountCurrencyBalance | undefined => {
@@ -125,31 +124,20 @@ const TotalBalanceContent = () => {
     }
 
 
-    useEffect(()=>{
-
+    useEffect(() => {
         const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
-            console.log(currenciesBalanceObj)
             const loadedCurrencyBalances: AccountCurrencyBalance[] = [];
             for (const key in currenciesBalanceObj) {
-                console.log(key)
                 loadedCurrencyBalances.push({
                     currency: currenciesBalanceObj[key].currency,
                     symbol: availableCurrencies[currenciesBalanceObj[key].currency as keyof typeof availableCurrencies],
-                    balance: new Decimal(currenciesBalanceObj[key].balance)
+                    balance: currenciesBalanceObj[key].balance
                 });
             }
 
-            setSubAccountsLoaded(true);
             setAccountCurrencyBalanceList(loadedCurrencyBalances);
-            setSelectedCurrency(findCurrencyByName(DEFAULT_SELECTED_CURRENCY, loadedCurrencyBalances)!);
-
-
-
-            dispatch({
-                type: SUB_ACCOUNTS_FETCH_SUCCESS,
-                status: 200,
-                payload: loadedCurrencyBalances
-            })
+            setSubAccountsLoaded(true);
+            dispatch(subaccountBalanceActions.setSubaccountsBalance(loadedCurrencyBalances))
         }
 
         const fetchSubAccountsRequest: RequestConfig = {
@@ -158,34 +146,17 @@ const TotalBalanceContent = () => {
 
         sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
 
-        if(subAccountsError){
-            dispatch({
-                type: SUB_ACCOUNTS_FETCH_FAILURE,
-                error: subAccountsError,
-                status: 403
-            })
-        }
 
-        // dispatch(fetchSubAccounts()).then(
-        //     ()=>{
-        //         setAccountCurrencyBalanceList(selector['subAccounts'])
-        //         setSelectedCurrency({
-        //             currency: accountCurrencyBalanceList[0].currency,
-        //             symbol: accountCurrencyBalanceList[0].symbol,
-        //             balance: accountCurrencyBalanceList[0].balance
-        //         })
-        //     }
-        // )
-    },[findCurrencyByName, sendSubAccountsRequest,subAccountsError,setSubAccountsLoaded])
+    }, [sendSubAccountsRequest])
 
 
     return (
         <>
 
             <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
-                           severity="error" />
+                           severity="error"/>
             <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}}
-                           severity="success" />
+                           severity="success"/>
 
 
             <Box sx={{
@@ -216,7 +187,8 @@ const TotalBalanceContent = () => {
                         }}>Currency balance</InputLabel>
                         <Select value={selectedCurrencyName} onChange={handleCurrencyChange}>
                             {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
-                                <MenuItem value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
+                                <MenuItem
+                                    value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
