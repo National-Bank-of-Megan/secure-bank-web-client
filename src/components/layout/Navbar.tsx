@@ -5,13 +5,13 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
 import Tab from '@mui/material/Tab';
 import {useLocation, useNavigate} from "react-router-dom";
-import {useSelector} from "react-redux";
-import {RootState} from "../../store/store";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
-import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
 import {logout, userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
 import UserAuthenticationService from "../../store/service/UserAuthenticationService";
+import jwt_decode from "jwt-decode";
+import DecodedJWT from "../../models/decodedJWT";
+import store from "../../store/store";
 
 export default function Navbar() {
     const  isAuthenticated= UserAuthenticationService.isUserLoggedIn();
@@ -29,6 +29,11 @@ export default function Navbar() {
         setCurrentPath(value);
     }, [pathname, paths, setCurrentPath])
 
+    const getUserInitials = () => {
+        return UserAuthenticationService.isUserLoggedIn() ? jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).firstName.charAt(0)
+            + jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).lastName.charAt(0) : "";
+    }
+
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setCurrentPath(newValue);
         navigate(paths[newValue]);
@@ -43,7 +48,8 @@ export default function Navbar() {
     };
 
     const handleLogout = (e :SyntheticEvent)=>{
-        dispatch(logout())
+        UserAuthenticationService.logout()
+        navigate('/login')
     }
 
     const open = Boolean(notificationsPopover);
@@ -112,7 +118,7 @@ export default function Navbar() {
                         color="inherit"
                     >
                         <Avatar sx={{bgcolor: "primary.main", width: 34, height: 34}}><Typography
-                            color="secondary.light" sx={{fontSize: '15px'}}>MT</Typography></Avatar>
+                            color="secondary.light" sx={{fontSize: '15px'}}>{getUserInitials()}</Typography></Avatar>
                     </IconButton>
 
                     <IconButton

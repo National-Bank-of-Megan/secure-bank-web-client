@@ -4,10 +4,12 @@ import {configureStore} from "@reduxjs/toolkit";
 import storage from 'redux-persist/lib/storage'
 import {persistReducer, persistStore} from 'redux-persist'
 import {userAuthenticationSlice} from "./slice/userAuthenticationSlice";
+import {subaccountBalanceSlice} from "./slice/subaccountBalanceSlice";
 
 
 const reducers = combineReducers({
     userAuthentication: userAuthenticationSlice.reducer,
+    subaccountBalance : subaccountBalanceSlice.reducer
 
 })
 

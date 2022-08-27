@@ -1,7 +1,4 @@
 import React from "react";
-import {useSelector} from "react-redux";
-import {RootState} from "../../store/store";
-import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
 
 import UserAuthenticationService from "../../store/service/UserAuthenticationService";
 import useRefreshToken from "../../hook/use-refresh";

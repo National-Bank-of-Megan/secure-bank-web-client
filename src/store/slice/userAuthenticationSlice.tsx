@@ -1,5 +1,6 @@
 import {createAction, createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
+import {UserAuthenticationSliceType} from "../slice-types/UserAuthenticationSliceType";
 
 export const sendRequest = createAsyncThunk(
     'userAuthentication/sendRequest',
@@ -60,7 +61,7 @@ export const userAuthenticationSlice = createSlice({
         status: -1,
         isLoading: false,
         error: null
-    },
+    } as UserAuthenticationSliceType,
 
     extraReducers: (builder) => {
 
@@ -99,6 +100,7 @@ export const userAuthenticationSlice = createSlice({
                 state.authTokens = {accessToken: null, refreshToken: null};
                 state.status = -1;
                 state.error = null;
+                dispatchSynchronously()
             })
 
     },

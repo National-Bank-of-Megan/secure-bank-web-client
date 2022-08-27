@@ -21,6 +21,8 @@ import {isValidAmount} from "../../../common/validation";
 import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from 'decimal.js';
+import {subaccountBalanceActions} from "../../../store/slice/subaccountBalanceSlice";
+import {useAppDispatch} from "../../../hook/redux-hooks";
 
 const AddMoneyDialog: React.FC<{
     openAddMoneyDialog: boolean;
@@ -36,6 +38,7 @@ const AddMoneyDialog: React.FC<{
 
     const {isLoading, error, sendRequest: addBalanceRequest} = useFetch();
     const [isProcessingAddingMoneyRequest, setIsProcessingAddingMoneyRequest] = useState<boolean>(false);
+    const dispatch = useAppDispatch()
 
     const countDecimals = (value: number) => {
         if ((value % 1) !== 0)
@@ -81,7 +84,7 @@ const AddMoneyDialog: React.FC<{
         clearAddBalanceValue();
         props.setSuccessAlertState({
             isOpen: true,
-            message: "Successfully added funds to your acccount."
+            message: "Successfully added funds to your account."
         });
     }
 

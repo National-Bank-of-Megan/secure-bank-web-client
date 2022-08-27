@@ -2,7 +2,9 @@ import store from "../store";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
-import {logout} from "../slice/userAuthenticationSlice";
+import {logout, userAuthenticationActions} from "../slice/userAuthenticationSlice";
+import {subaccountBalanceActions} from "../slice/subaccountBalanceSlice";
+import {useNavigate} from "react-router-dom";
 
 const UserAuthenticationService = {
 
@@ -24,18 +26,24 @@ const UserAuthenticationService = {
             const accessToken = store.getState().userAuthentication.authTokens.accessToken;
             const refreshToken = store.getState().userAuthentication.authTokens.refreshToken;
             if (accessToken === null || refreshToken === null) {
-                // eslint-disable-next-line react-hooks/rules-of-hooks
-                useAppDispatch()(logout());
+               this.logout()
                 return false;
             }
             console.log('IS USER LOGGED IN? ' + ((!!accessToken && this.isTokenValid('accessToken')) || (!!refreshToken && this.isTokenValid('refreshToken'))))
             const isLoggedIn = ((!!accessToken && this.isTokenValid('accessToken')) || (!!refreshToken && this.isTokenValid('refreshToken')));
-            // eslint-disable-next-line react-hooks/rules-of-hooks
-            if (!isLoggedIn) useAppDispatch()(logout())
+            if (!isLoggedIn) this.logout()
             return isLoggedIn === null ? false : isLoggedIn;
         } catch (error) {
             return false;
         }
+    },
+
+    logout : function () :void {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useAppDispatch()(subaccountBalanceActions.logout());
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useAppDispatch()(logout())
+        // eslint-disable-next-line react-hooks/rules-of-hooks
     }
 
     // isUserLoggedIn: function (): boolean {

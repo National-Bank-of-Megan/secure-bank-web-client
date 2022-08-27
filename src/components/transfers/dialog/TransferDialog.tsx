@@ -28,9 +28,12 @@ import Spinner from "../../common/Spinner";
 import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from "decimal.js";
-import {RootState} from "../../../store/store";
+import store, {RootState} from "../../../store/store";
 import {useSelector} from "react-redux";
 import {UserAuthenticationSliceType} from "../../../store/slice-types/UserAuthenticationSliceType";
+import {useAppDispatch} from "../../../hook/redux-hooks";
+import DecodedJWT from "../../../models/decodedJWT";
+import jwt_decode from "jwt-decode";
 
 const TransferDialog: React.FC<{
     openTransferDialog: boolean;
@@ -43,9 +46,11 @@ const TransferDialog: React.FC<{
     setSuccessAlertState: (alertState: AlertState) => void;
     updateCurrencyBalance: (currencyName: string, amountToCharge: Decimal) => void;
 }> = (props) => {
-    const selector= useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
+
+
     const appTheme = useTheme();
     const {isLoading, error, sendRequest: makeTransferRequest} = useFetch();
+    const dispatch = useAppDispatch()
 
     const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
     const {
@@ -125,6 +130,7 @@ const TransferDialog: React.FC<{
             isOpen: true,
             message: "Transfer successful."
         });
+
     }
 
     const makeTransferHandler = () => {
@@ -133,13 +139,15 @@ const TransferDialog: React.FC<{
             return;
         }
 
+        console.log('----- '+jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).sub+' -------')
+
         const makeTransferRequestContent: RequestConfig = {
             url: REST_PATH_TRANSFER,
             method: "POST",
             body: {
                 "title": titleValue,
                 //todo decode jwt
-                "senderId": 111,
+                "senderId": jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).sub,
                 "receiverAccountNumber": accountNumberValue,
                 "amount": amountValue,
                 "currency": props.selectedCurrencyName

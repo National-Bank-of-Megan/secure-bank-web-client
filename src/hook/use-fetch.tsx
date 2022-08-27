@@ -54,12 +54,11 @@ const useFetch = () => {
         try {
             if (isAccessTokenValid) {
                 console.log('Sending request with valid access token')
-                requestConfig.headers['Authorization'] = 'Bearer '+userAuth.authTokens.accessToken;
+                requestConfig.headers['Authorization'] = userAuth.authTokens.accessToken;
             }
             else if (isRefreshTokenValid) {
                 console.log('getting access token form dispatch')
-                   // @ts-ignore
-                   requestConfig.headers['Authorization'] = 'Bearer ' +await requestAuthTokenWithRefreshToken();
+                   requestConfig.headers['Authorization'] = await requestAuthTokenWithRefreshToken();
             }
             else
             if (!(requestConfig.url.startsWith(REST_PATH_AUTH)))
