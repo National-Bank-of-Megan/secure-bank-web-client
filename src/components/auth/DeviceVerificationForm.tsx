@@ -11,6 +11,7 @@ import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
 import {login, verifyOtp} from "../../actions/user-action";
 import store from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
+import {ClientJS} from "clientjs";
 
 
 const DeviceVerificationForm = () => {
@@ -82,11 +83,14 @@ const DeviceVerificationForm = () => {
         if (!isCodeValid(code)) {
             setErrorAlertState({
                 isOpen: true,
-                message: 'Fill all cells.'
+                message: 'Fill all cells'
             });
             return;
         }
-        dispatch(verifyOtp(clientId, code)).then(() => {
+
+        const client = new ClientJS();
+
+        dispatch(verifyOtp(clientId, code, client.getFingerprint().toString())).then(() => {
             const status = store.getState().userAuth['status']
                 if (status === 200) {
                     navigate('/transfers', {replace: true})

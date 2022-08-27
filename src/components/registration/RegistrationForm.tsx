@@ -10,6 +10,7 @@ import {isEmail} from "../../input-rules/is-email";
 import Spinner from "../common/Spinner";
 import {SuccessfulRegistrationType} from "../../models/custom-types/SuccessfulRegistrationType";
 import {REST_PATH_AUTH} from "../../constants/Constants";
+import { ClientJS } from 'clientjs';
 
 const RegistrationForm = () => {
     const {isLoading, error, sendRequest: registerRequest} = useFetch();
@@ -95,6 +96,9 @@ const RegistrationForm = () => {
             setAllInputsError();
             return;
         }
+
+        const client = new ClientJS();
+
         const registerRequestContent: RequestConfig = {
             url: REST_PATH_AUTH + "/web/register",
             method: "POST",
@@ -102,7 +106,8 @@ const RegistrationForm = () => {
                 'firstName': firstNameValue,
                 'lastName': lastNameValue,
                 'email': emailValue,
-                'password': passwordValue
+                'password': passwordValue,
+                'deviceFingerprint': client.getFingerprint().toString()
             },
             headers: {
                 'Content-Type': 'application/json'

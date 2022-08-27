@@ -11,11 +11,14 @@ import {AnyAction} from "redux";
 import {REST_PATH_AUTH} from "../constants/Constants";
 import storage from "redux-persist/lib/storage";
 
-const reduxAuthFetch = async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>, url :string, body : string) :Promise<void>=>{
-
+const reduxAuthFetch = async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>, url :string, body : string, deviceFingerprint: string) :Promise<void>=>{
+    console.log(deviceFingerprint);
     const response = await fetch(url, {
         method: "POST",
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+            'Content-Type': 'application/json',
+            'Device-Fingerprint': deviceFingerprint
+        },
         body: body
     })
 
@@ -48,7 +51,7 @@ const reduxAuthFetch = async (dispatch: ThunkDispatch<RootState, unknown, AnyAct
 
 }
 
-export const   login = (clientId: string, password: string)   :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> => {
+export const   login = (clientId: string, password: string, deviceFingerprint: string)   :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> => {
 
     dispatch({
         type: USER_AUTH_REQUEST
@@ -60,7 +63,7 @@ export const   login = (clientId: string, password: string)   :ThunkAction<Promi
         password : password
     })
 
-    await reduxAuthFetch(dispatch, url, body)
+    await reduxAuthFetch(dispatch, url, body, deviceFingerprint)
 
 
 }
@@ -74,12 +77,13 @@ export const logout = (): ThunkAction<Promise<void>, RootState, unknown, AnyActi
     await storage.removeItem('persist: persist-key')
 }
 
-export const verifyOtp = (clientId :string, code :string) :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> =>{
+export const verifyOtp = (clientId :string, code :string, deviceFingerprint: string) :ThunkAction<Promise<void>, RootState, unknown, AnyAction> => async (dispatch: ThunkDispatch<RootState, unknown, AnyAction>): Promise<void> =>{
     const body = JSON.stringify({
         clientId : clientId,
-        code : code
+        code : code,
+        deviceFingerprint: deviceFingerprint
     })
 
     const url = REST_PATH_AUTH + "/web/login/verify?clientId="+clientId
-    await reduxAuthFetch(dispatch, url, body);
+    await reduxAuthFetch(dispatch, url, body, deviceFingerprint);
 }

@@ -12,6 +12,7 @@ import {useSelector} from "react-redux";
 import store, {RootState} from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {PASSWORD_MAX_LENGTH} from "../../constants/Constants";
+import {ClientJS} from "clientjs";
 
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
@@ -109,7 +110,8 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 message: 'Fill all cells.'
             });
         } else {
-            dispatch(login(props.data!.clientId, psw)).then(
+            const client = new ClientJS();
+            dispatch(login(props.data!.clientId, psw, client.getFingerprint().toString())).then(
                 (response) => {
 
                     const status = store.getState().userAuth['status']
