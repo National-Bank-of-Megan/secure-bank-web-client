@@ -127,7 +127,10 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     if (status === 206) {
                         console.log('redirecting to otp verification page ...')
                         let url = '/login/verify?clientId=' + props.data?.clientId;
-                        navigate(url, {replace: true})
+                        navigate(url, {replace: true, state: {
+                                clientId: props.data!.clientId, password: getPassword()
+                            }
+                        });
                     }
 
                     setErrorAlertState({
