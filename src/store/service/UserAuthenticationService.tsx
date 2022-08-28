@@ -2,9 +2,14 @@ import store from "../store";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
-import {logout, userAuthenticationActions} from "../slice/userAuthenticationSlice";
 import {subaccountBalanceActions} from "../slice/subaccountBalanceSlice";
-import {useNavigate} from "react-router-dom";
+import {logout} from "../slice/userAuthenticationSlice";
+import storage from "redux-persist/lib/storage";
+
+// function logout() {
+//     useAppDispatch()(subaccountBalanceActions.setSubaccountsBalance([]));
+//     useAppDispatch()(logout())
+// }
 
 const UserAuthenticationService = {
 
@@ -12,8 +17,12 @@ const UserAuthenticationService = {
         try {
             // @ts-ignore
             const token = store.getState().userAuthentication.authTokens[tokenName];
+            console.log('=== is token valid ===')
+            console.log(token)
+            console.log(jwt_decode<DecodedJWT>(token).exp)
             const toMilliseconds = 1000;
             const authTokenExpiration = jwt_decode<DecodedJWT>(token).exp;
+            console.log(authTokenExpiration * toMilliseconds >= new Date().getTime())
             return authTokenExpiration * toMilliseconds >= new Date().getTime()
         } catch (error) {
             return false;
@@ -26,42 +35,28 @@ const UserAuthenticationService = {
             const accessToken = store.getState().userAuthentication.authTokens.accessToken;
             const refreshToken = store.getState().userAuthentication.authTokens.refreshToken;
             if (accessToken === null || refreshToken === null) {
-               this.logout()
+                // this.logout()
+                // storage.removeItem('persist: persist-key')
                 return false;
             }
             console.log('IS USER LOGGED IN? ' + ((!!accessToken && this.isTokenValid('accessToken')) || (!!refreshToken && this.isTokenValid('refreshToken'))))
             const isLoggedIn = ((!!accessToken && this.isTokenValid('accessToken')) || (!!refreshToken && this.isTokenValid('refreshToken')));
-            if (!isLoggedIn) this.logout()
+            // if (!isLoggedIn) {
+            //     // this.logout()
+            //     storage.removeItem('persist: persist-key')
+            // }
             return isLoggedIn === null ? false : isLoggedIn;
         } catch (error) {
             return false;
         }
     },
 
-    logout : function () :void {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useAppDispatch()(subaccountBalanceActions.logout());
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        useAppDispatch()(logout())
-        // eslint-disable-next-line react-hooks/rules-of-hooks
+    logout: function() :void {
+        storage.removeItem('persist: persist-key')
     }
-
-    // isUserLoggedIn: function (): boolean {
-    //     try {
-    //         const accessToken = store.getState().userAuthentication.authTokens.accessToken;
-    //         const refreshToken = store.getState().userAuthentication.authTokens.refreshToken;
-    //
-    //         console.log('IS USER LOGGED IN? ' + ((!!accessToken && this.isTokenValid('accessToken')) || (!!refreshToken && this.isTokenValid('refreshToken'))))
-    //         const isLoggedIn = ((!!accessToken && this.isTokenValid('accessToken')) || (!!refreshToken && this.isTokenValid('refreshToken')));
-    //         // eslint-disable-next-line react-hooks/rules-of-hooks
-    //
-    //         return isLoggedIn === null ? false : isLoggedIn;
-    //     } catch (error) {
-    //         return false;
-    //     }
-    // }
-
 
 }
 
 export default UserAuthenticationService
+
+

@@ -58,7 +58,7 @@ const AccountInfo = () => {
                     <AccountInfoField fieldName='First name' fieldValue={accountData?.firstName} />
                     <AccountInfoField fieldName='Last name' fieldValue={accountData?.lastName} />
                     <AccountInfoField fieldName='Email' fieldValue={accountData?.email} />
-                    <AccountInfoField fieldName='Phone number' fieldValue={accountData?.phone} />
+                    <AccountInfoField fieldName='Phone number' fieldValue={accountData?.phoneNumber} />
                 </Stack>
             </Grid>
         </Grid>

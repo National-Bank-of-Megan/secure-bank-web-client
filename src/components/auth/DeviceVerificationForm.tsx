@@ -11,6 +11,7 @@ import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
 import store from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {sendRequest} from "../../store/slice/userAuthenticationSlice";
+import {ClientJS} from "clientjs";
 
 
 const DeviceVerificationForm = () => {
@@ -26,10 +27,7 @@ const DeviceVerificationForm = () => {
         isOpen: false,
         message: ''
     });
-    const {isLoading, error, sendRequest: loginRequest} = useFetch();
 
-    //redux
-    const userAuth = useAppSelector((state) => state.userAuthentication)
     const dispatch = useAppDispatch()
 
     const getCode = () => {
@@ -54,14 +52,6 @@ const DeviceVerificationForm = () => {
     };
 
     useEffect(() => {
-        if (!!error) {
-            setErrorAlertState({
-                isOpen: true,
-                message: error.message
-            });
-            return;
-        }
-
         digitsRefs[currentIndex].current?.focus();
         window.addEventListener("keyup", handleKeyPress, false);
 
@@ -89,7 +79,8 @@ const DeviceVerificationForm = () => {
 
         const body = JSON.stringify({
             clientId: clientId,
-            code: code
+            code: code,
+            deviceFingerprint : new ClientJS().getFingerprint().toString()
         })
 
         dispatch(sendRequest(

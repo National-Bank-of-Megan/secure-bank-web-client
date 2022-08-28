@@ -1,5 +1,5 @@
 import React, {SyntheticEvent, useEffect, useMemo, useState} from "react";
-import {AppBar, Avatar, Badge, Box, Paper, Popover, Tabs, Toolbar, Typography} from "@mui/material";
+import {AppBar, Avatar, Badge, Box, Button, Paper, Popover, Tabs, Toolbar, Typography} from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
@@ -7,14 +7,16 @@ import Tab from '@mui/material/Tab';
 import {useLocation, useNavigate} from "react-router-dom";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
-import {logout, userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
+import {logout} from "../../store/slice/userAuthenticationSlice";
 import UserAuthenticationService from "../../store/service/UserAuthenticationService";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
 import store from "../../store/store";
+import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
+import buttonStyles from "../../styles/ButtonStyles";
 
 export default function Navbar() {
-    const  isAuthenticated= UserAuthenticationService.isUserLoggedIn();
+    const isAuthenticated = UserAuthenticationService.isUserLoggedIn();
     const dispatch = useAppDispatch()
 
     const {pathname} = useLocation();
@@ -47,8 +49,9 @@ export default function Navbar() {
         setNotificationsPopover(null);
     };
 
-    const handleLogout = (e :SyntheticEvent)=>{
-        UserAuthenticationService.logout()
+    const handleLogout = (e: SyntheticEvent) => {
+        dispatch(subaccountBalanceActions.setSubaccountsBalance([]))
+        dispatch(logout())
         navigate('/login')
     }
 
@@ -130,6 +133,15 @@ export default function Navbar() {
                         <LogoutIcon fontSize="inherit"/>
                     </IconButton>
                 </Box>}
+                {
+                    !isAuthenticated &&
+                    <Button
+                        sx={buttonStyles}
+                        variant="outlined"
+                        size="large"
+                        onClick={()=> navigate('/login')}
+                    >Login</Button>
+                }
             </Toolbar>
         </AppBar>
 

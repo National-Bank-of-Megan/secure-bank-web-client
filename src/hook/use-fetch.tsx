@@ -11,6 +11,7 @@ import {UserAuthenticationSliceType} from "../store/slice-types/UserAuthenticati
 import {logout, userAuthenticationActions} from "../store/slice/userAuthenticationSlice";
 import UserAuthenticationService from "../store/service/UserAuthenticationService";
 import useRefreshToken from "./use-refresh";
+import {subaccountBalanceActions} from "../store/slice/subaccountBalanceSlice";
 
 export type Headers = {
     [key: string]: any;
@@ -48,20 +49,25 @@ const useFetch = () => {
 
         if(!isRefreshTokenValid){
             console.log('Logging out, refresh token is expired');
-            dispatch(logout());
+            dispatch(subaccountBalanceActions.setSubaccountsBalance([]))
+            dispatch(logout())
+            navigate('/login')
         }
 
         try {
             if (isAccessTokenValid) {
                 console.log('Sending request with valid access token')
-                requestConfig.headers['Authorization'] = userAuth.authTokens.accessToken;
+                console.log('Bearer '+userAuth.authTokens.accessToken)
+                requestConfig.headers['Authorization'] = 'Bearer '+userAuth.authTokens.accessToken;
             }
             else if (isRefreshTokenValid) {
                 console.log('getting access token form dispatch')
-                   requestConfig.headers['Authorization'] = await requestAuthTokenWithRefreshToken();
+                let t =await requestAuthTokenWithRefreshToken();
+                console.log('refrsh in useFetch')
+                console.log(t)
+                   requestConfig.headers['Authorization'] ='Bearer '+ t;
             }
-            else
-            if (!(requestConfig.url.startsWith(REST_PATH_AUTH)))
+            else if (!(requestConfig.url.startsWith(REST_PATH_AUTH)))
                 navigate('/login');
 
 

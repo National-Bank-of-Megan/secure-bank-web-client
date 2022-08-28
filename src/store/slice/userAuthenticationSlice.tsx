@@ -1,14 +1,22 @@
 import {createAction, createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
 import {UserAuthenticationSliceType} from "../slice-types/UserAuthenticationSliceType";
+import {unmountComponentAtNode} from "react-dom";
+import {useNavigate} from "react-router-dom";
+import {ClientJS} from "clientjs";
 
 export const sendRequest = createAsyncThunk(
     'userAuthentication/sendRequest',
     async (request: { body: string, url: string, method: string }, dispatch) => {
         console.log('=== INSIDE SEND REQUEST ACTION ===');
+        const client = new ClientJS();
+        console.log(client.getFingerprint().toString())
         const response = await fetch(request.url, {
             method: request.method,
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'Device-Fingerprint' : client.getFingerprint().toString()
+            },
             body: request.body
         })
         console.log(response)
@@ -107,6 +115,8 @@ export const userAuthenticationSlice = createSlice({
 
     reducers: {
         setAccessToken : (state, payload)=>{
+            console.log('USER AUTH SLICE SETTING ACCESS TOKEN')
+            console.log(payload.payload)
             state.authTokens.accessToken = payload.payload
         }
     }

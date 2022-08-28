@@ -15,7 +15,7 @@ const useRefreshToken = () => {
         const response = await fetch(APIAddress, {
             method: 'GET',
             headers: {
-                'Authorization': refreshToken ? refreshToken : ''
+                'Authorization': refreshToken ? 'Bearer '+refreshToken : ''
             }
         });
 
@@ -30,7 +30,7 @@ const useRefreshToken = () => {
     const requestAuthTokenWithRefreshToken = useCallback(async (): Promise<string> => {
         const fetchedAuthToken = await fetchAuthToken();
         console.log('Fetched tokne: '+fetchedAuthToken)
-        dispatch(userAuthenticationActions.setAccessToken(fetchedAuthToken))
+        await dispatch(userAuthenticationActions.setAccessToken(fetchedAuthToken))
         return fetchedAuthToken !== null ? fetchedAuthToken : "";
     }, [ fetchAuthToken])
 

@@ -4,5 +4,5 @@ export type AccountData = {
     firstName: string;
     lastName: string;
     email: string;
-    phone: string;
+    phoneNumber: string;
 }

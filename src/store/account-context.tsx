@@ -14,7 +14,7 @@ const AccountContext = React.createContext<AccountContextObj>({
         firstName: '',
         lastName: '',
         email: '',
-        phone: ''
+        phoneNumber: ''
     },
     setAccountData: () => {}
 });
