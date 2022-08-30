@@ -4,6 +4,7 @@ import {UserAuthenticationSliceType} from "../slice-types/UserAuthenticationSlic
 import {unmountComponentAtNode} from "react-dom";
 import {useNavigate} from "react-router-dom";
 import {ClientJS} from "clientjs";
+import {wait} from "@testing-library/user-event/dist/utils";
 
 export const sendRequest = createAsyncThunk(
     'userAuthentication/sendRequest',
@@ -89,6 +90,7 @@ export const userAuthenticationSlice = createSlice({
                 state.status = payload['status']
             })
             .addCase(sendRequest.fulfilled, (state, payload) => {
+
                 console.log('fulfilled')
                 state.isLoading = false;
                 state.error = null;

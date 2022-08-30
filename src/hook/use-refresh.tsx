@@ -7,10 +7,11 @@ import {sendRequest, userAuthenticationActions} from "../store/slice/userAuthent
 
 const useRefreshToken = () => {
 
-    const refreshToken = store.getState().userAuthentication.authTokens.refreshToken;
+
     const dispatch = useAppDispatch()
 
     const fetchAuthToken = useCallback(async (): Promise<string> => {
+        const refreshToken = store.getState().userAuthentication.authTokens.refreshToken || '';
         const APIAddress = REST_PATH_AUTH + "/web/token/refresh";
         const response = await fetch(APIAddress, {
             method: 'GET',
@@ -25,7 +26,7 @@ const useRefreshToken = () => {
 
         const responseBody = await response.json();
         return responseBody['access_token'];
-    }, [refreshToken]);
+    }, []);
 
     const requestAuthTokenWithRefreshToken = useCallback(async (): Promise<string> => {
         const fetchedAuthToken = await fetchAuthToken();

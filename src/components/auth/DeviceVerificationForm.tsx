@@ -119,7 +119,8 @@ const DeviceVerificationForm = () => {
                 marginTop: "100px",
             }}
         >
-            <Spinner isLoading={false}/>
+            <h1>{store.getState().userAuthentication.isLoading}</h1>
+            <Spinner isLoading={store.getState().userAuthentication.isLoading}/>
             <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
 
             <Paper

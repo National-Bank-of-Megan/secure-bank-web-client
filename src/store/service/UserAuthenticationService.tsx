@@ -17,6 +17,7 @@ const UserAuthenticationService = {
         try {
             // @ts-ignore
             const token = store.getState().userAuthentication.authTokens[tokenName];
+            if(token === null) return false;
             console.log('=== is token valid ===')
             console.log(token)
             console.log(jwt_decode<DecodedJWT>(token).exp)

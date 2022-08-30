@@ -11,6 +11,7 @@ import {sendRequest} from "../../store/slice/userAuthenticationSlice";
 import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
 import store, {RootState} from "../../store/store";
 import {useSelector} from "react-redux";
+import Spinner from "../common/Spinner";
 
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
@@ -155,8 +156,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                {/*todo correct*/}
-                {/*<Spinner isLoading={store.getState().userAuthentication.isLoading}/>*/}
+                <Spinner isLoading={store.getState().userAuthentication.isLoading}/>
                 <AlertSnackBar severity={"error"}
                                alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
                 <Paper

@@ -14,6 +14,7 @@ import DecodedJWT from "../../models/decodedJWT";
 import store from "../../store/store";
 import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
 import buttonStyles from "../../styles/ButtonStyles";
+import {REST_PATH_TRANSFER} from "../../constants/Constants";
 
 export default function Navbar() {
     const isAuthenticated = UserAuthenticationService.isUserLoggedIn();
@@ -30,6 +31,27 @@ export default function Navbar() {
         const value = paths.indexOf(pathname);
         setCurrentPath(value);
     }, [pathname, paths, setCurrentPath])
+
+    // useEffect(() => {
+        // const sse = new EventSource(REST_PATH_TRANSFER + '/notification/subscribe', {withCredentials: true});
+        // sse.addEventListener("TRANSFER_NOTIFICATION", (event) => {
+        //     console.log("== NEW TRANSFER NOTIFICATION RECEIVED ==")
+        //     let data = JSON.parse(event.data);
+        //     console.log(data);
+        // })
+        //
+        // sse.addEventListener("error", (event) => {
+        //     console.log("== TRANSFER NOTIFICATION ERROR ==");
+        //     console.log(event)
+            // if(event.currentTarget.readyState! === EventSource.CLOSED){
+            //
+            // }else{
+            //     console.log("== CLOSING TRANSFER NOTIFICATION CONNECTION ==")
+            //     sse.close();
+            // }
+            //
+        // })
+    // },[])
 
     const getUserInitials = () => {
         return UserAuthenticationService.isUserLoggedIn() ? jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).firstName.charAt(0)
@@ -139,7 +161,7 @@ export default function Navbar() {
                         sx={buttonStyles}
                         variant="outlined"
                         size="large"
-                        onClick={()=> navigate('/login')}
+                        onClick={() => navigate('/login',{replace: true})}
                     >Login</Button>
                 }
             </Toolbar>
