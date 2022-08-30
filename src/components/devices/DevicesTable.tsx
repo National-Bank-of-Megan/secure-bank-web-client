@@ -1,17 +1,22 @@
-import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import {DataGrid, GridColDef, GridEventListener} from '@mui/x-data-grid';
 import {randomCreatedDate, randomInt} from "@mui/x-data-grid-generator";
 import {Box, Button} from "@mui/material";
 import * as React from "react";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
-import {useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {REST_PATH_AUTH} from "../../constants/Constants";
 import {ClientJS} from "clientjs";
 import {DetailedTransactionTypeResponse} from "../../models/custom-types/DetailedTransactionTypeResponse";
 import DetailedTransaction from "../../models/detailedTransaction";
 import {TrustedDeviceResponse} from "../../models/custom-types/TrustedDeviceResponse";
 import TrustedDevice from "../../models/trustedDevice";
+import {AlertState} from "../notifications/AlertSnackBar";
+import trustedDevice from "../../models/trustedDevice";
 
-const DevicesTable = () => {
+const DevicesTable: React.FC<{
+    setErrorAlertState: Dispatch<SetStateAction<AlertState>>;
+    setSuccessAlertState: Dispatch<SetStateAction<AlertState>>;
+}> = (props) => {
     const {
         isLoading: isTrustedDeviceListLoading,
         error: errorDeviceList,
@@ -22,8 +27,10 @@ const DevicesTable = () => {
         error: errorDeleteTrustedDevice,
         sendRequest: sendDeleteTrustedDeviceRequest
     } = useFetch();
+    const [isProcessingDeleteTrustedDeviceRequest, setIsProcessingDeleteTrustedDeviceRequest] = useState(false);
+
     const [trustedDeviceList, setTrustedDeviceList] = useState<TrustedDevice[]>([]);
-    const [isTrustedDeviceListLoaded, setIsTrustedDeviceListLoaded] = useState(false);
+    const [selectedDevice, setSelectedDevice] = useState<TrustedDevice | null>(null);
 
     const columns: GridColDef[] = [
         {field: 'deviceName', type: 'string', headerName: 'Device name', flex: 1},
@@ -32,6 +39,15 @@ const DevicesTable = () => {
         {field: 'lastLoggedInDate', type: 'data', headerName: 'Last logged in date', flex: 1}
     ];
     const [rows, setRows] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (!!errorDeleteTrustedDevice) {
+            props.setErrorAlertState({
+                isOpen: true,
+                message: errorDeleteTrustedDevice.message
+            });
+        }
+    }, [errorDeleteTrustedDevice, props.setErrorAlertState])
 
     useEffect(() => {
         const transformTrustedDevices = (trustedDeviceResponseObj: TrustedDeviceResponse[]) => {
@@ -51,13 +67,16 @@ const DevicesTable = () => {
                     id: trustedDeviceResponse.id,
                     deviceName: trustedDeviceResponse.name,
                     ipAddress: trustedDeviceResponse.ip,
-                    registrationDate: trustedDeviceResponse.registrationDate,
-                    lastLoggedInDate: trustedDeviceResponse.lastLoggedInDate
+                    registrationDate: new Date(trustedDeviceResponse.registrationDate).toLocaleDateString('en-us', {
+                        year: "numeric", day: "numeric", month: "short", hour : "numeric", minute :"numeric", second: "numeric"
+                    }),
+                    lastLoggedInDate: new Date(trustedDeviceResponse.lastLoggedInDate).toLocaleDateString('en-us', {
+                        year: "numeric", day: "numeric", month: "short", hour : "numeric", minute :"numeric", second: "numeric"
+                    })
                 });
             }
             setTrustedDeviceList(loadedTrustedDeviceList);
             setRows(loadedRows);
-            setIsTrustedDeviceListLoaded(true);
         }
 
         const client = new ClientJS();
@@ -71,27 +90,50 @@ const DevicesTable = () => {
         sendGetTrustedDeviceListRequest(getTrustedDeviceListRequest, transformTrustedDevices);
     }, [sendGetTrustedDeviceListRequest]);
 
+    const handleDeleteTrustedDeviceSuccessResponse = (response: any) => {
+        setRows((prevRows) => {
+            return prevRows.filter(row => row.id !== selectedDevice!.id)
+        });
+        setSelectedDevice(null);
+        props.setSuccessAlertState({
+            isOpen: true,
+            message: "Device successfully removed from trusted devices"
+        });
+    }
 
     const handleDeleteRow = () => {
-        setRows((prevRows) => {
-            const rowToDeleteIndex = randomInt(0, prevRows.length - 1);
-            return [
-                ...rows.slice(0, rowToDeleteIndex),
-                ...rows.slice(rowToDeleteIndex + 1),
-            ];
-        });
+        if (selectedDevice === null) {
+            return;
+        }
+
+        const deleteTrustedDeviceRequest: RequestConfig = {
+            url: REST_PATH_AUTH + "/account/devices/" + selectedDevice.id,
+            method: 'DELETE',
+        };
+        sendDeleteTrustedDeviceRequest(deleteTrustedDeviceRequest, handleDeleteTrustedDeviceSuccessResponse);
     };
 
+    const handleDeviceClick: GridEventListener<'rowClick'> = (params) => {
+        const selectedTrustedDevice = trustedDeviceList.find((trustedDevice) => {
+            return trustedDevice.id === params.id
+        });
+        if (selectedTrustedDevice === undefined) {
+            setSelectedDevice(null);
+        } else {
+            setSelectedDevice(selectedTrustedDevice);
+        }
+    };
 
     return (
         <Box sx={{width: '100%'}}>
             <Box sx={{display: 'flex', justifyContent: 'end'}}>
-                <Button size="large" variant="outlined" color="error" onClick={handleDeleteRow}>
+                <Button size="large" variant="outlined" color="error" onClick={handleDeleteRow} disabled={selectedDevice === null}>
                     Delete device
                 </Button>
             </Box>
             <Box sx={{height: 400, mt: 1}}>
                 <DataGrid rows={rows} columns={columns} loading={isTrustedDeviceListLoading}
+                          onRowClick={handleDeviceClick}
                           initialState={{
                               pagination: {
                                   page: 0,
