@@ -14,7 +14,7 @@ const SuccessfulRegistrationPage = () => {
             console.log('gówno')
             navigate('/', {replace: true});
         }
-    }, [])
+    }, [navigate, registrationData])
 
     return (
         <>

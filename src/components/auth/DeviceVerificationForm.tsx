@@ -12,9 +12,10 @@ import store from "../../store/store";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {sendRequest} from "../../store/slice/userAuthenticationSlice";
 import {ClientJS} from "clientjs";
+import {AccountCredentialsType} from "../../models/custom-types/AccountCredentialsType";
 
 
-const DeviceVerificationForm = () => {
+const DeviceVerificationForm: React.FC<{accountCredentials: AccountCredentialsType}> = ({ accountCredentials }) => {
     const [digitsRefs] = useState(() =>
         Array.from({length: CODE_LENGTH}, () => createRef<HTMLInputElement>())
     );
@@ -80,7 +81,8 @@ const DeviceVerificationForm = () => {
         const body = JSON.stringify({
             clientId: clientId,
             code: code,
-            deviceFingerprint : new ClientJS().getFingerprint().toString()
+            deviceFingerprint : new ClientJS().getFingerprint().toString(),
+            password: accountCredentials.password
         })
 
         dispatch(sendRequest(
