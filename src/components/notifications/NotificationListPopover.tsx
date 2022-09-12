@@ -1,8 +1,11 @@
 import {CompareArrows, Security} from "@mui/icons-material";
-import {Container} from "@mui/material";
+import {Box, Container} from "@mui/material";
+import TransferNotificationClass from "../../models/TransferNotificationClass";
+import { notificationType } from "../layout/Navbar";
 import AccountNotification from "./AccountNotification";
+import TransferNotification from "./transfer/TransferNotification";
 
-const NotificationsListPopover = () => {
+const NotificationsListPopover: React.FC<{notifications: notificationType[]}> = ({notifications}) => {
     return (
         <Container sx={{
             display: 'flex',
@@ -12,14 +15,23 @@ const NotificationsListPopover = () => {
             paddingBottom: '20px',
             rowGap: '20px'
         }}>
-            <AccountNotification icon={<CompareArrows/>}/>
-            <AccountNotification icon={<Security/>}/>
-            <AccountNotification icon={<CompareArrows/>}/>
-            <AccountNotification icon={<Security/>}/>
-            <AccountNotification icon={<CompareArrows/>}/>
-            <AccountNotification icon={<Security/>}/>
-            <AccountNotification icon={<CompareArrows/>}/>
-            <AccountNotification icon={<Security/>}/>
+            {
+                notifications.map((n)=>{
+                switch(n.notificationType){
+                    case "TRANSFER": {
+                        console.log("elo")
+                       return <TransferNotification
+                       transferData = {n.contents as TransferNotificationClass}
+                       wasViewed = {n.wasViewed}
+                       />
+                    }
+
+                    default: {
+                       return null;
+                    }
+                }
+                })
+            }
         </Container>
     );
 }

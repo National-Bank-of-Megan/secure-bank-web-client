@@ -1,180 +1,240 @@
-import React, {SyntheticEvent, useEffect, useMemo, useState} from "react";
-import {AppBar, Avatar, Badge, Box, Button, Paper, Popover, Tabs, Toolbar, Typography} from "@mui/material";
+import React, { SyntheticEvent, useEffect, useMemo, useState } from "react";
+import {
+  AppBar,
+  Avatar,
+  Badge,
+  Box,
+  Button,
+  Paper,
+  Popover,
+  Tabs,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
-import Tab from '@mui/material/Tab';
-import {useLocation, useNavigate} from "react-router-dom";
-import {useAppDispatch} from "../../hook/redux-hooks";
+import Tab from "@mui/material/Tab";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
-import {logout} from "../../store/slice/userAuthenticationSlice";
+import { logout } from "../../store/slice/userAuthenticationSlice";
 import UserAuthenticationService from "../../store/service/UserAuthenticationService";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
 import store from "../../store/store";
-import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
+import { subaccountBalanceActions } from "../../store/slice/subaccountBalanceSlice";
 import buttonStyles from "../../styles/ButtonStyles";
-import {REST_PATH_TRANSFER} from "../../constants/Constants";
+import { REST_PATH_TRANSFER } from "../../constants/Constants";
+import TransferNotificationClass from "../../models/TransferNotificationClass";
+
+export type notificationType = {
+  wasViewed: boolean;
+  contents: Object;
+  notificationType: string;
+};
 
 export default function Navbar() {
-    const isAuthenticated = UserAuthenticationService.isUserLoggedIn();
-    const dispatch = useAppDispatch()
+  const isAuthenticated = UserAuthenticationService.isUserLoggedIn();
+  const dispatch = useAppDispatch();
 
-    const {pathname} = useLocation();
-    const [currentPath, setCurrentPath] = useState<number>(0);
-    const [notificationsPopover, setNotificationsPopover] = React.useState<HTMLButtonElement | null>(null);
+  const { pathname } = useLocation();
+  const [currentPath, setCurrentPath] = useState<number>(0);
+  const [notificationsPopover, setNotificationsPopover] =
+    React.useState<HTMLButtonElement | null>(null);
 
-    const navigate = useNavigate();
-    const paths = useMemo(() => ["/transfers", "/history", "/exchange", "/devices", "/account"], []);
+  const navigate = useNavigate();
+  const paths = useMemo(
+    () => ["/transfers", "/history", "/exchange", "/devices", "/account"],
+    []
+  );
 
-    useEffect(() => {
-        const value = paths.indexOf(pathname);
-        setCurrentPath(value);
-    }, [pathname, paths, setCurrentPath])
+  const [notifications, setNotifications] = useState<notificationType[]>([]);
+ const subscribe = () => {
+    const sse = new EventSource(
+      REST_PATH_TRANSFER +
+        "/notification/subscribe?jwt=" +
+        store.getState().userAuthentication.authTokens.accessToken!
+    );
+    sse.addEventListener("TRANSFER_NOTIFICATION", (event) => {
+      console.log("== NEW TRANSFER NOTIFICATION RECEIVED ==");
+      console.log(event)
 
-    // useEffect(() => {
-        // const sse = new EventSource(REST_PATH_TRANSFER + '/notification/subscribe', {withCredentials: true});
-        // sse.addEventListener("TRANSFER_NOTIFICATION", (event) => {
-        //     console.log("== NEW TRANSFER NOTIFICATION RECEIVED ==")
-        //     let data = JSON.parse(event.data);
-        //     console.log(data);
-        // })
-        //
-        // sse.addEventListener("error", (event) => {
-        //     console.log("== TRANSFER NOTIFICATION ERROR ==");
-        //     console.log(event)
-            // if(event.currentTarget.readyState! === EventSource.CLOSED){
-            //
-            // }else{
-            //     console.log("== CLOSING TRANSFER NOTIFICATION CONNECTION ==")
-            //     sse.close();
-            // }
-            //
-        // })
-    // },[])
+      let messageEvent = event as MessageEvent;
+      let data = JSON.parse(messageEvent.data);
+      notifications.push({
+        wasViewed: false,
+        notificationType: "TRANSFER",
+        contents: new TransferNotificationClass(
+          data.title,
+          data.senderFirstname,
+          data.senderLastname,
+          data.amount,
+          data.currency,
+          new Date()
+        ),
+      });
+    });
 
-    const getUserInitials = () => {
-        return UserAuthenticationService.isUserLoggedIn() ? jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).firstName.charAt(0)
-            + jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).lastName.charAt(0) : "";
-    }
+    sse.addEventListener("open", (event) => {
+      console.log("== CONNECTION OPENED ==");
+    });
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setCurrentPath(newValue);
-        navigate(paths[newValue]);
-    };
+    sse.addEventListener("error", (event) => {
+      // console.log("== TRANSFER NOTIFICATION ERROR ==");
+      // console.log(event);
+      // if(event.currentTarget.readyState! === EventSource.CLOSED){
+      // }else{
+      //     console.log("== CLOSING TRANSFER NOTIFICATION CONNECTION ==")
+      //     sse.close();
+      // }
+    });
+  };
+  useEffect(() => {
+    const value = paths.indexOf(pathname);
+    setCurrentPath(value);
+    if(isAuthenticated)subscribe()
+  }, [pathname, paths, setCurrentPath, subscribe]);
 
-    const handleNotificationsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setNotificationsPopover(event.currentTarget);
-    };
+  const markAsViewed = (notification: notificationType) => {
+    notification.wasViewed = true;
+  };
 
-    const handleNotificationsClose = () => {
-        setNotificationsPopover(null);
-    };
+ 
 
-    const handleLogout = (e: SyntheticEvent) => {
-        dispatch(subaccountBalanceActions.setSubaccountsBalance([]))
-        dispatch(logout())
-        navigate('/login')
-    }
+  const getUserInitials = () => {
+    return UserAuthenticationService.isUserLoggedIn()
+      ? jwt_decode<DecodedJWT>(
+          store.getState().userAuthentication.authTokens.accessToken!
+        ).firstName.charAt(0) +
+          jwt_decode<DecodedJWT>(
+            store.getState().userAuthentication.authTokens.accessToken!
+          ).lastName.charAt(0)
+      : "";
+  };
 
-    const open = Boolean(notificationsPopover);
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setCurrentPath(newValue);
+    navigate(paths[newValue]);
+  };
 
-    return <Box sx={{flexGrow: 1}}>
-        <AppBar position="static">
-            <Toolbar>
-                <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-                    National Bank of Megan
-                </Typography>
-                {isAuthenticated && <Box>
-                    <IconButton
-                        size="large"
-                        aria-label="show 4 new mails"
-                        color="inherit"
-                        // component={Link} to="/notifications"
-                        onClick={handleNotificationsClick}
-                    >
-                        <Badge badgeContent={4} color="error">
-                            <NotificationsIcon
-                                fontSize="inherit"
-                            />
-                        </Badge>
-                    </IconButton>
+  const handleNotificationsClick = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    setNotificationsPopover(event.currentTarget);
+  };
 
-                    <Popover
-                        id='simple-popover'
-                        open={open}
-                        anchorEl={notificationsPopover}
-                        onClose={handleNotificationsClose}
-                        anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                        }}
-                        transformOrigin={{
-                            vertical: 'top',
-                            horizontal: 'right',
-                        }}
-                        PaperProps={{
-                            style: {
-                                width: '480px',
-                                height: '500px'
-                            },
-                        }}
-                        sx={{
-                            marginLeft: '50px',
-                            '*::-webkit-scrollbar': {
-                                width: '0.4em'
-                            },
-                            '*::-webkit-scrollbar-track': {
-                                '-webkit-box-shadow': 'inset 0 0 6px rgba(0,0,0,0.00)'
-                            },
-                            '*::-webkit-scrollbar-thumb': {
-                                backgroundColor: 'rgba(0,0,0,.1)',
-                                outline: '1px solid #1E1E1E'
-                            }
-                        }}
+  const handleNotificationsClose = () => {
+    setNotificationsPopover(null);
+  };
 
-                    >
-                        <NotificationsListPopover/>
-                    </Popover>
+  const handleLogout = (e: SyntheticEvent) => {
+    dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
+    dispatch(logout());
+    navigate("/login");
+  };
 
-                    <IconButton
-                        size="large"
-                        aria-label="show 4 new mails"
-                        color="inherit"
-                    >
-                        <Avatar sx={{bgcolor: "primary.main", width: 34, height: 34}}><Typography
-                            color="secondary.light" sx={{fontSize: '15px'}}>{getUserInitials()}</Typography></Avatar>
-                    </IconButton>
+  const open = Boolean(notificationsPopover);
 
-                    <IconButton
-                        size="large"
-                        color="inherit"
-                        onClick={handleLogout}
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            National Bank of Megan
+          </Typography>
+          {isAuthenticated && (
+            <Box>
+              <Button onClick={() => subscribe()}>test</Button>
+              <IconButton
+                size="large"
+                aria-label="show 4 new mails"
+                color="inherit"
+                // component={Link} to="/notifications"
+                onClick={handleNotificationsClick}
+              >
+                <Badge badgeContent={4} color="error">
+                  <NotificationsIcon fontSize="inherit" />
+                </Badge>
+              </IconButton>
 
-                    >
-                        <LogoutIcon fontSize="inherit"/>
-                    </IconButton>
-                </Box>}
-                {
-                    !isAuthenticated &&
-                    <Button
-                        sx={buttonStyles}
-                        variant="outlined"
-                        size="large"
-                        onClick={() => navigate('/login',{replace: true})}
-                    >Login</Button>
-                }
-            </Toolbar>
-        </AppBar>
+              <Popover
+                id="simple-popover"
+                open={open}
+                anchorEl={notificationsPopover}
+                onClose={handleNotificationsClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                PaperProps={{
+                  style: {
+                    width: "480px",
+                    height: "500px",
+                  },
+                }}
+                sx={{
+                  marginLeft: "50px",
+                  "*::-webkit-scrollbar": {
+                    width: "0.4em",
+                  },
+                  "*::-webkit-scrollbar-track": {
+                    "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.00)",
+                  },
+                  "*::-webkit-scrollbar-thumb": {
+                    backgroundColor: "rgba(0,0,0,.1)",
+                    outline: "1px solid #1E1E1E",
+                  },
+                }}
+              >
+                <NotificationsListPopover notifications={notifications} />
+              </Popover>
 
-        {isAuthenticated && <Paper sx={{bgcolor: 'background.paper'}}>
-            <Tabs value={currentPath} onChange={handleChange} variant="fullWidth">
-                <Tab label="Transfers"/>
-                <Tab label="History"/>
-                <Tab label="Currency"/>
-                <Tab label="Devices"/>
-                <Tab label="Account"/>
-            </Tabs>
-        </Paper>}
-    </Box>;
-}
+              <IconButton
+                size="large"
+                aria-label="show 4 new mails"
+                color="inherit"
+              >
+                <Avatar sx={{ bgcolor: "primary.main", width: 34, height: 34 }}>
+                  <Typography color="secondary.light" sx={{ fontSize: "15px" }}>
+                    {getUserInitials()}
+                  </Typography>
+                </Avatar>
+              </IconButton>
+
+              <IconButton size="large" color="inherit" onClick={handleLogout}>
+                <LogoutIcon fontSize="inherit" />
+              </IconButton>
+            </Box>
+          )}
+          {!isAuthenticated && (
+            <Button
+              sx={buttonStyles}
+              variant="outlined"
+              size="large"
+              onClick={() => navigate("/login", { replace: true })}
+            >
+              Login
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
+
+      {isAuthenticated && (
+        <Paper sx={{ bgcolor: "background.paper" }}>
+          <Tabs value={currentPath} onChange={handleChange} variant="fullWidth">
+            <Tab label="Transfers" />
+            <Tab label="History" />
+            <Tab label="Currency" />
+            <Tab label="Devices" />
+            <Tab label="Account" />
+          </Tabs>
+        </Paper>
+      )}
+    </Box>
+  );
+};
