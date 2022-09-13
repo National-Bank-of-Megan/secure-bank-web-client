@@ -50,6 +50,7 @@ export default function Navbar() {
   );
 
   const [notifications, setNotifications] = useState<notificationType[]>([]);
+  const [newNotificationsCounter, setNewNotificationsCounter] = useState<number>(0);
  const subscribe = () => {
     const sse = new EventSource(
       REST_PATH_TRANSFER +
@@ -74,6 +75,7 @@ export default function Navbar() {
           new Date()
         ),
       });
+      setNewNotificationsCounter(newNotificationsCounter + 1)
     });
 
     sse.addEventListener("open", (event) => {
@@ -96,11 +98,9 @@ export default function Navbar() {
     if(isAuthenticated)subscribe()
   }, [pathname, paths, setCurrentPath, subscribe]);
 
-  const markAsViewed = (notification: notificationType) => {
-    notification.wasViewed = true;
-  };
-
- 
+  const decrementNotificationCounter = ()=>{
+    setNewNotificationsCounter(newNotificationsCounter - 1);
+  }
 
   const getUserInitials = () => {
     return UserAuthenticationService.isUserLoggedIn()
@@ -153,7 +153,7 @@ export default function Navbar() {
                 // component={Link} to="/notifications"
                 onClick={handleNotificationsClick}
               >
-                <Badge badgeContent={4} color="error">
+                <Badge badgeContent={newNotificationsCounter} color="error">
                   <NotificationsIcon fontSize="inherit" />
                 </Badge>
               </IconButton>
@@ -191,7 +191,8 @@ export default function Navbar() {
                   },
                 }}
               >
-                <NotificationsListPopover notifications={notifications} />
+                <NotificationsListPopover notifications={notifications} 
+                decrementNotificationCounter={decrementNotificationCounter}/>
               </Popover>
 
               <IconButton

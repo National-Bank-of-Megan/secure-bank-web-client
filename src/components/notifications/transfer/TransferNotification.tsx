@@ -1,43 +1,61 @@
 import { CompareArrows } from "@mui/icons-material";
 import { Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { AnyIfEmpty } from "react-redux";
 import TransferNotificationClass from "../../../models/TransferNotificationClass";
+import { notificationType } from "../../layout/Navbar";
 
 const TransferNotification: React.FC<{
-  transferData: TransferNotificationClass;
-  wasViewed: boolean;
-}> = ({ transferData, wasViewed }) => {
+  transferData: notificationType;
+  decrementNotificationCounter: () => void;
+}> = ({ transferData, decrementNotificationCounter }) => {
+  let data = transferData.contents as TransferNotificationClass;
   return (
     <Box
       sx={{
         display: "flex",
         columnGap: "30px",
+        alignItems: "center",
+        width: "100%",
+      }}
+      onClick={() => {
+        if(!transferData.wasViewed){
+        transferData.wasViewed = true;
+        decrementNotificationCounter();
+        }
       }}
     >
-      <CompareArrows sx={{ color: wasViewed ? "" : "red" }} />
+      <CompareArrows
+        sx={{ color: transferData.wasViewed ? "primary" : "red" }}
+      />
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
         }}
       >
-        <Typography>{transferData.title}</Typography>
+        <Typography color="primary">{data.title}</Typography>
         <Typography>
-          {transferData.senderFirstname + " " + transferData.senderLastname}{" "}
-          just ordered transfer for you. Transfered amount:{" "}
+          {data.senderFirstname +
+            " " +
+            data.senderLastname +
+            " just ordered transfer for you."}
         </Typography>
         <Typography>
-          {transferData.currency + " " + transferData.amount.toFixed(2)}
+          {"Transfered amount:  " +
+            data.currency +
+            " " +
+            data.amount.toFixed(2)}
         </Typography>
-       <Typography
+        <Typography
           color="text.secondary"
           sx={{
             fontWeight: "500",
             fontSize: "14px",
           }}
         >
-         {"Arraving on " +
-            transferData.arrivalDate.toLocaleDateString("en-us", {
+          {"Arraving on " +
+            data.arrivalDate.toLocaleDateString("en-us", {
               year: "numeric",
               day: "numeric",
               month: "short",

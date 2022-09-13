@@ -5,7 +5,7 @@ import { notificationType } from "../layout/Navbar";
 import AccountNotification from "./AccountNotification";
 import TransferNotification from "./transfer/TransferNotification";
 
-const NotificationsListPopover: React.FC<{notifications: notificationType[]}> = ({notifications}) => {
+const NotificationsListPopover: React.FC<{notifications: notificationType[], decrementNotificationCounter :()=>void}> = ({decrementNotificationCounter,notifications}) => {
     return (
         <Container sx={{
             display: 'flex',
@@ -15,14 +15,14 @@ const NotificationsListPopover: React.FC<{notifications: notificationType[]}> = 
             paddingBottom: '20px',
             rowGap: '20px'
         }}>
+        
             {
                 notifications.map((n)=>{
                 switch(n.notificationType){
                     case "TRANSFER": {
-                        console.log("elo")
                        return <TransferNotification
-                       transferData = {n.contents as TransferNotificationClass}
-                       wasViewed = {n.wasViewed}
+                    transferData={n}
+                    decrementNotificationCounter={decrementNotificationCounter}
                        />
                     }
 
