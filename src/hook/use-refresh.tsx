@@ -12,7 +12,7 @@ const useRefreshToken = () => {
 
     const fetchAuthToken = useCallback(async (): Promise<string> => {
         const refreshToken = store.getState().userAuthentication.authTokens.refreshToken || '';
-        const APIAddress = REST_PATH_AUTH + "/web/token/refresh";
+        const APIAddress = REST_PATH_AUTH + "/token/refresh";
         const response = await fetch(APIAddress, {
             method: 'GET',
             headers: {

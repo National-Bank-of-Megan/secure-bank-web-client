@@ -113,7 +113,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
             })
 
             dispatch(sendRequest(
-                { body : body, url : REST_PATH_AUTH + '/web/login', method : 'POST'}
+                { body : body, url : REST_PATH_AUTH + '/login', method : 'POST'}
             )).then(
                 (response) => {
 

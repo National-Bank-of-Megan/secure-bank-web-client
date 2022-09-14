@@ -6,9 +6,9 @@ import {isValidPassword} from "../../input-rules/is-valid-password";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {shouldUpdateCode} from "../../common/validation";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
-import {REST_PATH_AUTH} from "../../constants/Constants";
 import {AlertState} from "../notifications/AlertSnackBar";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
+import { REST_PATH_ACCOUNT } from "../../constants/Constants";
 
 const ChangePasswordForm: React.FC<{
     setIsChangingPassword: Dispatch<SetStateAction<boolean>>;
@@ -105,7 +105,7 @@ const ChangePasswordForm: React.FC<{
         }
 
         const changePasswordRequestContent: RequestConfig = {
-            url: REST_PATH_AUTH + "/account/changePassword",
+            url: REST_PATH_ACCOUNT + "/changePassword",
             method: "PUT",
             body: {
                 'oldPassword': oldPasswordValue,

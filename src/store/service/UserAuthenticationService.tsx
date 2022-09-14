@@ -3,13 +3,9 @@ import {useAppDispatch} from "../../hook/redux-hooks";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
 import {subaccountBalanceActions} from "../slice/subaccountBalanceSlice";
-import {logout} from "../slice/userAuthenticationSlice";
 import storage from "redux-persist/lib/storage";
-
-// function logout() {
-//     useAppDispatch()(subaccountBalanceActions.setSubaccountsBalance([]));
-//     useAppDispatch()(logout())
-// }
+import { useNavigate } from "react-router-dom";
+import {userAuthenticationActions} from "../slice/userAuthenticationSlice";
 
 const UserAuthenticationService = {
 
@@ -35,26 +31,20 @@ const UserAuthenticationService = {
         try {
             const accessToken = store.getState().userAuthentication.authTokens.accessToken;
             const refreshToken = store.getState().userAuthentication.authTokens.refreshToken;
-            if (accessToken === null || refreshToken === null) {
-                // this.logout()
-                // storage.removeItem('persist: persist-key')
-                return false;
-            }
             console.log('IS USER LOGGED IN? ' + ((!!accessToken && this.isTokenValid('accessToken')) || (!!refreshToken && this.isTokenValid('refreshToken'))))
             const isLoggedIn = ((!!accessToken && this.isTokenValid('accessToken')) || (!!refreshToken && this.isTokenValid('refreshToken')));
-            // if (!isLoggedIn) {
-            //     // this.logout()
-            //     storage.removeItem('persist: persist-key')
-            // }
-            return isLoggedIn === null ? false : isLoggedIn;
+            return isLoggedIn;
         } catch (error) {
             return false;
         }
     },
 
-    logout: function() :void {
-        storage.removeItem('persist: persist-key')
-    }
+    // logout: function() :void {
+    //     useAppDispatch()(subaccountBalanceActions.setSubaccountsBalance([]));
+    //     useAppDispatch()(UserAuthenticationService.logout)
+    //     storage.removeItem('persist: persist-key')
+    //     useNavigate()("/login");
+    // }
 
 }
 

@@ -83,7 +83,7 @@ const RegistrationForm = () => {
 
     const handleRegistration = (response: SuccessfulRegistrationType) => {
         setIsRegistering(false);
-        navigate('success', {
+        navigate('/signup/success', {
             replace: true, state: {
                 clientId: response['clientId'], qr: response['qr']
             }
@@ -100,7 +100,7 @@ const RegistrationForm = () => {
         const client = new ClientJS();
 
         const registerRequestContent: RequestConfig = {
-            url: REST_PATH_AUTH + "/web/register",
+            url: REST_PATH_AUTH + "/register",
             method: "POST",
             body: {
                 'firstName': firstNameValue,

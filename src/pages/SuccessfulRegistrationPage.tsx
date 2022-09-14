@@ -11,7 +11,6 @@ const SuccessfulRegistrationPage = () => {
 
     useEffect(() => {
         if (!registrationData) {
-            console.log('gówno')
             navigate('/', {replace: true});
         }
     }, [navigate, registrationData])

@@ -26,7 +26,7 @@ const TransferNotification: React.FC<{
       }}
     >
       <CompareArrows
-        sx={{ color: transferData.wasViewed ? "primary" : "red" }}
+        sx={{ color: transferData.wasViewed ? "primary" : "primary.main" }}
       />
       <Box
         sx={{
@@ -54,7 +54,7 @@ const TransferNotification: React.FC<{
             fontSize: "14px",
           }}
         >
-          {"Arraving on " +
+          {
             data.arrivalDate.toLocaleDateString("en-us", {
               year: "numeric",
               day: "numeric",

@@ -14,7 +14,7 @@ import {
 import {AccountCurrencyBalance} from "../TotalBalanceContent";
 import useInput from "../../../hook/use-input";
 import useFetch, {RequestConfig} from "../../../hook/use-fetch";
-import {REST_PATH_AUTH} from "../../../constants/Constants";
+import {REST_PATH_ACCOUNT, REST_PATH_AUTH} from "../../../constants/Constants";
 import React, {useEffect, useState} from "react";
 import Spinner from "../../common/Spinner";
 import {isValidAmount} from "../../../common/validation";
@@ -95,7 +95,7 @@ const AddMoneyDialog: React.FC<{
         }
 
         const addToBalanceRequestContent: RequestConfig = {
-            url: REST_PATH_AUTH + "/account/currency",
+            url: REST_PATH_ACCOUNT + "/currency",
             method: "PUT",
             body: {
                 'currency': props.selectedCurrencyName,

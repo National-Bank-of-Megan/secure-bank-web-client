@@ -37,7 +37,7 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData: Dispa
             return
         }
         const getPasswordRandomCharsRequestContent: RequestConfig = {
-            url: REST_PATH_AUTH + "/web/login/combination?clientId=" + clientIdValue,
+            url: REST_PATH_AUTH + "/login/combination?clientId=" + clientIdValue,
             method: "GET",
             body: {},
             headers: {

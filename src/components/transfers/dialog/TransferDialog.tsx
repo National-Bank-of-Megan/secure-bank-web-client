@@ -139,14 +139,11 @@ const TransferDialog: React.FC<{
             return;
         }
 
-        console.log('----- '+jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).sub+' -------')
-
         const makeTransferRequestContent: RequestConfig = {
             url: REST_PATH_TRANSFER,
             method: "POST",
             body: {
                 "title": titleValue,
-                //todo decode jwt
                 "senderId": jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).sub,
                 "receiverAccountNumber": accountNumberValue,
                 "amount": amountValue,

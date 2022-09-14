@@ -86,7 +86,7 @@ const DeviceVerificationForm: React.FC<{accountCredentials: AccountCredentialsTy
         })
 
         dispatch(sendRequest(
-            {body: body, url: REST_PATH_AUTH + '/web/login/verify', method: 'POST'}
+            {body: body, url: REST_PATH_AUTH + '/login/verify', method: 'POST'}
         )).then((response) => {
 
             if(store.getState().userAuthentication.status == 200)  navigate('/transfers', {replace: true});

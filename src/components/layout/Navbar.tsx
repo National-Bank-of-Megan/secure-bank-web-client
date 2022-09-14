@@ -7,6 +7,7 @@ import {
   Button,
   Paper,
   Popover,
+  Stack,
   Tabs,
   Toolbar,
   Typography,
@@ -18,15 +19,17 @@ import Tab from "@mui/material/Tab";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
-import { logout } from "../../store/slice/userAuthenticationSlice";
+import {userAuthenticationActions } from "../../store/slice/userAuthenticationSlice";
 import UserAuthenticationService from "../../store/service/UserAuthenticationService";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
 import store from "../../store/store";
 import { subaccountBalanceActions } from "../../store/slice/subaccountBalanceSlice";
 import buttonStyles from "../../styles/ButtonStyles";
-import { REST_PATH_TRANSFER } from "../../constants/Constants";
+import { CURRENCIES, REST_PATH_TRANSFER } from "../../constants/Constants";
 import TransferNotificationClass from "../../models/TransferNotificationClass";
+import Decimal from "decimal.js";
+import storage from "redux-persist/es/storage";
 
 export type notificationType = {
   wasViewed: boolean;
@@ -36,8 +39,6 @@ export type notificationType = {
 
 export default function Navbar() {
   const isAuthenticated = UserAuthenticationService.isUserLoggedIn();
-  const dispatch = useAppDispatch();
-
   const { pathname } = useLocation();
   const [currentPath, setCurrentPath] = useState<number>(0);
   const [notificationsPopover, setNotificationsPopover] =
@@ -50,8 +51,11 @@ export default function Navbar() {
   );
 
   const [notifications, setNotifications] = useState<notificationType[]>([]);
-  const [newNotificationsCounter, setNewNotificationsCounter] = useState<number>(0);
- const subscribe = () => {
+  const [newNotificationsCounter, setNewNotificationsCounter] =
+    useState<number>(0);
+  const dispatch = useAppDispatch();
+
+  const subscribe = () => {
     const sse = new EventSource(
       REST_PATH_TRANSFER +
         "/notification/subscribe?jwt=" +
@@ -59,7 +63,7 @@ export default function Navbar() {
     );
     sse.addEventListener("TRANSFER_NOTIFICATION", (event) => {
       console.log("== NEW TRANSFER NOTIFICATION RECEIVED ==");
-      console.log(event)
+      console.log(event);
 
       let messageEvent = event as MessageEvent;
       let data = JSON.parse(messageEvent.data);
@@ -75,7 +79,19 @@ export default function Navbar() {
           new Date()
         ),
       });
-      setNewNotificationsCounter(newNotificationsCounter + 1)
+      dispatch(
+        subaccountBalanceActions.setSubaccountsBalance(
+          store
+            .getState()
+            .subaccountBalance.subaccounts.map((b) =>
+              b.currency === data.currency
+                ? { ...b, balance: Decimal.add(b.balance, data.amount) }
+                : b
+            )
+        )
+      );
+      setNewNotificationsCounter(newNotificationsCounter + 1);
+      alert(store.getState().subaccountBalance.subaccounts);
     });
 
     sse.addEventListener("open", (event) => {
@@ -83,24 +99,18 @@ export default function Navbar() {
     });
 
     sse.addEventListener("error", (event) => {
-      // console.log("== TRANSFER NOTIFICATION ERROR ==");
-      // console.log(event);
-      // if(event.currentTarget.readyState! === EventSource.CLOSED){
-      // }else{
-      //     console.log("== CLOSING TRANSFER NOTIFICATION CONNECTION ==")
-      //     sse.close();
-      // }
+      console.log("== TRANSFER NOTIFICATION ERROR ==");
     });
   };
   useEffect(() => {
     const value = paths.indexOf(pathname);
     setCurrentPath(value);
-    if(isAuthenticated)subscribe()
+    if (UserAuthenticationService.isUserLoggedIn()) subscribe();
   }, [pathname, paths, setCurrentPath, subscribe]);
 
-  const decrementNotificationCounter = ()=>{
+  const decrementNotificationCounter = () => {
     setNewNotificationsCounter(newNotificationsCounter - 1);
-  }
+  };
 
   const getUserInitials = () => {
     return UserAuthenticationService.isUserLoggedIn()
@@ -130,8 +140,9 @@ export default function Navbar() {
 
   const handleLogout = (e: SyntheticEvent) => {
     dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
-    dispatch(logout());
-    navigate("/login");
+    dispatch(userAuthenticationActions.clearAuthentication());
+    storage.removeItem("persist: persist-key");
+    navigate("/login",{replace : true});
   };
 
   const open = Boolean(notificationsPopover);
@@ -145,7 +156,6 @@ export default function Navbar() {
           </Typography>
           {isAuthenticated && (
             <Box>
-              <Button onClick={() => subscribe()}>test</Button>
               <IconButton
                 size="large"
                 aria-label="show 4 new mails"
@@ -191,8 +201,10 @@ export default function Navbar() {
                   },
                 }}
               >
-                <NotificationsListPopover notifications={notifications} 
-                decrementNotificationCounter={decrementNotificationCounter}/>
+                <NotificationsListPopover
+                  notifications={notifications}
+                  decrementNotificationCounter={decrementNotificationCounter}
+                />
               </Popover>
 
               <IconButton
@@ -213,6 +225,15 @@ export default function Navbar() {
             </Box>
           )}
           {!isAuthenticated && (
+            <Stack direction="row" spacing={2}>
+             <Button
+            variant="outlined"
+            color="success"
+            size="large"
+            onClick={() => navigate("/signup", { replace: true })}
+          >
+           Register
+          </Button>
             <Button
               sx={buttonStyles}
               variant="outlined"
@@ -221,6 +242,7 @@ export default function Navbar() {
             >
               Login
             </Button>
+          </Stack>
           )}
         </Toolbar>
       </AppBar>
@@ -238,4 +260,4 @@ export default function Navbar() {
       )}
     </Box>
   );
-};
+}

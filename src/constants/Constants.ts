@@ -1,4 +1,5 @@
-const REST_PATH_AUTH = 'http://127.0.0.1:80/api'
+const REST_PATH_AUTH = 'http://127.0.0.1:80/api/web'
+const REST_PATH_ACCOUNT = 'http://127.0.0.1:80/api/account'
 const REST_PATH_EXCHANGE = 'http://127.0.0.1:80/api/exchange'
 const REST_PATH_TRANSFER = 'http://127.0.0.1:80/api/transfer'
 const PASSWORD_MAX_LENGTH = 20
@@ -11,6 +12,7 @@ const TRANSFER_TYPE_SENT = "SENT"
 
 export {
     REST_PATH_AUTH,
+    REST_PATH_ACCOUNT,
     REST_PATH_EXCHANGE,
     REST_PATH_TRANSFER,
     PASSWORD_MAX_LENGTH,

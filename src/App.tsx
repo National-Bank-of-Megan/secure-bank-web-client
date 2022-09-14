@@ -28,13 +28,15 @@ function App() {
                 <Layout>
                     <Routes>
                         <Route path="/" element={<CustomRoute><MainPage/></CustomRoute>}/>
-                        <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
-                        <Route path="/signup/success"
-                               element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
+                       
                         {!UserAuthenticationService.isUserLoggedIn() &&
-                            <>
+                            <> 
+                            <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
+                                <Route path="/signup/success"
+                               element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/login/verify" element={<DeviceVerificationPage/>}/>
+                                <Route path='*' element={<Navigate to="/"/>}/>
                             </>
                         }
                         <Route path="/transfers" element={<PrivateRoute><TransferPage/></PrivateRoute>}/>
@@ -43,7 +45,7 @@ function App() {
                         <Route path="/account" element={<PrivateRoute><AccountPage/></PrivateRoute>}/>
                         <Route path="/devices" element={<PrivateRoute><DevicesPage/></PrivateRoute>}/>
                         <Route path="/account/changePassword" element={<PrivateRoute><ChangePasswordPage/></PrivateRoute>}/>
-                        <Route path='*' element={<Navigate to="/"/>}/>
+                        <Route path='*' element={<Navigate to="/transfers"/>}/>
                     </Routes>
                 </Layout>
             </CssBaseline>

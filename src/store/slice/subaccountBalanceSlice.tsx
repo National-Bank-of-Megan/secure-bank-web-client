@@ -1,6 +1,6 @@
 import {createAction, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {AccountCurrencyBalance} from "../../components/transfers/TotalBalanceContent";
-import {logout, userAuthenticationSlice} from "./userAuthenticationSlice";
+import {userAuthenticationSlice} from "./userAuthenticationSlice";
 import {UpdateBalance} from "../action-types/UpdateBalance";
 import {Decimal} from "decimal.js";
 
@@ -17,7 +17,6 @@ export const subaccountBalanceSlice = createSlice({
         }
     }
 })
-
 
 export const subaccountBalanceActions = subaccountBalanceSlice.actions;
 export default subaccountBalanceSlice.reducer;

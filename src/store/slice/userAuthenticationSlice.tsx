@@ -44,23 +44,6 @@ export const sendRequest = createAsyncThunk(
     }
 )
 
-export const logout = createAction(
-    'userAuthentication/logout', function prepare() {
-        console.log('action logout')
-        dispatchSynchronously().then(r => console.log('Store cleared'))
-        return {
-            payload: {
-                isLoading: false,
-                authTokens: {accessToken: null, refreshToken: null},
-                error: null,
-                status: -1
-            },
-        }
-    })
-
-const dispatchSynchronously = async () => {
-    await storage.removeItem('persist: persist-key')
-}
 
 
 export const userAuthenticationSlice = createSlice({
@@ -104,14 +87,7 @@ export const userAuthenticationSlice = createSlice({
                     refreshToken: payload.payload.data.refresh_token
                 } : null;
             })
-            .addCase(logout,(state)=>{
-                console.log('extra reducers logout')
-                state.isLoading = false;
-                state.authTokens = {accessToken: null, refreshToken: null};
-                state.status = -1;
-                state.error = null;
-                dispatchSynchronously()
-            })
+          
 
     },
 
@@ -120,7 +96,13 @@ export const userAuthenticationSlice = createSlice({
             console.log('USER AUTH SLICE SETTING ACCESS TOKEN')
             console.log(payload.payload)
             state.authTokens.accessToken = payload.payload
-        }
+        },
+        clearAuthentication: (state) => {
+            state.isLoading = false;
+            state.authTokens = { accessToken: null, refreshToken: null };
+            state.status = -1;
+            state.error = null;
+          }
     }
 
 })

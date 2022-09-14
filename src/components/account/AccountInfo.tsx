@@ -2,7 +2,7 @@ import {Avatar, Grid, Stack} from "@mui/material";
 import {useContext, useEffect, useState} from "react";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import AccountContext from "../../store/account-context";
-import {REST_PATH_AUTH} from "../../constants/Constants";
+import {REST_PATH_ACCOUNT} from "../../constants/Constants";
 import {AccountData} from "../../common/account";
 import AccountInfoField from "./AccountInfoField";
 import UserAuthenticationService from "../../store/service/UserAuthenticationService";
@@ -31,7 +31,7 @@ const AccountInfo = () => {
 
         if (accountCtx.accountData === null || accountCtx.accountData === undefined) {
             const fetchAccountDataRequest: RequestConfig = {
-                url: REST_PATH_AUTH + "/account/profile"
+                url: REST_PATH_ACCOUNT + "/profile"
             }
 
             fetchAccountData(fetchAccountDataRequest, transformAccountData);

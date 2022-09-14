@@ -11,7 +11,7 @@ import {Decimal} from "decimal.js";
 import store from "../../store/store";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
-import {REST_PATH_AUTH} from "../../constants/Constants";
+import {REST_PATH_ACCOUNT, REST_PATH_AUTH} from "../../constants/Constants";
 import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
 
 export const availableCurrencies = {
@@ -141,7 +141,7 @@ const TotalBalanceContent = () => {
         }
 
         const fetchSubAccountsRequest: RequestConfig = {
-            url: REST_PATH_AUTH + '/account/currency/all'
+            url: REST_PATH_ACCOUNT + '/currency/all'
         };
 
         sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
@@ -186,7 +186,7 @@ const TotalBalanceContent = () => {
                             fontSize: "18px"
                         }}>Currency balance</InputLabel>
                         <Select value={selectedCurrencyName} onChange={handleCurrencyChange}>
-                            {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
+                            {store.getState().subaccountBalance.subaccounts.map((accountCurrencyBalance) => (
                                 <MenuItem
                                     value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                             ))}
