@@ -32,6 +32,7 @@ const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
                     }
                 });
             }}
+            fixedDecimalScale={true}
             decimalScale={2}
             thousandSeparator
             allowLeadingZeros={false}
@@ -43,7 +44,7 @@ const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
 });
 
 const CurrencyExchangeCard: React.FC<{
-    exchange : UseStateType<IExchangeData>, handleAmountChangeOtherCard(newAmount: number,actionSettingNewAmount :Action) :void,currencies :string[]
+    exchange : UseStateType<IExchangeData>, handleAmountChangeOtherCard(newAmount: number,actionSettingNewAmount :Action) :void,currencies :string[], isDisabled :boolean
 }> = (props) => {
 
     return (
@@ -78,17 +79,8 @@ const CurrencyExchangeCard: React.FC<{
                                     return <MenuItem key={currency} value={currency}>{currency}</MenuItem>
                                 })
                             }
-
-
                         </Select>
                     </FormControl>
-                    {/*<Typography*/}
-                    {/*    variant="body2"*/}
-                    {/*    color='error'*/}
-                    {/*    sx={{marginTop: "20px"}}*/}
-                    {/*>*/}
-                    {/*    { props.exchange.state.canExchangeBeMade ? 'You do not have enough '+props.exchange.state.currency : ''}*/}
-                    {/*</Typography>*/}
                 </Box>
 
                 <TextField
@@ -101,6 +93,7 @@ const CurrencyExchangeCard: React.FC<{
                     }}
                     id="standard-basic"
                     variant="standard"
+                    disabled={props.isDisabled}
                     value={props.exchange.state.amount}
                     placeholder="13.98"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {

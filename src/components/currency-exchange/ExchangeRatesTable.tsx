@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {DataGrid, GridColDef, GridRowsProp} from '@mui/x-data-grid';
 import Spinner from "../common/Spinner";
+import {Typography} from "@mui/material";
+import {Action} from "./CurrencyExchangeForm";
 
 const ExchangeRatesTable: React.FC<{ currentCurrency: string, data :GridRowsProp, isLoading :boolean }> = ({currentCurrency, data, isLoading}) => {
 

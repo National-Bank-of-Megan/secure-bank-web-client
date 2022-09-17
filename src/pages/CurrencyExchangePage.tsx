@@ -28,6 +28,7 @@ const CurrencyExchangePage = () => {
 
 
     const getCurrencyRatesTable = () => {
+        console.log(rates)
         if (rates !== null) {
             return <ExchangeRatesTable isLoading={isLoading}
                                        currentCurrency={top.currency}
@@ -56,19 +57,13 @@ const CurrencyExchangePage = () => {
             container
             sx={{
                 justifyContent: "space-between",
-                alignItems: 'center',
-
+                alignItems: 'center'
             }}
         >
-            <Grid item xs={12}>
-                <Typography variant="h2" color="primary.main" sx={{marginBottom: '50px'}}>
-                    Sell {top.action === Action.sell ? top.currency : bottom.currency}
-                </Typography>
-            </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={6} >
                 {getExchangeForm()}
             </Grid>
-            <Grid item xs={6} style={{justifyContent: 'end'}}>
+            <Grid item xs={6} style={{justifyContent: 'end', alignSelf :'center'}}>
                 {getCurrencyRatesTable()}
             </Grid>
 

@@ -1,6 +1,7 @@
 import {Grid} from "@mui/material";
 import RecentActivityContent from "../components/transfers/RecentActivityContent";
 import TotalBalanceContent from "../components/transfers/TotalBalanceContent";
+import store from "../store/store";
 
 const TransferPage = () => {
 

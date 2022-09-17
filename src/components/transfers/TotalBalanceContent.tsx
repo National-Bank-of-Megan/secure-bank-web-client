@@ -74,7 +74,7 @@ const TotalBalanceContent = () => {
     const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("PLN");
     const dispatch = useAppDispatch()
 
-    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>(store.getState().subaccountBalance.subaccounts);
+    const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
     const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
         currency: '',
         symbol: '',
@@ -149,9 +149,14 @@ const TotalBalanceContent = () => {
 
     }, [sendSubAccountsRequest])
 
+    useEffect(()=>{
+       setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
+    },[])
+
 
     return (
         <>
+
 
             <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
                            severity="error"/>
@@ -186,7 +191,7 @@ const TotalBalanceContent = () => {
                             fontSize: "18px"
                         }}>Currency balance</InputLabel>
                         <Select value={selectedCurrencyName} onChange={handleCurrencyChange}>
-                            {store.getState().subaccountBalance.subaccounts.map((accountCurrencyBalance) => (
+                            {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
                                 <MenuItem
                                     value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                             ))}
