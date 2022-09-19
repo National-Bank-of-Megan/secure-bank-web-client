@@ -14,6 +14,17 @@ export const subaccountBalanceSlice = createSlice({
         setSubaccountsBalance: (state, action :PayloadAction<AccountCurrencyBalance[]>) => {
             console.log('setting subaccounts balance -> '+ action.payload)
             state.subaccounts = action.payload;
+        },
+        setBalance : (state, action)=>{
+            let newBalanceList = state.subaccounts.map(a=>{
+                if(a.currency === action.payload.currency){
+                    a.balance = action.payload.amount
+                }
+                return a;
+            })
+            console.log(newBalanceList)
+            state.subaccounts = newBalanceList;
+
         }
     }
 })

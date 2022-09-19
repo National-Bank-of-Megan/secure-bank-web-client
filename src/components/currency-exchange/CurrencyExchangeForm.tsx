@@ -10,10 +10,12 @@ import {CURRENCIES, REST_PATH_EXCHANGE} from "../../constants/Constants";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
-import {RootState} from "../../store/store";
+import store from "../../store/store";
 import {findCurrencyByName} from "../../common/transfer";
-import {useSelector} from "react-redux";
-import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
+import {AccountCurrencyBalance} from "../transfers/TotalBalanceContent";
+import ServerError from "../notifications/ServerError";
+import {useAppDispatch} from "../../hook/redux-hooks";
+import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
 
 
 export enum Action {
@@ -27,8 +29,9 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
                                                                                                                                                           bottom,
                                                                                                                                                           rates
                                                                                                                                                       }) => {
+    const dispatch = useAppDispatch();
     const {isLoading, error, sendRequest: sendExchangeCurrencyRequest} = useFetch();
-    const [serviceDisabled, setServiceDisabled] = useState<boolean>(false);
+    const [serverError, setServerError] = useState<boolean>(false);
     const [successAlertState, setSuccessAlertState] = useState<AlertState>({
         isOpen: false,
         message: ''
@@ -39,85 +42,50 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
     });
     const conversionRate = rates[bottom.state.currency];
     const [isArrowUp, setIsArrowUp] = useState<boolean>(false);
-
-    const selector = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication);
+    const [currentTopAmount, setCurrentTopAmount] = useState<number>(0.00);
+    const [currentBottomAmount, setCurrentBottomAmount] = useState<number>(0.00);
 
     const getSubAccountBalance = (currency: string) => {
         let x = null;
-        let subAccounts: [] = [];
-        // subAccounts.forEach((sub) => {
-        //     console.log('Loop ' + (sub['currency'] === bottom.state.currency))
-        //     if (sub['currency'] === bottom.state.currency) x = sub['balance']
-        // })
-        //todo handle service diabled
-        if (x === null) setServiceDisabled(true);
-
+        let subAccounts: AccountCurrencyBalance[] = store.getState().subaccountBalance.subaccounts;
+        subAccounts.forEach((sub) => {
+            if (sub['currency'] === currency) x = sub['balance']
+        })
+        if (x === null) setServerError(true);
         return x;
     }
 
     const checkIfExchangePossible = (setError: Dispatch<SetStateAction<AlertState>>, state: UseStateType<IExchangeData>, newAmount: number, balance: number, convertedNewAmount: number, currency: string) => {
         if (Math.abs(newAmount) > balance && state.state.action === Action.sell) {
-            state.setState({...state.state, canExchangeBeMade: false})
             setErrorAlertState({
                 isOpen: true,
                 message: 'You do not have enough ' + state.state.currency + ' to buy ' + Math.abs(convertedNewAmount).toFixed(2) + ' ' + currency
             })
         } else {
             setErrorAlertState({...errorAlertState, isOpen: false})
-            state.setState({...state.state, canExchangeBeMade: true})
         }
     }
 
     const handleAmountChange = useCallback((newAmount: number, actionSettingNewAmount: Action) => {
-        // alert(top.state.action === actionSettingNewAmount)
 
         if (top.state.action === actionSettingNewAmount) {
+            setCurrentTopAmount(newAmount);
+            let convertedNewAmount = newAmount * conversionRate;
+            setCurrentBottomAmount(convertedNewAmount)
             let balance = null;
             if (top.state.action === Action.sell) {
-                let convertedNewAmount = newAmount * conversionRate;
                 bottom.setState({...bottom.state, "amount": convertedNewAmount})
-                console.log('Setting bottom from selling top')
                 //    calculate bottom
                 balance = getSubAccountBalance(top.state.currency) || -666;
                 checkIfExchangePossible(setErrorAlertState, top, newAmount, balance, convertedNewAmount, bottom.state.currency)
             } else {
-                console.log('Setting bottom from buying top')
-                let convertedNewAmount = newAmount /conversionRate;
                 bottom.setState({...bottom.state, "amount": convertedNewAmount})
                 //    calculate bottom
                 balance = getSubAccountBalance(bottom.state.currency) || -666;
                 checkIfExchangePossible(setErrorAlertState, bottom, convertedNewAmount, balance, newAmount, top.state.currency)
             }
-
-
-        } else {
-            // calculate top
-            if (bottom.state.action === Action.sell) {
-                let convertedNewAmount = newAmount * conversionRate;
-                top.setState({...top.state, "amount": convertedNewAmount})
-            }else{
-                let convertedNewAmount = newAmount /conversionRate;
-                top.setState({...top.state, "amount": convertedNewAmount})
-            }
-
-            // let balance = null;
-            // if (bottom.state.action === Action.sell) {
-            //     //    calculate top
-            //     let convertedNewAmount = newAmount * conversionRate;
-            //     top.setState({...top.state, "amount": convertedNewAmount})
-            //     balance = getSubAccountBalance(bottom.state.currency) || -666;
-            //     checkIfExchangePossible(setErrorAlertState, bottom, newAmount, balance, convertedNewAmount, top.state.currency)
-            // } else {
-            //     //    calculate top
-            //     let convertedNewAmount = newAmount / conversionRate;
-            //     top.setState({...top.state, "amount": convertedNewAmount})
-            //     balance = getSubAccountBalance(top.state.currency) || -666;
-            //     checkIfExchangePossible(setErrorAlertState, top, convertedNewAmount, balance, newAmount, bottom.state.currency)
-            // }
-
-
         }
-    },[top,bottom,setErrorAlertState,findCurrencyByName,checkIfExchangePossible, conversionRate])
+    }, [top, bottom, setErrorAlertState, findCurrencyByName, checkIfExchangePossible, conversionRate])
 
     const returnArrow = () => {
         if (isArrowUp) return <ArrowUpwardIcon sx={{color: "primary.main"}}/>
@@ -138,14 +106,19 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
                 "currencyBought": top.state.action === Action.buy ? top.state.currency : bottom.state.currency,
                 "currencySold": top.state.action === Action.sell ? top.state.currency : bottom.state.currency,
                 "exchangeTime": new Date(),
-                "sold": top.state.action === Action.sell ? top.state.amount : bottom.state.amount
+                "sold": top.state.action === Action.sell ? Math.abs(currentTopAmount) : Math.abs(currentBottomAmount)
             },
             headers: {
                 'Content-Type': 'application/json'
             }
         }
+
         sendExchangeCurrencyRequest(exchangeCurrencyRequest, () => {
             top.setState({...top.state, "amount": 0.00})
+            dispatch(subaccountBalanceActions.setBalance({currency : top.state.currency, amount : getSubAccountBalance(top.state.currency)!+currentTopAmount}))
+            dispatch(subaccountBalanceActions.setBalance({currency : bottom.state.currency, amount : getSubAccountBalance(bottom.state.currency)!-currentTopAmount}))
+            setCurrentBottomAmount(0.00)
+            setCurrentTopAmount(0.00)
             setSuccessAlertState({
                 isOpen: true,
                 message: 'Successfully exchanged currency.'
@@ -155,6 +128,7 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
     }
 
     useEffect(() => {
+        console.log(error)
         if (!!error) {
             setErrorAlertState({
                 isOpen: true,
@@ -165,68 +139,81 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
 
     return (
         <>
-            <Spinner isLoading={isLoading}/>
-            <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
-                           severity="error"/>
-            <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}}
-                           severity="success"/>
-            <Box gap={2} sx={{display: 'flex', flexDirection: 'column'}}>
-                <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}} gap={1}>
-                    <TrendingUpIcon sx={{color: "primary.main"}}/>
-                    <Typography variant="h5"
-                                color="primary.main">{'1' + bottom.state.currency + ' = ' + top.state.currency}</Typography>
-                </Box>
-                <Box>
-                    <Box sx={{width: '480px'}}>
-                        <CurrencyExchangeCard
-                            exchange={top}
-                            handleAmountChangeOtherCard={handleAmountChange}
-                            currencies={
-                                CURRENCIES.filter(v => v !== bottom.state.currency)
-                            }
-                        />
-                        <Avatar
-                            onClick={arrowChangeHandler}
-                            sx={{
-                                bgcolor: 'background.paper',
-                                border: '1px solid primary',
-                                zIndex: '111111',
-                                position: 'relative',
-                                marginTop: '-14px',
-                                marginBottom: '-14px',
-                                marginLeft: '47%'
-                            }}>
-                            {returnArrow()}
-                        </Avatar>
+            {serverError && <ServerError/>}
+            {!serverError &&
+                <>
+                    <Spinner isLoading={isLoading}/>
+                    <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
+                                   severity="error"/>
+                    <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}}
+                                   severity="success"/>
+                    <Box gap={2} sx={{display: 'flex', flexDirection: 'column'}}>
+                        <Typography variant="h2" color="primary.main" sx={{marginBottom: '50px'}}>
+                            Sell {top.state.action === Action.sell ? top.state.currency : bottom.state.currency}
+                        </Typography>
+                        <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}} gap={1}>
+                            <TrendingUpIcon sx={{color: "primary.main"}}/>
+                            <Typography variant="h5"
+                                        color="primary.main">{'1' +bottom.state.currency + ' = ' + (1/rates[bottom.state.currency]).toFixed(2) + top.state.currency}</Typography>
+                        </Box>
+                        <Box>
+                            <Box sx={{width: '480px'}}>
+                                <CurrencyExchangeCard
+                                    isDisabled={false}
+                                    exchange={top}
+                                    handleAmountChangeOtherCard={handleAmountChange}
+                                    currencies={
+                                        CURRENCIES.filter(v => v !== bottom.state.currency)
+                                    }
+                                />
+                                <Avatar
+                                    onClick={arrowChangeHandler}
+                                    sx={{
+                                        bgcolor: 'background.paper',
+                                        border: '1px solid primary',
+                                        zIndex: '111111',
+                                        position: 'relative',
+                                        marginTop: '-14px',
+                                        marginBottom: '-14px',
+                                        marginLeft: '47%'
+                                    }}>
+                                    {returnArrow()}
+                                </Avatar>
 
-                        <CurrencyExchangeCard
-                            exchange={bottom}
-                            handleAmountChangeOtherCard={handleAmountChange}
-                            currencies={
-                                CURRENCIES.filter(v => v !== top.state.currency)
-                            }
-                        />
+                                <CurrencyExchangeCard
+                                    isDisabled={true}
+                                    exchange={bottom}
+                                    handleAmountChangeOtherCard={handleAmountChange}
+                                    currencies={
+                                        CURRENCIES.filter(v => v !== top.state.currency)
+                                    }
+                                />
+                            </Box>
+                        </Box>
+
+                        <Stack spacing={0.1}>
+                            <FormHelperText error={getSubAccountBalance(top.state.currency)! + currentTopAmount < 0}>
+                                {top.state.currency + ' balance after transfer: ' + ((getSubAccountBalance(top.state.currency) || 0.00) + (currentTopAmount || 0.00)).toFixed(2)}
+                            </FormHelperText>
+                            <FormHelperText
+                                error={getSubAccountBalance(bottom.state.currency)! - currentBottomAmount < 0}>
+                                {bottom.state.currency + ' balance after transfer: ' + ((getSubAccountBalance(bottom.state.currency) || 0.00) - (currentBottomAmount || 0.00)).toFixed(2)}
+                            </FormHelperText>
+                        </Stack>
+                        <Button variant="contained" size="large" sx={{width: '480px'}}
+                                disabled={errorAlertState.isOpen || currentTopAmount === 0.00}
+                                onClick={exchangeCurrency}
+                        >
+                            Exchange
+                        </Button>
+
                     </Box>
-                </Box>
-
-                <Stack spacing={0.1}>
-                    <FormHelperText>
-                        PLN balance after transfer: 15.253,51 PLN
-                    </FormHelperText>
-                    <FormHelperText>
-                        CHF balance after transfer: 323,51 CHF
-                    </FormHelperText>
-                </Stack>
-                <Button variant="contained" size="large" sx={{width: '480px'}}
-                        disabled={top.state.currency === bottom.state.currency || !bottom.state.canExchangeBeMade || !top.state.canExchangeBeMade}
-                        onClick={exchangeCurrency}
-                >
-                    Exchange
-                </Button>
-
-            </Box>
+                </>
+            }
         </>
-    );
+
+    )
+        ;
 }
 
 export default CurrencyExchangeForm;
