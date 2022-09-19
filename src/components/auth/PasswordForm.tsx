@@ -1,5 +1,5 @@
 import {Box, Button, Paper, Stack, Typography,} from "@mui/material";
-import React, {createRef, useEffect, useReducer, useState} from "react";
+import React, {createRef, useEffect, useLayoutEffect, useReducer, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate} from "react-router-dom";
 import {isCodeValid} from "../../input-rules/is-code-valid";
@@ -63,7 +63,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
         inputRefsArray[password![0]].current?.focus()
     }, [inputRefsArray, password, status]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         forceUpdate();
     }, [forceUpdate]);
 

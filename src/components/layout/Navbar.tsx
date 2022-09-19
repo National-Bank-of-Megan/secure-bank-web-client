@@ -16,7 +16,7 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
 import Tab from "@mui/material/Tab";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hook/redux-hooks";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
 import {userAuthenticationActions } from "../../store/slice/userAuthenticationSlice";
@@ -207,17 +207,18 @@ export default function Navbar() {
                 />
               </Popover>
 
-              <IconButton
-                size="large"
-                aria-label="show 4 new mails"
-                color="inherit"
-              >
-                <Avatar sx={{ bgcolor: "primary.main", width: 34, height: 34 }}>
-                  <Typography color="secondary.light" sx={{ fontSize: "15px" }}>
-                    {getUserInitials()}
-                  </Typography>
-                </Avatar>
-              </IconButton>
+              <Link to="/account" style={{ textDecoration: 'none' }}>
+                <IconButton
+                  size="large"
+                  color="inherit"
+                >
+                  <Avatar sx={{ bgcolor: "primary.main", width: 34, height: 34 }}>
+                    <Typography color="secondary.light" sx={{ fontSize: "15px" }}>
+                      {getUserInitials()}
+                    </Typography>
+                  </Avatar>
+                </IconButton>
+              </Link>
 
               <IconButton size="large" color="inherit" onClick={handleLogout}>
                 <LogoutIcon fontSize="inherit" />
