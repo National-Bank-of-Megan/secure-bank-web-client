@@ -25,6 +25,26 @@ export const subaccountBalanceSlice = createSlice({
             console.log(newBalanceList)
             state.subaccounts = newBalanceList;
 
+        },
+        addToBalance : (state, action)=> {
+            let newBalanceList = state.subaccounts.map(a=>{
+                if(a.currency === action.payload.currency){
+                    let x = Decimal.add(action.payload.amount, a.balance as Decimal)
+                    a.balance = x
+                }
+                return a;
+            })
+            state.subaccounts = newBalanceList;
+        },
+        subtractFromBalance : (state, action)=> {
+            let newBalanceList = state.subaccounts.map(a=>{
+                if(a.currency === action.payload.currency){
+                    let x = Decimal.sub(a.balance as Decimal, action.payload.amount)
+                    a.balance = x
+                }
+                return a;
+            })
+            state.subaccounts = newBalanceList;
         }
     }
 })

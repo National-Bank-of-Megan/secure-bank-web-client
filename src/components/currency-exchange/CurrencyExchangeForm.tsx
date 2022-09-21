@@ -71,7 +71,7 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
         if (top.state.action === actionSettingNewAmount) {
             setCurrentTopAmount(newAmount);
             let convertedNewAmount = newAmount * conversionRate;
-            setCurrentBottomAmount(convertedNewAmount)
+            setCurrentBottomAmount(convertedNewAmount);
             let balance = null;
             if (top.state.action === Action.sell) {
                 bottom.setState({...bottom.state, "amount": convertedNewAmount})
@@ -115,8 +115,10 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
 
         sendExchangeCurrencyRequest(exchangeCurrencyRequest, () => {
             top.setState({...top.state, "amount": 0.00})
-            dispatch(subaccountBalanceActions.setBalance({currency : top.state.currency, amount : getSubAccountBalance(top.state.currency)!+currentTopAmount}))
-            dispatch(subaccountBalanceActions.setBalance({currency : bottom.state.currency, amount : getSubAccountBalance(bottom.state.currency)!-currentTopAmount}))
+            // dispatch(subaccountBalanceActions.setBalance({currency : top.state.currency, amount : getSubAccountBalance(top.state.currency)!+currentTopAmount}))
+            // dispatch(subaccountBalanceActions.setBalance({currency : bottom.state.currency, amount : getSubAccountBalance(bottom.state.currency)!-currentBottomAmount}))
+            dispatch(subaccountBalanceActions.addToBalance({currency : top.state.currency, amount : currentTopAmount}))
+            dispatch(subaccountBalanceActions.subtractFromBalance({currency : bottom.state.currency, amount : currentBottomAmount}))
             setCurrentBottomAmount(0.00)
             setCurrentTopAmount(0.00)
             setSuccessAlertState({
@@ -192,13 +194,13 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
                         </Box>
 
                         <Stack spacing={0.1}>
-                            <FormHelperText error={getSubAccountBalance(top.state.currency)! + currentTopAmount < 0}>
-                                {top.state.currency + ' balance after transfer: ' + ((getSubAccountBalance(top.state.currency) || 0.00) + (currentTopAmount || 0.00)).toFixed(2)}
-                            </FormHelperText>
-                            <FormHelperText
-                                error={getSubAccountBalance(bottom.state.currency)! - currentBottomAmount < 0}>
-                                {bottom.state.currency + ' balance after transfer: ' + ((getSubAccountBalance(bottom.state.currency) || 0.00) - (currentBottomAmount || 0.00)).toFixed(2)}
-                            </FormHelperText>
+                            {/*<FormHelperText error={(getSubAccountBalance(top.state.currency)! + currentTopAmount) < 0}>*/}
+                            {/*    {top.state.currency + ' balance after transfer: ' + ((getSubAccountBalance(top.state.currency) || 0.00) + (currentTopAmount || 0.00)).toFixed(2)}*/}
+                            {/*</FormHelperText>*/}
+                            {/*<FormHelperText*/}
+                            {/*    error={getSubAccountBalance(bottom.state.currency)! - currentBottomAmount < 0}>*/}
+                            {/*    {bottom.state.currency + ' balance after transfer: ' + ((getSubAccountBalance(bottom.state.currency) || 0.00) - (currentBottomAmount || 0.00)).toFixed(2)}*/}
+                            {/*</FormHelperText>*/}
                         </Stack>
                         <Button variant="contained" size="large" sx={{width: '480px'}}
                                 disabled={errorAlertState.isOpen || currentTopAmount === 0.00}

@@ -35,9 +35,11 @@ export const sendRequest = createAsyncThunk(
         }
         else {
             console.log('sendRequest: dispatch.rejectWithValue');
+            const errorBody = await response.json();
+            const errorMessage = await errorBody.message;
             return dispatch.rejectWithValue({
                 status: response.status,
-                error: await response.text() || 'Invalid credentials'
+                error:  errorMessage || 'Invalid credentials'
             })
         }
 
@@ -65,10 +67,9 @@ export const userAuthenticationSlice = createSlice({
             .addCase(sendRequest.rejected, (state, {payload}
             ) => {
                 console.log('rejected')
-
                 state.isLoading = false;
                 // @ts-ignore
-                state.error = payload['error']
+                state.error = payload.error
                 // @ts-ignore
                 state.status = payload['status']
             })

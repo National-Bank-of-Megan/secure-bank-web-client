@@ -84,18 +84,7 @@ export default function Navbar() {
                     new Date()
                 ),
             });
-
-            dispatch(
-                subaccountBalanceActions.setSubaccountsBalance(
-                    store
-                        .getState()
-                        .subaccountBalance.subaccounts.map((b) =>
-                        b.currency === data.currency
-                            ? {...b, balance: Decimal.add(b.balance, data.amount)}
-                            : b
-                    )
-                )
-            );
+            dispatch(subaccountBalanceActions.addToBalance({currency : data.currency, amount : data.amount}))
             setNewNotificationsCounter(newNotificationsCounter + 1);
 
         });

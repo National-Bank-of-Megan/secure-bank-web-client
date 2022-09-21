@@ -30,13 +30,12 @@ function App() {
                         <Route path="/" element={<CustomRoute><MainPage/></CustomRoute>}/>
                        
                         {!UserAuthenticationService.isUserLoggedIn() &&
-                            <> 
+                            <>
                             <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
                                 <Route path="/signup/success"
                                element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/login/verify" element={<DeviceVerificationPage/>}/>
-                                <Route path='*' element={<Navigate to="/"/>}/>
                             </>
                         }
                         <Route path="/transfers" element={<PrivateRoute><TransferPage/></PrivateRoute>}/>

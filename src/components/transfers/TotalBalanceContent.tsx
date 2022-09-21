@@ -61,6 +61,7 @@ const TotalBalanceContent = () => {
         error: subAccountsError,
         sendRequest: sendSubAccountsRequest
     } = useFetch();
+
     const {
         isLoading: isFavoriteTransferReceiversLoading,
         error: favoriteTransferReceiversError,
@@ -108,11 +109,6 @@ const TotalBalanceContent = () => {
         setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
     }
 
-    const findCurrencyByName = useCallback((selectedCurrencyName: string, loadedCurrencyBalances: AccountCurrencyBalance[]): AccountCurrencyBalance | undefined => {
-        return loadedCurrencyBalances.find((accountCurrencyBalance) => {
-            return accountCurrencyBalance.currency === selectedCurrencyName;
-        });
-    }, []);
 
     const handleCurrencyChange = (e: SelectChangeEvent) => {
         const selectedCurrencyName = e.target.value;
@@ -125,6 +121,7 @@ const TotalBalanceContent = () => {
 
 
     useEffect(() => {
+        //  get subaccounts
         const transformSubAccounts = (currenciesBalanceObj: AccountCurrencyBalanceResponse[]) => {
             const loadedCurrencyBalances: AccountCurrencyBalance[] = [];
             for (const key in currenciesBalanceObj) {
@@ -134,8 +131,6 @@ const TotalBalanceContent = () => {
                     balance: currenciesBalanceObj[key].balance
                 });
             }
-
-            setAccountCurrencyBalanceList(loadedCurrencyBalances);
             setSubAccountsLoaded(true);
             dispatch(subaccountBalanceActions.setSubaccountsBalance(loadedCurrencyBalances))
         }
@@ -146,8 +141,17 @@ const TotalBalanceContent = () => {
 
         sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
 
+    //    get favorite transfer receivers
+        const transformFavorites = (favoriteReceiversObj: FavoriteReceiverResponse[]) => {
+            setFavoriteReceiversList(favoriteReceiversObj);
+        }
 
-    }, [sendSubAccountsRequest])
+        const fetchFavoriteReceiversRequest = {
+            url: REST_PATH_ACCOUNT + '/receiver/all'
+        }
+
+        sendFavoriteTransferReceiversRequest(fetchFavoriteReceiversRequest,transformFavorites)
+    }, [sendSubAccountsRequest, sendFavoriteTransferReceiversRequest])
 
     useEffect(()=>{
        setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
@@ -191,7 +195,7 @@ const TotalBalanceContent = () => {
                             fontSize: "18px"
                         }}>Currency balance</InputLabel>
                         <Select value={selectedCurrencyName} onChange={handleCurrencyChange}>
-                            {accountCurrencyBalanceList.map((accountCurrencyBalance) => (
+                            {store.getState().subaccountBalance.subaccounts.map((accountCurrencyBalance) => (
                                 <MenuItem
                                     value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                             ))}

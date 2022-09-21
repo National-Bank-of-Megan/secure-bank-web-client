@@ -136,7 +136,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
 
                     setErrorAlertState({
                         isOpen: true,
-                        message: store.getState().userAuthentication.error!
+                        message: store.getState().userAuthentication.error || 'error'
                     });
                     inputRefsArray.forEach(
                         (ref) => {
