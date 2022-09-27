@@ -131,6 +131,7 @@ const TotalBalanceContent = () => {
                     balance: currenciesBalanceObj[key].balance
                 });
             }
+            setAccountCurrencyBalanceList(loadedCurrencyBalances);
             setSubAccountsLoaded(true);
             dispatch(subaccountBalanceActions.setSubaccountsBalance(loadedCurrencyBalances))
         }
@@ -155,7 +156,7 @@ const TotalBalanceContent = () => {
 
     useEffect(()=>{
        setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
-    },[])
+    },[store])
 
 
     return (

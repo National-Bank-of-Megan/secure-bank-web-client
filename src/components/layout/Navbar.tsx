@@ -27,6 +27,7 @@ export type notificationType = {
 };
 
 export default function Navbar() {
+
     const isAuthenticated = UserAuthenticationService.isUserLoggedIn();
     const {pathname} = useLocation();
     const [currentPath, setCurrentPath] = useState<number>(0);
@@ -94,10 +95,12 @@ export default function Navbar() {
         });
 
         sse!.onerror=function (event) {
-            console.log("== ERROR ==")
+            console.log(event)
             sse!.close()
-            subscribe()
+            if(UserAuthenticationService.isUserLoggedIn())subscribe()
         };
+
+
     };
 
     useEffect(() => {
@@ -139,8 +142,7 @@ export default function Navbar() {
     const handleLogout = (e: SyntheticEvent) => {
         dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
         dispatch(userAuthenticationActions.clearAuthentication());
-        storage.removeItem("persist: persist-key");
-        navigate("/login", {replace: true});
+        storage.removeItem("persist: persist-key").then(r =>  navigate("/login", {replace: true}) );
     };
 
     const open = Boolean(notificationsPopover);
