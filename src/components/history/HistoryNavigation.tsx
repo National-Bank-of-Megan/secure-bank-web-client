@@ -18,7 +18,6 @@ const sortingTypes: string[] = [
 ]
 
 
-
 //todo poprawic typ handleBrowsingChange
 const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: any, state: UseStateType<string> }> = ({
                                                                                                                                 currentlyBrowsing,

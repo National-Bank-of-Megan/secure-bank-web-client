@@ -44,7 +44,7 @@ const NumberFormatCustom = React.forwardRef<NumberFormat<InputAttributes>,
 });
 
 const CurrencyExchangeCard: React.FC<{
-    exchange : UseStateType<IExchangeData>, handleAmountChangeOtherCard(newAmount: number,actionSettingNewAmount :Action) :void,currencies :string[], isDisabled :boolean
+    exchange: UseStateType<IExchangeData>, handleAmountChangeOtherCard(newAmount: number, actionSettingNewAmount: Action): void, currencies: string[], isDisabled: boolean
 }> = (props) => {
 
     return (
@@ -72,7 +72,10 @@ const CurrencyExchangeCard: React.FC<{
                             labelId="demo-simple-select-label"
                             id="demo-simple-select"
                             value={props.exchange.state.currency}
-                            onChange={(e: SelectChangeEvent) => props.exchange.setState({...props.exchange.state, "currency" : e.target.value})}
+                            onChange={(e: SelectChangeEvent) => props.exchange.setState({
+                                ...props.exchange.state,
+                                "currency": e.target.value
+                            })}
                         >
                             {
                                 props.currencies.map((currency) => {
@@ -97,8 +100,8 @@ const CurrencyExchangeCard: React.FC<{
                     value={props.exchange.state.amount}
                     placeholder="13.98"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        props.exchange.setState({...props.exchange.state, "amount" : parseFloat(e.target.value)})
-                        props.handleAmountChangeOtherCard( parseFloat(e.target.value),props.exchange.state.action)
+                        props.exchange.setState({...props.exchange.state, "amount": parseFloat(e.target.value)})
+                        props.handleAmountChangeOtherCard(parseFloat(e.target.value), props.exchange.state.action)
                     }}
 
                     size="medium"

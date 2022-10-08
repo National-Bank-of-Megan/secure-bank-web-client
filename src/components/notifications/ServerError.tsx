@@ -13,4 +13,4 @@ const ServerError = () => {
     </Stack>
 }
 
-export default  ServerError
+export default ServerError

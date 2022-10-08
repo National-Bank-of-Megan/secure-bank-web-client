@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Decimal} from "decimal.js";
 
-const useTransferInput = (validateValue: (value: string) => boolean, userBalance: Decimal, shouldUpdate: (amount: string, userBalance: Decimal) => boolean ) => {
+const useTransferInput = (validateValue: (value: string) => boolean, userBalance: Decimal, shouldUpdate: (amount: string, userBalance: Decimal) => boolean) => {
     const [enteredValue, setEnteredValue] = useState<string>('');
     const [isTouched, setIsTouched] = useState<boolean>(false);
 

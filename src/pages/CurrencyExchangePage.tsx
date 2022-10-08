@@ -1,4 +1,4 @@
-import {Grid, Typography} from "@mui/material";
+import {Grid} from "@mui/material";
 import CurrencyExchangeForm, {Action} from "../components/currency-exchange/CurrencyExchangeForm";
 import React, {useEffect, useState} from "react";
 import useFetchCurrencyRates from "../hook/use-fetch-currency-rates";
@@ -13,8 +13,18 @@ export interface IExchangeData {
 }
 
 const CurrencyExchangePage = () => {
-    const [top, setTop] = useState<IExchangeData>({currency: 'PLN', amount: 0.00, action: Action.sell, canExchangeBeMade: true})
-    const [bottom, setBottom] = useState<IExchangeData>({currency: 'USD', amount: 0.00, action: Action.buy, canExchangeBeMade :true})
+    const [top, setTop] = useState<IExchangeData>({
+        currency: 'PLN',
+        amount: 0.00,
+        action: Action.sell,
+        canExchangeBeMade: true
+    })
+    const [bottom, setBottom] = useState<IExchangeData>({
+        currency: 'USD',
+        amount: 0.00,
+        action: Action.buy,
+        canExchangeBeMade: true
+    })
     const [isCurrencyServiceDisabled, setIsCurrencyServiceDisabled] = useState<boolean>(false);
 
     const {getCurrencyRates, error, isLoading, rates} = useFetchCurrencyRates(top.currency);
@@ -22,7 +32,7 @@ const CurrencyExchangePage = () => {
     useEffect(() => {
         console.log('currency page rendering ...')
         getCurrencyRates(top.currency)
-        if(!!error) setIsCurrencyServiceDisabled(true)
+        if (!!error) setIsCurrencyServiceDisabled(true)
 
     }, [top.currency, getCurrencyRates])
 
@@ -32,17 +42,17 @@ const CurrencyExchangePage = () => {
         if (rates !== null) {
             return <ExchangeRatesTable isLoading={isLoading}
                                        currentCurrency={top.currency}
-            data={ CURRENCIES.map((currency) => {
-                        if (currency !== top.currency) {
-                            return {id: currency, col1: currency, col2: rates[currency]}
-                        }
-                    }
-                ).filter((anyValue) => typeof anyValue !== 'undefined')}
+                                       data={CURRENCIES.map((currency) => {
+                                               if (currency !== top.currency) {
+                                                   return {id: currency, col1: currency, col2: rates[currency]}
+                                               }
+                                           }
+                                       ).filter((anyValue) => typeof anyValue !== 'undefined')}
             />
         }
     }
 
-    const getExchangeForm=()=>{
+    const getExchangeForm = () => {
         if (rates !== null) {
             return <CurrencyExchangeForm
                 top={{"state": top, "setState": setTop}}
@@ -60,10 +70,10 @@ const CurrencyExchangePage = () => {
                 alignItems: 'center'
             }}
         >
-            <Grid item xs={6} >
+            <Grid item xs={6}>
                 {getExchangeForm()}
             </Grid>
-            <Grid item xs={6} style={{justifyContent: 'end', alignSelf :'center'}}>
+            <Grid item xs={6} style={{justifyContent: 'end', alignSelf: 'center'}}>
                 {getCurrencyRatesTable()}
             </Grid>
 

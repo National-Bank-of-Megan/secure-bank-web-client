@@ -13,11 +13,11 @@ const root = ReactDOM.createRoot(
 root.render(
     <Provider store={store}>
         <PersistGate persistor={persistor}>
-        <AccountContextProvider>
-            <BrowserRouter>
-                <App/>
-            </BrowserRouter>
-        </AccountContextProvider>
+            <AccountContextProvider>
+                <BrowserRouter>
+                    <App/>
+                </BrowserRouter>
+            </AccountContextProvider>
         </PersistGate>
     </Provider>
 );

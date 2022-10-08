@@ -17,7 +17,8 @@ const Transaction: React.FC<{ item: TransactionSummary }> = ({item}) => {
                 }}>
                     <Box>
                         <Typography variant="h5">{item.title}</Typography>
-                        <Typography variant="body2" color="text.secondary">{new Date(item.requestDate).toLocaleDateString('en-us', {
+                        <Typography variant="body2"
+                                    color="text.secondary">{new Date(item.requestDate).toLocaleDateString('en-us', {
                             year: "numeric",
                             day: "numeric",
                             month: "short",

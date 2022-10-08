@@ -1,4 +1,4 @@
-import {Avatar, Box, Button, FormHelperText, Stack, Typography,} from "@mui/material";
+import {Avatar, Box, Button, Stack, Typography,} from "@mui/material";
 import React, {Dispatch, SetStateAction, useCallback, useEffect, useState} from "react";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import CurrencyExchangeCard from "./CurrencyExchangeCard";
@@ -117,8 +117,11 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
             top.setState({...top.state, "amount": 0.00})
             // dispatch(subaccountBalanceActions.setBalance({currency : top.state.currency, amount : getSubAccountBalance(top.state.currency)!+currentTopAmount}))
             // dispatch(subaccountBalanceActions.setBalance({currency : bottom.state.currency, amount : getSubAccountBalance(bottom.state.currency)!-currentBottomAmount}))
-            dispatch(subaccountBalanceActions.addToBalance({currency : top.state.currency, amount : currentTopAmount}))
-            dispatch(subaccountBalanceActions.subtractFromBalance({currency : bottom.state.currency, amount : currentBottomAmount}))
+            dispatch(subaccountBalanceActions.addToBalance({currency: top.state.currency, amount: currentTopAmount}))
+            dispatch(subaccountBalanceActions.subtractFromBalance({
+                currency: bottom.state.currency,
+                amount: currentBottomAmount
+            }))
             setCurrentBottomAmount(0.00)
             setCurrentTopAmount(0.00)
             setSuccessAlertState({
@@ -156,7 +159,7 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
                         <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}} gap={1}>
                             <TrendingUpIcon sx={{color: "primary.main"}}/>
                             <Typography variant="h5"
-                                        color="primary.main">{'1' +bottom.state.currency + ' = ' + (1/rates[bottom.state.currency]).toFixed(2) + top.state.currency}</Typography>
+                                        color="primary.main">{'1' + bottom.state.currency + ' = ' + (1 / rates[bottom.state.currency]).toFixed(2) + top.state.currency}</Typography>
                         </Box>
                         <Box>
                             <Box sx={{width: '480px'}}>

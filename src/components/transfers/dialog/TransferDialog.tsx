@@ -28,9 +28,7 @@ import Spinner from "../../common/Spinner";
 import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from "decimal.js";
-import store, {RootState} from "../../../store/store";
-import {useSelector} from "react-redux";
-import {UserAuthenticationSliceType} from "../../../store/slice-types/UserAuthenticationSliceType";
+import store from "../../../store/store";
 import {useAppDispatch} from "../../../hook/redux-hooks";
 import DecodedJWT from "../../../models/decodedJWT";
 import jwt_decode from "jwt-decode";
@@ -87,7 +85,7 @@ const TransferDialog: React.FC<{
             console.log(error.message);
             props.setErrorAlertState({
                 isOpen: true,
-                message: "Could not transfer money."
+                message: error.message
             });
         }
     }, [error, props.setErrorAlertState])
@@ -144,7 +142,7 @@ const TransferDialog: React.FC<{
             method: "POST",
             body: {
                 "title": titleValue,
-                "senderId": jwt_decode<DecodedJWT>(store.getState().userAuthentication.authTokens.accessToken!).sub,
+                "senderId": jwt_decode<DecodedJWT>(store.getState().userAuthentication.authToken!).sub,
                 "receiverAccountNumber": accountNumberValue,
                 "amount": amountValue,
                 "currency": props.selectedCurrencyName
@@ -314,7 +312,8 @@ const TransferDialog: React.FC<{
                                         marginTop: "10px",
                                     }}
                                 >
-                                    <>Currency balance after transfer: {amountValue.trim() !== '' ? Decimal.sub(foundCurrency.balance, amountValue).toString() : foundCurrency.balance.toString()} {foundCurrency.symbol}</>
+                                    <>Currency balance after
+                                        transfer: {amountValue.trim() !== '' ? Decimal.sub(foundCurrency.balance, amountValue).toString() : foundCurrency.balance.toString()} {foundCurrency.symbol}</>
                                 </Typography>
                                 <Typography
                                     color="text.secondary"

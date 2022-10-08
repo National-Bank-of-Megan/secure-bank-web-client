@@ -20,13 +20,15 @@ const HistoryPage = () => {
 
     // componentWillUnmount
     useLayoutEffect(() => {
-       return ()=>{ setHasContainer(true);}
+        return () => {
+            setHasContainer(true);
+        }
 
     }, []);
 
 
     return (
-        <Grid sx={{height :'100%'}}>
+        <Grid sx={{height: '100%'}}>
             <History currentlyBrowsing={currentlyBrowsing} handleBrowsingChange={handleBrowsingChange}/>
         </Grid>)
 

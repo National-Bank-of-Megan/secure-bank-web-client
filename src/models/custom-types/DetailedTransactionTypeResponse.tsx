@@ -8,7 +8,7 @@ export type DetailedTransactionTypeResponse = {
     doneDate: Date;
     sender: string;
     receiver: string;
-    requestDate :Date;
+    requestDate: Date;
     status: string;
-    title :string;
+    title: string;
 }

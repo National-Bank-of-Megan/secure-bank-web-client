@@ -9,9 +9,9 @@ export const darkTheme = createTheme({
         primary: {
             main: "#007AFF",
         },
-        info: {
-            main: "#e3f2fd"
-        }
+        // info: {
+        //     main: "#e3f2fd"
+        // }
 
         // }
     },

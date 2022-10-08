@@ -17,7 +17,7 @@ const DevicesPage = () => {
     return (
         <>
             <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
-                               severity="error"/>
+                           severity="error"/>
             <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}}
                            severity="success"/>
             <Grid container gap={5}>

@@ -71,7 +71,7 @@ const UsernameForm: React.FC<{ toggleForms: () => void, setLoginBasicData: Dispa
                 marginTop: "100px",
             }}
         >
-            <Spinner isLoading={isGettingCombination || isLoading}/>
+            <Spinner isLoading={isLoading}/>
             <AlertSnackBar severity="error" alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
             <Paper
                 sx={{

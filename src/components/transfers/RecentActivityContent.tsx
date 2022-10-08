@@ -11,7 +11,11 @@ import CurrencyExchangeHistoryResponse from "../../models/currencyExchangeHistor
 
 const RecentActivityContent = () => {
 
-    const {isLoading: isLoadingRecentActivity, error: errorRecentActivity, sendRequest: sendGetRecentActivityRequest} = useFetch();
+    const {
+        isLoading: isLoadingRecentActivity,
+        error: errorRecentActivity,
+        sendRequest: sendGetRecentActivityRequest
+    } = useFetch();
     const [recentActivityLoaded, setRecentActivityLoaded] = useState(false);
     const [recentActivityList, setRecentActivityList] = useState<MoneyBalanceOperation[]>([]);
 
@@ -87,9 +91,11 @@ const RecentActivityContent = () => {
                 {
                     recentActivityLoaded && recentActivityList.map(recentActivity => {
                         if (recentActivity instanceof TransactionSummary) {
-                            return <Transaction item={recentActivity as TransactionSummary} key={recentActivityList.indexOf(recentActivity)}/>
+                            return <Transaction item={recentActivity as TransactionSummary}
+                                                key={recentActivityList.indexOf(recentActivity)}/>
                         } else {
-                            return <CurrencyExchangeHistoryCard item={recentActivity as CurrencyExchangeHistory} key={recentActivityList.indexOf(recentActivity)}/>;
+                            return <CurrencyExchangeHistoryCard item={recentActivity as CurrencyExchangeHistory}
+                                                                key={recentActivityList.indexOf(recentActivity)}/>;
                         }
                     })
                 }

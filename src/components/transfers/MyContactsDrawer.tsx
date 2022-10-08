@@ -18,7 +18,7 @@ const MyContactsDrawer: React.FC<{
         <Box sx={{width: 280}} onClick={toggleDrawer} onKeyDown={toggleDrawer}>
             <List>
                 {props.favoriteReceivers.map((favoriteTransfer) => (
-                    <FriendAccount favoriteTransfer={favoriteTransfer} writeAccountNumber={props.writeAccountNumber}/>
+                    <FriendAccount key={favoriteTransfer.id} favoriteTransfer={favoriteTransfer} writeAccountNumber={props.writeAccountNumber}/>
                 ))}
             </List>
         </Box>

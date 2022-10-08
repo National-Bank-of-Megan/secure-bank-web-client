@@ -7,16 +7,16 @@ import {PasswordCombinationType} from "../../models/custom-types/PasswordCombina
 import {useAppDispatch} from "../../hook/redux-hooks";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
 import {PASSWORD_MAX_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
-import {sendRequest} from "../../store/slice/userAuthenticationSlice";
-import {UserAuthenticationSliceType} from "../../store/slice-types/UserAuthenticationSliceType";
-import store, {RootState} from "../../store/store";
-import {useSelector} from "react-redux";
+import {Tokens, userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
 import Spinner from "../common/Spinner";
+import useFetch, {RequestConfig} from "../../hook/use-fetch";
+import {ClientJS} from "clientjs";
 
 
 const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinationType | null }> = (props) => {
-    let userAuthentication = useSelector<RootState, UserAuthenticationSliceType>((state) => state.userAuthentication)
-    const [status, setStatus] = useState<number>(200)
+
+    const {isLoading, isLoadedSuccessfully, error, sendRequest: loginRequest} = useFetch();
+
     const navigate = useNavigate();
     //  error handlers
     const [errorAlertState, setErrorAlertState] = useState<AlertState>({
@@ -42,13 +42,6 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
     }
 
     useEffect(() => {
-
-        inputRefsArray.forEach(
-            (ref) => {
-                ref.current!.value = "";
-            }
-        )
-
         inputRefsArray.forEach(
             (ref) => {
                 ref.current!.disabled = true;
@@ -59,9 +52,23 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 inputRefsArray[char].current!.disabled = false;
             }
         )
+    }, [inputRefsArray, password]);
 
-        inputRefsArray[password![0]].current?.focus()
-    }, [inputRefsArray, password, status]);
+    useEffect(() => {
+        if (!!error) {
+            setErrorAlertState({
+                isOpen: true,
+                message: error.message
+            });
+
+            inputRefsArray.forEach(
+                (ref) => {
+                    ref.current!.value = "";
+                }
+            )
+        }
+        inputRefsArray[password![0]].current?.focus();
+    }, [error, inputRefsArray, password]);
 
     useLayoutEffect(() => {
         forceUpdate();
@@ -69,17 +76,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         const pressedButton = e.key;
-        if (pressedButton.length === 1 && pressedButton.match(/^[0-9A-Za-z]+$/)) {
-            setCurrentIndex((prevIndex) => {
-                let letterIndex = password!.indexOf(prevIndex);
-                let nextIndex = letterIndex < password!.length - 1 ? letterIndex + 1 : letterIndex;
-                if (nextIndex < password!.length) {
-                    const nextInput = inputRefsArray?.[password![nextIndex]]?.current;
-                    nextInput?.focus();
-                }
-                return password![nextIndex];
-            });
-        } else if (pressedButton === "Backspace") {
+        if (pressedButton === "Backspace") {
             setCurrentIndex((currentIndex) => {
                 let letterIndex = password!.indexOf(currentIndex);
                 if (letterIndex === -1) {
@@ -92,12 +89,38 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 prevInput?.focus();
                 return password![prevIndex];
             });
+        } else if (pressedButton.length === 1) {
+            setCurrentIndex((prevIndex) => {
+                let letterIndex = password!.indexOf(prevIndex);
+                let nextIndex = letterIndex < password!.length - 1 ? letterIndex + 1 : letterIndex;
+                if (nextIndex < password!.length) {
+                    const nextInput = inputRefsArray?.[password![nextIndex]]?.current;
+                    nextInput?.focus();
+                }
+                return password![nextIndex];
+            });
         }
     };
 
     const handleFocus = (index: number) => {
         setCurrentIndex(index);
     };
+
+    const handleLoginSuccessResponse = (response: any, responseStatus: number) => {
+        if (responseStatus === 200) {
+            const tokens: Tokens = {
+                authToken: response['access_token'],
+                refreshToken: response['refresh_token']
+            }
+            dispatch(userAuthenticationActions.loginHandler(tokens));
+            navigate('/transfers', { replace: true })
+        } else if (responseStatus === 206) {
+            const url = '/login/verify?clientId=' + props.data?.clientId;
+            navigate(url, { state: {
+                clientId: props.data!.clientId, password: getPassword()
+            }});
+        }
+    }
 
     const passwordSubmitHandler = () => {
         const psw = getPassword();
@@ -107,46 +130,22 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                 message: 'Fill all cells.'
             });
         } else {
-            const body =JSON.stringify({
-                clientId: props.data!.clientId,
-                password: psw
-            })
-
-            dispatch(sendRequest(
-                { body : body, url : REST_PATH_AUTH + '/login', method : 'POST'}
-            )).then(
-                (response) => {
-
-                    console.log('auth request performed')
-                    const status = store.getState().userAuthentication.status
-
-                    if (status === 200) {
-                        console.log('redirecting to transfers page ...')
-                        navigate('/transfers', {replace: true})
-                    }
-
-                    if (status === 206) {
-                        console.log('redirecting to otp verification page ...')
-                        let url = '/login/verify?clientId=' + props.data?.clientId;
-                        navigate(url, {replace: true, state: {
-                                clientId: props.data!.clientId, password: getPassword()
-                            }
-                        });
-                    }
-
-                    setErrorAlertState({
-                        isOpen: true,
-                        message: store.getState().userAuthentication.error || 'error'
-                    });
-                    inputRefsArray.forEach(
-                        (ref) => {
-                            ref.current!.value = "";
-                        }
-                    )
+            const client = new ClientJS();
+            const loginRequestData: RequestConfig = {
+                url: REST_PATH_AUTH + "/login",
+                method: "POST",
+                body: {
+                    "clientId": props.data?.clientId,
+                    "password": psw
+                },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Device-Fingerprint': client.getFingerprint().toString()
                 }
-            )
-        }
+            };
 
+            loginRequest(loginRequestData, handleLoginSuccessResponse);
+        }
     }
 
     return (
@@ -159,7 +158,7 @@ const PasswordForm: React.FC<{ toggleForms: () => void, data: PasswordCombinatio
                     marginTop: "100px",
                 }}
             >
-                <Spinner isLoading={store.getState().userAuthentication.isLoading}/>
+                <Spinner isLoading={isLoading}/>
                 <AlertSnackBar severity={"error"}
                                alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
                 <Paper

@@ -10,7 +10,7 @@ import {isEmail} from "../../input-rules/is-email";
 import Spinner from "../common/Spinner";
 import {SuccessfulRegistrationType} from "../../models/custom-types/SuccessfulRegistrationType";
 import {REST_PATH_AUTH} from "../../constants/Constants";
-import { ClientJS } from 'clientjs';
+import {ClientJS} from 'clientjs';
 
 const RegistrationForm = () => {
     const {isLoading, error, sendRequest: registerRequest} = useFetch();
@@ -137,7 +137,7 @@ const RegistrationForm = () => {
         <>
             <Spinner isLoading={isRegistering || isLoading}/>
             <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
-                           severity="error" />
+                           severity="error"/>
 
             <form onSubmit={signUpHandler} style={{
                 marginLeft: "auto",

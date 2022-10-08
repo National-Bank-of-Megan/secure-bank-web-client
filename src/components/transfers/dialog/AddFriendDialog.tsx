@@ -15,7 +15,7 @@ import {isNotEmpty} from "../../../input-rules/is-not-empty";
 import {isValidAccountNumber} from "../../../input-rules/is-valid-account-number";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import useFetch, {RequestConfig} from "../../../hook/use-fetch";
-import {REST_PATH_ACCOUNT, REST_PATH_AUTH} from "../../../constants/Constants";
+import {REST_PATH_ACCOUNT} from "../../../constants/Constants";
 import Spinner from "../../common/Spinner";
 import {FavoriteReceiverResponse} from "../TotalBalanceContent";
 import {AlertState} from "../../notifications/AlertSnackBar";
@@ -115,7 +115,8 @@ const AddFriendDialog: React.FC<{
 
     return (
         <>
-            <Spinner isLoading={isProcessingAddFavoriteReceiverRequest || isLoading} zIndex={appTheme.zIndex.modal + 1}/>
+            <Spinner isLoading={isProcessingAddFavoriteReceiverRequest || isLoading}
+                     zIndex={appTheme.zIndex.modal + 1}/>
             <Dialog
                 open={props.openAddFriendDialog}
                 onClose={handleDialogClose}

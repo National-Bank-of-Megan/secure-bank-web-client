@@ -12,10 +12,10 @@ const ChangePasswordPage = () => {
 
     return (
         <>
-            <Spinner isLoading={isChangingPassword} />
+            <Spinner isLoading={isChangingPassword}/>
             <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
-                           severity="error" />
-            <ChangePasswordForm setErrorAlertState={setErrorAlertState} setIsChangingPassword={setIsChangingPassword} />
+                           severity="error"/>
+            <ChangePasswordForm setErrorAlertState={setErrorAlertState} setIsChangingPassword={setIsChangingPassword}/>
         </>
     );
 }

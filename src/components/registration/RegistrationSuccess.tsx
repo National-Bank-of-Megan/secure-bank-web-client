@@ -22,7 +22,8 @@ const RegistrationSuccess: React.FC<{ registrationResponseData: SuccessfulRegist
 
     return (
         <>
-            <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}} severity="success" />
+            <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}}
+                           severity="success"/>
             <Grid container marginTop="50px" gap={-2}>
                 <Grid item xs={6} pl="50px">
                     <Stack textAlign="center" height='100%' sx={{

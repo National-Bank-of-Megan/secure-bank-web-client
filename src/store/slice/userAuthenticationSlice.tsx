@@ -1,14 +1,15 @@
-import {createAction, createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {UserAuthenticationSliceType} from "../slice-types/UserAuthenticationSliceType";
-import {unmountComponentAtNode} from "react-dom";
-import {useNavigate} from "react-router-dom";
 import {ClientJS} from "clientjs";
-import {wait} from "@testing-library/user-event/dist/utils";
+
+export type Tokens = {
+    authToken: string;
+    refreshToken: string;
+};
 
 export const sendRequest = createAsyncThunk(
     'userAuthentication/sendRequest',
-    async (request: { body: string, url: string, method: string }, dispatch) => {
+    async (request: { body: string, url: string, method: string }, thunkAPI) => {
         console.log('=== INSIDE SEND REQUEST ACTION ===');
         const client = new ClientJS();
         console.log(client.getFingerprint().toString())
@@ -16,7 +17,7 @@ export const sendRequest = createAsyncThunk(
             method: request.method,
             headers: {
                 'Content-Type': 'application/json',
-                'Device-Fingerprint' : client.getFingerprint().toString()
+                'Device-Fingerprint': client.getFingerprint().toString()
             },
             body: request.body
         })
@@ -27,31 +28,29 @@ export const sendRequest = createAsyncThunk(
         if (status === 206 || status === 200) {
             console.log('sendRequest: dispatch.fulfillWithValue');
             console.log('=== PARSING RESPONSE (EXTRACTING TOKENS) ===');
-            let tokens  = status == 206 ? null : await response.json();
-            return dispatch.fulfillWithValue({
+            let tokens = status === 206 ? null : await response.json();
+            return thunkAPI.fulfillWithValue({
                 status: status,
                 data: tokens
             });
-        }
-        else {
+        } else {
             console.log('sendRequest: dispatch.rejectWithValue');
             const errorBody = await response.json();
             const errorMessage = await errorBody.message;
-            return dispatch.rejectWithValue({
+            return thunkAPI.rejectWithValue({
                 status: response.status,
-                error:  errorMessage || 'Invalid credentials'
+                error: errorMessage || 'Invalid credentials'
             })
         }
 
     }
 )
 
-
-
 export const userAuthenticationSlice = createSlice({
     name: "userAuthentication",
     initialState: {
-        authTokens: {accessToken: null, refreshToken: null},
+        authToken: null,
+        refreshToken: null,
         status: -1,
         isLoading: false,
         error: null
@@ -83,27 +82,32 @@ export const userAuthenticationSlice = createSlice({
                 // @ts-ignore
                 state.authTokens = payload.payload.status === 200 ? {
                     // @ts-ignore
-                    accessToken: payload.payload.data.access_token,
+                    authToken: payload.payload.data.access_token,
                     // @ts-ignore
                     refreshToken: payload.payload.data.refresh_token
                 } : null;
             })
-          
+
 
     },
 
     reducers: {
-        setAccessToken : (state, payload)=>{
+        loginHandler: (state, action: PayloadAction<Tokens>) => {
+            state.authToken = action.payload.authToken;
+            state.refreshToken = action.payload.refreshToken;
+        },
+        setAuthToken: (state, action) => {
             console.log('USER AUTH SLICE SETTING ACCESS TOKEN')
-            console.log(payload.payload)
-            state.authTokens.accessToken = payload.payload
+            console.log(action.payload)
+            state.authToken = action.payload;
         },
         clearAuthentication: (state) => {
             state.isLoading = false;
-            state.authTokens = { accessToken: null, refreshToken: null };
+            state.authToken = null;
+            state.refreshToken = null;
             state.status = -1;
             state.error = null;
-          }
+        }
     }
 
 })

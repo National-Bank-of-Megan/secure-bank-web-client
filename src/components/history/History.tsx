@@ -25,17 +25,17 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
     const [currencyExchangeHistory, setCurrencyExchangeHistory] = useState<CurrencyExchangeHistory[]>([]);
     const [recentTransfers, setRecentTransfers] = useState<DetailedTransaction[]>([]);
 
-    const [currentSortType, setCurrentSortType] = useState<string>('None')
+    const [currentSortType, setCurrentSortType] = useState<string>('Newest to oldest')
 
     const sortAscending = (data: CurrencyExchangeHistory[] | DetailedTransaction[]) => {
         return data.slice().sort(function (first, second) {
-            return Number(first.requestDate) - Number(second.requestDate);
+            return Number(second.requestDate) - Number(first.requestDate);
         });
     }
 
     const sortDescending = (data: CurrencyExchangeHistory[] | DetailedTransaction[]) => {
         return data.slice().sort(function (first, second) {
-            return Number(second.requestDate) - Number(first.requestDate);
+            return Number(first.requestDate) - Number(second.requestDate);
         });
     }
 
@@ -58,14 +58,14 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
             if (recentTransfers.length === 0 && !errorDetailedTransaction)
                 return <Typography variant="h4" color="primary.main">You do not have any transfers</Typography>
             else { // @ts-ignore
-                return <OperationsList history={data} serverError ={errorDetailedTransaction ? true : false}/>
+                return <OperationsList history={data} serverError={errorDetailedTransaction ? true : false}/>
             }
         } else {
             data = getSortedData(currencyExchangeHistory, currentSortType);
-            if (currencyExchangeHistory.length === 0 && !errorExchangeHistory )
+            if (currencyExchangeHistory.length === 0 && !errorExchangeHistory)
                 return <Typography variant="h4" color="primary.main">You do not have any currency exchanges</Typography>
             else { // @ts-ignore
-                return <ExchangeList history={data} serverError={errorExchangeHistory ? true : false} />
+                return <ExchangeList history={data} serverError={errorExchangeHistory ? true : false}/>
             }
         }
     }
@@ -125,13 +125,13 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
 
     }, [sendCurrencyExchangeHistoryRequest, setCurrencyExchangeHistory, setRecentTransfers, sendDetailedTransactionHistoryRequest])
     return (
-        <Box sx={{position :'relative',padding: '70px 180px 20px', height : '100%', minHeight :'100vh'}}>
+        <Box sx={{position: 'relative', padding: '70px 180px 20px', height: '100%', minHeight: '100vh'}}>
             <HistoryNavigation currentlyBrowsing={props.currentlyBrowsing}
                                handleBrowsingChange={props.handleBrowsingChange}
                                state={{"state": currentSortType, "setState": setCurrentSortType}}
             />
             <Spinner isLoading={isLoadingExchangeHistory || isLoadingDetailedTransaction} isPositionAbsolute={true}/>
-                {returnHistory()}
+            {returnHistory()}
         </Box>
     );
 

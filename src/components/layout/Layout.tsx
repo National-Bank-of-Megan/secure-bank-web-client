@@ -13,7 +13,7 @@ export default function Layout(props: any) {
     }
 
     let historyStyle = {
-        height : '100%'
+        height: '100%'
     }
 
     return (

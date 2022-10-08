@@ -3,7 +3,7 @@ import MoneyBalanceOperation from "./moneyBalanceOperation";
 
 class DetailedTransaction extends MoneyBalanceOperation {
     transferType: string;
-    title :string;
+    title: string;
     amount: Decimal;
     currency: string;
     status: string;

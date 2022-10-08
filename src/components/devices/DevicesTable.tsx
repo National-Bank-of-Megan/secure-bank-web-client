@@ -1,17 +1,13 @@
 import {DataGrid, GridColDef, GridEventListener} from '@mui/x-data-grid';
-import {randomCreatedDate, randomInt} from "@mui/x-data-grid-generator";
 import {Box, Button} from "@mui/material";
 import * as React from "react";
-import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
-import {REST_PATH_AUTH} from "../../constants/Constants";
+import useFetch, {RequestConfig} from "../../hook/use-fetch";
+import {REST_PATH_ACCOUNT} from "../../constants/Constants";
 import {ClientJS} from "clientjs";
-import {DetailedTransactionTypeResponse} from "../../models/custom-types/DetailedTransactionTypeResponse";
-import DetailedTransaction from "../../models/detailedTransaction";
 import {TrustedDeviceResponse} from "../../models/custom-types/TrustedDeviceResponse";
 import TrustedDevice from "../../models/trustedDevice";
 import {AlertState} from "../notifications/AlertSnackBar";
-import trustedDevice from "../../models/trustedDevice";
 
 const DevicesTable: React.FC<{
     setErrorAlertState: Dispatch<SetStateAction<AlertState>>;
@@ -68,10 +64,20 @@ const DevicesTable: React.FC<{
                     deviceName: trustedDeviceResponse.name,
                     ipAddress: trustedDeviceResponse.ip,
                     registrationDate: new Date(trustedDeviceResponse.registrationDate).toLocaleDateString('en-us', {
-                        year: "numeric", day: "numeric", month: "short", hour : "numeric", minute :"numeric", second: "numeric"
+                        year: "numeric",
+                        day: "numeric",
+                        month: "short",
+                        hour: "numeric",
+                        minute: "numeric",
+                        second: "numeric"
                     }),
                     lastLoggedInDate: new Date(trustedDeviceResponse.lastLoggedInDate).toLocaleDateString('en-us', {
-                        year: "numeric", day: "numeric", month: "short", hour : "numeric", minute :"numeric", second: "numeric"
+                        year: "numeric",
+                        day: "numeric",
+                        month: "short",
+                        hour: "numeric",
+                        minute: "numeric",
+                        second: "numeric"
                     })
                 });
             }
@@ -82,9 +88,9 @@ const DevicesTable: React.FC<{
         const client = new ClientJS();
 
         const getTrustedDeviceListRequest: RequestConfig = {
-            url: REST_PATH_AUTH + "/account/devices",
+            url: REST_PATH_ACCOUNT + "/devices",
             headers: {
-                'Device-Fingerprint' : client.getFingerprint().toString()
+                'Device-Fingerprint': client.getFingerprint().toString()
             }
         };
         sendGetTrustedDeviceListRequest(getTrustedDeviceListRequest, transformTrustedDevices);
@@ -107,7 +113,7 @@ const DevicesTable: React.FC<{
         }
 
         const deleteTrustedDeviceRequest: RequestConfig = {
-            url: REST_PATH_AUTH + "/account/devices/" + selectedDevice.id,
+            url: REST_PATH_ACCOUNT + "/devices/" + selectedDevice.id,
             method: 'DELETE',
         };
         sendDeleteTrustedDeviceRequest(deleteTrustedDeviceRequest, handleDeleteTrustedDeviceSuccessResponse);
@@ -127,7 +133,8 @@ const DevicesTable: React.FC<{
     return (
         <Box sx={{width: '100%'}}>
             <Box sx={{display: 'flex', justifyContent: 'end'}}>
-                <Button size="large" variant="outlined" color="error" onClick={handleDeleteRow} disabled={selectedDevice === null}>
+                <Button size="large" variant="outlined" color="error" onClick={handleDeleteRow}
+                        disabled={selectedDevice === null}>
                     Delete device
                 </Button>
             </Box>

@@ -8,7 +8,7 @@ import {shouldUpdateCode} from "../../common/validation";
 import useFetch, {RequestConfig} from "../../hook/use-fetch";
 import {AlertState} from "../notifications/AlertSnackBar";
 import {isNotEmpty} from "../../input-rules/is-not-empty";
-import { REST_PATH_ACCOUNT } from "../../constants/Constants";
+import {REST_PATH_ACCOUNT} from "../../constants/Constants";
 
 const ChangePasswordForm: React.FC<{
     setIsChangingPassword: Dispatch<SetStateAction<boolean>>;
@@ -79,7 +79,7 @@ const ChangePasswordForm: React.FC<{
 
     const setAllInputsError = () => {
         const setIsTouchedList = [setIsOldPasswordTouched, setIsNewPasswordTouched, setIsConfirmNewPasswordTouched,
-                                  setIsOneTimePasswordTouched];
+            setIsOneTimePasswordTouched];
 
         setIsTouchedList.forEach(setIsTouched => {
             setIsTouched(true);
@@ -169,7 +169,6 @@ const ChangePasswordForm: React.FC<{
                     />
 
 
-
                     <TextField
                         error={newPasswordHasError}
                         onChange={newPasswordChangeHandler}
@@ -200,7 +199,7 @@ const ChangePasswordForm: React.FC<{
 
                     <TextField
                         InputProps={{
-                            inputProps: { min: 0 }
+                            inputProps: {min: 0}
                         }}
                         error={oneTimePasswordHasError}
                         onChange={oneTimePasswordChangeHandler}
@@ -220,7 +219,8 @@ const ChangePasswordForm: React.FC<{
                             }
                         }}
                     />
-                    <Button onClick={changePasswordHandler} sx={{width: "350px", marginTop: '15px'}} variant="contained" size="large">
+                    <Button onClick={changePasswordHandler} sx={{width: "350px", marginTop: '15px'}} variant="contained"
+                            size="large">
                         Change password
                     </Button>
                 </Box>

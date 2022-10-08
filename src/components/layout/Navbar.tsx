@@ -5,20 +5,16 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import IconButton from "@mui/material/IconButton";
 import Tab from "@mui/material/Tab";
 import {useAppDispatch} from "../../hook/redux-hooks";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import NotificationsListPopover from "../notifications/NotificationListPopover";
 import {userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
-import UserAuthenticationService from "../../store/service/UserAuthenticationService";
 import jwt_decode from "jwt-decode";
 import DecodedJWT from "../../models/decodedJWT";
 import store from "../../store/store";
 import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
 import buttonStyles from "../../styles/ButtonStyles";
-import {REST_PATH_TRANSFER} from "../../constants/Constants";
-import TransferNotificationClass from "../../models/TransferNotificationClass";
-import Decimal from "decimal.js";
 import storage from "redux-persist/es/storage";
-import useRefreshToken from "../../hook/use-refresh";
+import useCredentialsValidation from "../../hook/use-credentials-validation";
 
 export type notificationType = {
     wasViewed: boolean;
@@ -28,7 +24,7 @@ export type notificationType = {
 
 export default function Navbar() {
 
-    const isAuthenticated = UserAuthenticationService.isUserLoggedIn();
+    const { isUserLoggedIn } = useCredentialsValidation();
     const {pathname} = useLocation();
     const [currentPath, setCurrentPath] = useState<number>(0);
     const [notificationsPopover, setNotificationsPopover] =
@@ -44,82 +40,81 @@ export default function Navbar() {
     const [newNotificationsCounter, setNewNotificationsCounter] =
         useState<number>(0);
     const dispatch = useAppDispatch();
-    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
 
-    const subscribe =async () => {
-        let req = ''
-        let sse: EventSource | null = null;
-        console.log("== SUBSCRIBING TO NOTIFICATIONS ==");
-        let isAccessTokenValid =
-            UserAuthenticationService.isTokenValid("accessToken");
-        let isRefreshTokenValid =
-            UserAuthenticationService.isTokenValid("refreshToken");
-
-        if (isRefreshTokenValid && !isAccessTokenValid) {
-            let jwt = await requestAuthTokenWithRefreshToken();
-            req = REST_PATH_TRANSFER +
-                "/notification/subscribe?jwt=" + store.getState().userAuthentication.authTokens.accessToken;
-            sse = new EventSource(req);
-        } else {
-            req = REST_PATH_TRANSFER +
-                "/notification/subscribe?jwt=" +
-                store.getState().userAuthentication.authTokens.accessToken!
-            sse = new EventSource(req);
-        }
-
-        sse!.addEventListener("TRANSFER_NOTIFICATION", (event) => {
-            console.log("== NEW TRANSFER NOTIFICATION RECEIVED ==");
-            console.log(event);
-
-            let messageEvent = event as MessageEvent;
-            let data = JSON.parse(messageEvent.data);
-            notifications.push({
-                wasViewed: false,
-                notificationType: "TRANSFER",
-                contents: new TransferNotificationClass(
-                    data.title,
-                    data.senderFirstname,
-                    data.senderLastname,
-                    data.amount,
-                    data.currency,
-                    new Date()
-                ),
-            });
-            dispatch(subaccountBalanceActions.addToBalance({currency : data.currency, amount : data.amount}))
-            setNewNotificationsCounter(newNotificationsCounter + 1);
-
-        });
-
-        sse!.addEventListener("open", (event) => {
-            console.log("== CONNECTION OPENED ==");
-        });
-
-        sse!.onerror=function (event) {
-            console.log(event)
-            sse!.close()
-            if(UserAuthenticationService.isUserLoggedIn())subscribe()
-        };
-
-
-    };
+    // const subscribe = async () => {
+    //     let req = ''
+    //     let sse: EventSource | null = null;
+    //     console.log("== SUBSCRIBING TO NOTIFICATIONS ==");
+    //     let isAccessTokenValid =
+    //         UserAuthenticationService.isTokenValid("accessToken");
+    //     let isRefreshTokenValid =
+    //         UserAuthenticationService.isTokenValid("refreshToken");
+    //
+    //     if (isRefreshTokenValid && !isAccessTokenValid) {
+    //         let jwt = await requestAuthTokenWithRefreshToken();
+    //         req = REST_PATH_TRANSFER +
+    //             "/notification/subscribe?jwt=" + store.getState().userAuthentication.authTokens.accessToken;
+    //         sse = new EventSource(req);
+    //     } else {
+    //         req = REST_PATH_TRANSFER +
+    //             "/notification/subscribe?jwt=" +
+    //             store.getState().userAuthentication.authTokens.accessToken!
+    //         sse = new EventSource(req);
+    //     }
+    //
+    //     sse!.addEventListener("TRANSFER_NOTIFICATION", (event) => {
+    //         console.log("== NEW TRANSFER NOTIFICATION RECEIVED ==");
+    //         console.log(event);
+    //
+    //         let messageEvent = event as MessageEvent;
+    //         let data = JSON.parse(messageEvent.data);
+    //         notifications.push({
+    //             wasViewed: false,
+    //             notificationType: "TRANSFER",
+    //             contents: new TransferNotificationClass(
+    //                 data.title,
+    //                 data.senderFirstname,
+    //                 data.senderLastname,
+    //                 data.amount,
+    //                 data.currency,
+    //                 new Date()
+    //             ),
+    //         });
+    //         dispatch(subaccountBalanceActions.addToBalance({currency: data.currency, amount: data.amount}))
+    //         setNewNotificationsCounter(newNotificationsCounter + 1);
+    //
+    //     });
+    //
+    //     sse!.addEventListener("open", (event) => {
+    //         console.log("== CONNECTION OPENED ==");
+    //     });
+    //
+    //     sse!.onerror = function (event) {
+    //         console.log(event)
+    //         sse!.close()
+    //         if (UserAuthenticationService.isUserLoggedIn()) subscribe()
+    //     };
+    //
+    //
+    // };
 
     useEffect(() => {
         const value = paths.indexOf(pathname);
         setCurrentPath(value);
-        if (UserAuthenticationService.isUserLoggedIn()) subscribe();
-    }, [pathname, paths, setCurrentPath, subscribe]);
+        // if (UserAuthenticationService.isUserLoggedIn()) subscribe();
+    }, [pathname, paths, setCurrentPath]);
 
     const decrementNotificationCounter = () => {
         setNewNotificationsCounter(newNotificationsCounter - 1);
     };
 
     const getUserInitials = () => {
-        return UserAuthenticationService.isUserLoggedIn()
+        return isUserLoggedIn()
             ? jwt_decode<DecodedJWT>(
-                store.getState().userAuthentication.authTokens.accessToken!
+                store.getState().userAuthentication.authToken!
             ).firstName.charAt(0) +
             jwt_decode<DecodedJWT>(
-                store.getState().userAuthentication.authTokens.accessToken!
+                store.getState().userAuthentication.authToken!
             ).lastName.charAt(0)
             : "";
     };
@@ -142,7 +137,7 @@ export default function Navbar() {
     const handleLogout = (e: SyntheticEvent) => {
         dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
         dispatch(userAuthenticationActions.clearAuthentication());
-        storage.removeItem("persist: persist-key").then(r =>  navigate("/login", {replace: true}) );
+        storage.removeItem("persist: persist-key").then(r => navigate("/login", {replace: true}));
     };
 
     const open = Boolean(notificationsPopover);
@@ -154,7 +149,7 @@ export default function Navbar() {
                     <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
                         National Bank of Megan
                     </Typography>
-                    {isAuthenticated && (
+                    {isUserLoggedIn() && (
                         <Box>
                             <IconButton
                                 size="large"
@@ -208,25 +203,25 @@ export default function Navbar() {
                             </Popover>
 
 
-              <Link to="/account" style={{ textDecoration: 'none' }}>
-                <IconButton
-                  size="large"
-                  color="inherit"
-                >
-                  <Avatar sx={{ bgcolor: "primary.main", width: 34, height: 34 }}>
-                    <Typography color="secondary.light" sx={{ fontSize: "15px" }}>
-                      {getUserInitials()}
-                    </Typography>
-                  </Avatar>
-                </IconButton>
-              </Link>
+                            <Link to="/account" style={{textDecoration: 'none'}}>
+                                <IconButton
+                                    size="large"
+                                    color="inherit"
+                                >
+                                    <Avatar sx={{bgcolor: "primary.main", width: 34, height: 34}}>
+                                        <Typography color="secondary.light" sx={{fontSize: "15px"}}>
+                                            {getUserInitials()}
+                                        </Typography>
+                                    </Avatar>
+                                </IconButton>
+                            </Link>
 
                             <IconButton size="large" color="inherit" onClick={handleLogout}>
                                 <LogoutIcon fontSize="inherit"/>
                             </IconButton>
                         </Box>
                     )}
-                    {!isAuthenticated && (
+                    {!isUserLoggedIn() && (
                         <Stack direction="row" spacing={2}>
                             <Button
                                 variant="outlined"
@@ -249,7 +244,7 @@ export default function Navbar() {
                 </Toolbar>
             </AppBar>
 
-            {isAuthenticated && (
+            {isUserLoggedIn() && (
                 <Paper sx={{bgcolor: "background.paper"}}>
                     <Tabs value={currentPath} onChange={handleChange} variant="fullWidth">
                         <Tab label="Transfers"/>

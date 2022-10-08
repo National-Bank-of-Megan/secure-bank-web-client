@@ -23,7 +23,8 @@ const FriendAccount: React.FC<{
             }}/>
             <ListItem key={props.favoriteTransfer.id} onClick={handleWriteAccountNumber} disablePadding>
                 <ListItemButton>
-                    <ListItemText primary={props.favoriteTransfer.name} secondary={props.favoriteTransfer.accountNumber}/>
+                    <ListItemText primary={props.favoriteTransfer.name}
+                                  secondary={props.favoriteTransfer.accountNumber}/>
                 </ListItemButton>
             </ListItem>
             <Divider/>

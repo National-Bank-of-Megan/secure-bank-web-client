@@ -14,26 +14,26 @@ import RegistrationPage from "./pages/RegistrationPage";
 import SuccessfulRegistrationPage from "./pages/SuccessfulRegistrationPage";
 import DeviceVerificationPage from "./pages/DeviceVerificationPage";
 import PrivateRoute from "./components/auth/PrivateRoute";
-import CustomRoute from "./components/auth/CustomRoute";
 
 import ChangePasswordPage from "./pages/ChangePasswordPage";
-import UserAuthenticationService from "./store/service/UserAuthenticationService";
+import useCredentialsValidation from "./hook/use-credentials-validation";
 
 
 function App() {
+
+    const { isUserLoggedIn } = useCredentialsValidation();
 
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline>
                 <Layout>
                     <Routes>
-                        <Route path="/" element={<CustomRoute><MainPage/></CustomRoute>}/>
-                       
-                        {!UserAuthenticationService.isUserLoggedIn() &&
+                        {!isUserLoggedIn() &&
                             <>
-                            <Route path="/signup" element={<CustomRoute><RegistrationPage/></CustomRoute>}/>
+                                <Route path="/" element={<MainPage/>}/>
+                                <Route path="/signup" element={<RegistrationPage/>}/>
                                 <Route path="/signup/success"
-                               element={<CustomRoute><SuccessfulRegistrationPage/></CustomRoute>}/>
+                                       element={<SuccessfulRegistrationPage/>}/>
                                 <Route path="/login" element={<LoginPage/>}/>
                                 <Route path="/login/verify" element={<DeviceVerificationPage/>}/>
                             </>
@@ -43,7 +43,8 @@ function App() {
                         <Route path="/history" element={<PrivateRoute><HistoryPage/></PrivateRoute>}/>
                         <Route path="/account" element={<PrivateRoute><AccountPage/></PrivateRoute>}/>
                         <Route path="/devices" element={<PrivateRoute><DevicesPage/></PrivateRoute>}/>
-                        <Route path="/account/changePassword" element={<PrivateRoute><ChangePasswordPage/></PrivateRoute>}/>
+                        <Route path="/account/changePassword"
+                               element={<PrivateRoute><ChangePasswordPage/></PrivateRoute>}/>
                         <Route path='*' element={<Navigate to="/transfers"/>}/>
                     </Routes>
                 </Layout>

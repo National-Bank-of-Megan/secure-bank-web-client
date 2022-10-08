@@ -9,26 +9,26 @@ export type AlertState = {
 }
 
 const AlertSnackBar: React.FC<{ alertState: UseStateType<AlertState>, severity: AlertColor }> =
-                              ({alertState, severity}) => {
+    ({alertState, severity}) => {
 
-    const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        alertState.setState!({
-            isOpen: false,
-            message: ''
-        });
-    };
+        const handlePopUpClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+            if (reason === 'clickaway') {
+                return;
+            }
+            alertState.setState!({
+                isOpen: false,
+                message: ''
+            });
+        };
 
-    return (
-        <Snackbar open={alertState.state.isOpen} autoHideDuration={6000} onClose={handlePopUpClose}>
-            <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity={severity}
-                      sx={{width: '100%'}}>
-                {alertState.state.message}
-            </MuiAlert>
-        </Snackbar>
-    );
-}
+        return (
+            <Snackbar open={alertState.state.isOpen} autoHideDuration={6000} onClose={handlePopUpClose}>
+                <MuiAlert elevation={6} variant="filled" onClose={handlePopUpClose} severity={severity}
+                          sx={{width: '100%'}}>
+                    {alertState.state.message}
+                </MuiAlert>
+            </Snackbar>
+        );
+    }
 
 export default AlertSnackBar;

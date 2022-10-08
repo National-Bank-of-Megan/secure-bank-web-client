@@ -1,23 +1,21 @@
-import {createAction, createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {AccountCurrencyBalance} from "../../components/transfers/TotalBalanceContent";
-import {userAuthenticationSlice} from "./userAuthenticationSlice";
-import {UpdateBalance} from "../action-types/UpdateBalance";
 import {Decimal} from "decimal.js";
 
 export const subaccountBalanceSlice = createSlice({
     name: 'subaccountBalance',
-    initialState : {
+    initialState: {
         subaccounts: [] as AccountCurrencyBalance[]
     },
 
     reducers: {
-        setSubaccountsBalance: (state, action :PayloadAction<AccountCurrencyBalance[]>) => {
-            console.log('setting subaccounts balance -> '+ action.payload)
+        setSubaccountsBalance: (state, action: PayloadAction<AccountCurrencyBalance[]>) => {
+            console.log('setting subaccounts balance -> ' + action.payload)
             state.subaccounts = action.payload;
         },
-        setBalance : (state, action)=>{
-            let newBalanceList = state.subaccounts.map(a=>{
-                if(a.currency === action.payload.currency){
+        setBalance: (state, action) => {
+            let newBalanceList = state.subaccounts.map(a => {
+                if (a.currency === action.payload.currency) {
                     a.balance = action.payload.amount
                 }
                 return a;
@@ -26,9 +24,9 @@ export const subaccountBalanceSlice = createSlice({
             state.subaccounts = newBalanceList;
 
         },
-        addToBalance : (state, action)=> {
-            let newBalanceList = state.subaccounts.map(a=>{
-                if(a.currency === action.payload.currency){
+        addToBalance: (state, action) => {
+            let newBalanceList = state.subaccounts.map(a => {
+                if (a.currency === action.payload.currency) {
                     let x = Decimal.add(action.payload.amount, a.balance as Decimal)
                     a.balance = x
                 }
@@ -36,9 +34,9 @@ export const subaccountBalanceSlice = createSlice({
             })
             state.subaccounts = newBalanceList;
         },
-        subtractFromBalance : (state, action)=> {
-            let newBalanceList = state.subaccounts.map(a=>{
-                if(a.currency === action.payload.currency){
+        subtractFromBalance: (state, action) => {
+            let newBalanceList = state.subaccounts.map(a => {
+                if (a.currency === action.payload.currency) {
                     let x = Decimal.sub(a.balance as Decimal, action.payload.amount)
                     a.balance = x
                 }

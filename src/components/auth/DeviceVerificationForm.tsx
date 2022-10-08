@@ -2,20 +2,23 @@ import {Box, Button, Paper, Stack, Typography} from "@mui/material";
 import React, {createRef, useEffect, useState} from "react";
 import PasswordCharacterInput from "./PasswordCharacterInput";
 import {useNavigate, useSearchParams} from "react-router-dom";
-import useFetch from "../../hook/use-fetch";
 import Spinner from "../common/Spinner";
 import {isCodeValid} from "../../input-rules/is-code-valid";
 import {CODE_LENGTH, REST_PATH_AUTH} from "../../constants/Constants";
 
-import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
-import store from "../../store/store";
+import {useAppDispatch} from "../../hook/redux-hooks";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
-import {sendRequest} from "../../store/slice/userAuthenticationSlice";
+import {Tokens, userAuthenticationActions} from "../../store/slice/userAuthenticationSlice";
 import {ClientJS} from "clientjs";
 import {AccountCredentialsType} from "../../models/custom-types/AccountCredentialsType";
+import useFetch, {RequestConfig} from "../../hook/use-fetch";
 
 
-const DeviceVerificationForm: React.FC<{accountCredentials: AccountCredentialsType}> = ({ accountCredentials }) => {
+const DeviceVerificationForm: React.FC<{ accountCredentials: AccountCredentialsType }> = ({accountCredentials}) => {
+    const dispatch = useAppDispatch()
+
+    const {isLoading, error, sendRequest: verificationLoginRequest} = useFetch();
+
     const [digitsRefs] = useState(() =>
         Array.from({length: CODE_LENGTH}, () => createRef<HTMLInputElement>())
     );
@@ -28,8 +31,6 @@ const DeviceVerificationForm: React.FC<{accountCredentials: AccountCredentialsTy
         isOpen: false,
         message: ''
     });
-
-    const dispatch = useAppDispatch()
 
     const getCode = () => {
         let code = '';
@@ -61,6 +62,29 @@ const DeviceVerificationForm: React.FC<{accountCredentials: AccountCredentialsTy
         };
     }, [digitsRefs, handleKeyPress]);
 
+    useEffect(() => {
+        if (!!error) {
+            digitsRefs.forEach(
+                (ref) => {
+                    ref.current!.value = "";
+                }
+            )
+            setErrorAlertState({
+                isOpen: true,
+                message: error.message
+            });
+        }
+    }, [error, digitsRefs]);
+
+    const handleLoginSuccessResponse = (response: any) => {
+        const tokens: Tokens = {
+            authToken: response['access_token'],
+            refreshToken: response['refresh_token']
+        }
+        dispatch(userAuthenticationActions.loginHandler(tokens));
+        navigate('/transfers', {replace: true});
+    }
+
     const submitHandler = () => {
         const code = getCode();
         if (clientId === null) {
@@ -78,35 +102,23 @@ const DeviceVerificationForm: React.FC<{accountCredentials: AccountCredentialsTy
             return;
         }
 
-        const body = JSON.stringify({
-            clientId: clientId,
-            code: code,
-            deviceFingerprint : new ClientJS().getFingerprint().toString(),
-            password: accountCredentials.password
-        })
-
-        dispatch(sendRequest(
-            {body: body, url: REST_PATH_AUTH + '/login/verify', method: 'POST'}
-        )).then((response) => {
-
-            if(store.getState().userAuthentication.status == 200)  navigate('/transfers', {replace: true});
-
-                if (store.getState().userAuthentication.error) {
-                    digitsRefs.forEach(
-                        (ref) => {
-                            ref.current!.value = "";
-                        }
-                    )
-                    setErrorAlertState({
-                        isOpen: true,
-                        message: store.getState().userAuthentication.error!
-                    });
-                }
+        const client = new ClientJS();
+        const loginRequestData: RequestConfig = {
+            url: REST_PATH_AUTH + "/login/verify",
+            method: "POST",
+            body: {
+                "clientId": clientId,
+                "code": code,
+                "deviceFingerprint": client.getFingerprint().toString(),
+                "password": accountCredentials.password
+            },
+            headers: {
+                'Content-Type': 'application/json'
             }
-        )
+        };
 
+        verificationLoginRequest(loginRequestData, handleLoginSuccessResponse);
     }
-
 
     const handleFocus = (index: number) => {
         setCurrentIndex(index);
@@ -121,8 +133,7 @@ const DeviceVerificationForm: React.FC<{accountCredentials: AccountCredentialsTy
                 marginTop: "100px",
             }}
         >
-            <h1>{store.getState().userAuthentication.isLoading}</h1>
-            <Spinner isLoading={store.getState().userAuthentication.isLoading}/>
+            <Spinner isLoading={isLoading}/>
             <AlertSnackBar severity={"error"} alertState={{"state": errorAlertState, "setState": setErrorAlertState}}/>
 
             <Paper

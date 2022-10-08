@@ -3,34 +3,34 @@ import {combineReducers} from "redux";
 import {configureStore} from "@reduxjs/toolkit";
 import storage from 'redux-persist/lib/storage'
 import {persistReducer, persistStore} from 'redux-persist'
-import {userAuthenticationSlice} from "./slice/userAuthenticationSlice";
-import {subaccountBalanceSlice} from "./slice/subaccountBalanceSlice";
+
+import subaccountBalanceReducer from "./slice/subaccountBalanceSlice";
+import userAuthenticationReducer from "./slice/userAuthenticationSlice";
 
 
 const reducers = combineReducers({
-    userAuthentication: userAuthenticationSlice.reducer,
-    subaccountBalance : subaccountBalanceSlice.reducer
-
+    userAuthentication: userAuthenticationReducer,
+    subaccountBalance: subaccountBalanceReducer
 })
 
 const persistConfig = {
     key: 'persist-key',
     storage
-}
+};
 
-const persistedReducer = persistReducer(persistConfig, reducers)
+const persistedReducer = persistReducer(persistConfig, reducers);
 
 const store = configureStore({
     devTools: true,
-    preloadedState : {},
+    preloadedState: {},
     reducer: persistedReducer,
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
-            serializableCheck: false,
+            serializableCheck: false
         })
 })
 
-const persistor = persistStore(store)
+const persistor = persistStore(store);
 
 export default store;
 export {persistor}

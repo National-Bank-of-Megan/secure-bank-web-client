@@ -1,4 +1,4 @@
 export type UserLoginType = {
-    clientId :string,
-    password :string
+    clientId: string,
+    password: string
 }

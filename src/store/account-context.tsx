@@ -16,7 +16,8 @@ const AccountContext = React.createContext<AccountContextObj>({
         email: '',
         phoneNumber: ''
     },
-    setAccountData: () => {}
+    setAccountData: () => {
+    }
 });
 
 export const AccountContextProvider: React.FC<Props> = ({children}) => {

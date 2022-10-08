@@ -14,14 +14,13 @@ import {
 import {AccountCurrencyBalance} from "../TotalBalanceContent";
 import useInput from "../../../hook/use-input";
 import useFetch, {RequestConfig} from "../../../hook/use-fetch";
-import {REST_PATH_ACCOUNT, REST_PATH_AUTH} from "../../../constants/Constants";
+import {REST_PATH_ACCOUNT} from "../../../constants/Constants";
 import React, {useEffect, useState} from "react";
 import Spinner from "../../common/Spinner";
 import {isValidAmount} from "../../../common/validation";
 import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from 'decimal.js';
-import {subaccountBalanceActions} from "../../../store/slice/subaccountBalanceSlice";
 import {useAppDispatch} from "../../../hook/redux-hooks";
 
 const AddMoneyDialog: React.FC<{
@@ -221,7 +220,8 @@ const AddMoneyDialog: React.FC<{
                                         marginTop: "10px",
                                     }}
                                 >
-                                    <>Currency balance after money load: {addBalanceValue.trim() !== '' ? Decimal.add(foundCurrency.balance, addBalanceValue).toString() : foundCurrency.balance.toString()} {foundCurrency.symbol}</>
+                                    <>Currency balance after money
+                                        load: {addBalanceValue.trim() !== '' ? Decimal.add(foundCurrency.balance, addBalanceValue).toString() : foundCurrency.balance.toString()} {foundCurrency.symbol}</>
                                 </Typography>
                                 <Typography
                                     color="text.secondary"

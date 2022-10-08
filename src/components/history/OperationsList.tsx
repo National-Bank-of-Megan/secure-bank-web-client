@@ -7,9 +7,9 @@ import ServerError from "../notifications/ServerError";
 import DetailedTransaction from "../../models/detailedTransaction";
 
 const OperationsList: React.FC<{ history: DetailedTransaction[], serverError: boolean }> = ({
-                                                                                                    history,
-                                                                                                    serverError
-                                                                                                }) => {
+                                                                                                history,
+                                                                                                serverError
+                                                                                            }) => {
     const numberPerPage = 5;
     const length = history.length;
     const nPages: number = Math.ceil(length / numberPerPage);
@@ -22,7 +22,7 @@ const OperationsList: React.FC<{ history: DetailedTransaction[], serverError: bo
     return (
         <Box
             sx={{
-                position :'relative',
+                position: 'relative',
                 display: "flex",
                 flexDirection: "column",
                 rowGap: "18px",

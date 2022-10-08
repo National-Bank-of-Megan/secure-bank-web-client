@@ -19,7 +19,13 @@ const CurrencyExchangeHistoryCard: React.FC<{ item: CurrencyExchangeHistory }> =
                         <Typography variant="h5"
                                     color="success.main">{'+' + item.bought.toString() + ' ' + item.currencyBought}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                            {new Date(item.requestDate).toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short",hour : "numeric",minute :"numeric"})}
+                            {new Date(item.requestDate).toLocaleDateString('en-us', {
+                                year: "numeric",
+                                day: "numeric",
+                                month: "short",
+                                hour: "numeric",
+                                minute: "numeric"
+                            })}
                         </Typography></Box>
                     <Box sx={{
                         alignSelf: 'center'

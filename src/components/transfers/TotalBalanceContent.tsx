@@ -1,6 +1,6 @@
 import {Add, ArrowForward, Cached, Favorite,} from "@mui/icons-material";
 import {Box, Fab, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography,} from "@mui/material";
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import buttonStyles from "../../styles/ButtonStyles";
 import TransferDialog from "./dialog/TransferDialog";
 import AddMoneyDialog from "./dialog/AddMoneyDialog";
@@ -11,7 +11,7 @@ import {Decimal} from "decimal.js";
 import store from "../../store/store";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import AlertSnackBar, {AlertState} from "../notifications/AlertSnackBar";
-import {REST_PATH_ACCOUNT, REST_PATH_AUTH} from "../../constants/Constants";
+import {REST_PATH_ACCOUNT} from "../../constants/Constants";
 import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
 
 export const availableCurrencies = {
@@ -142,7 +142,7 @@ const TotalBalanceContent = () => {
 
         sendSubAccountsRequest(fetchSubAccountsRequest, transformSubAccounts);
 
-    //    get favorite transfer receivers
+        //    get favorite transfer receivers
         const transformFavorites = (favoriteReceiversObj: FavoriteReceiverResponse[]) => {
             setFavoriteReceiversList(favoriteReceiversObj);
         }
@@ -151,12 +151,12 @@ const TotalBalanceContent = () => {
             url: REST_PATH_ACCOUNT + '/receiver/all'
         }
 
-        sendFavoriteTransferReceiversRequest(fetchFavoriteReceiversRequest,transformFavorites)
+        sendFavoriteTransferReceiversRequest(fetchFavoriteReceiversRequest, transformFavorites)
     }, [sendSubAccountsRequest, sendFavoriteTransferReceiversRequest])
 
-    useEffect(()=>{
-       setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
-    },[store])
+    useEffect(() => {
+        setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
+    }, [store])
 
 
     return (
@@ -197,7 +197,7 @@ const TotalBalanceContent = () => {
                         }}>Currency balance</InputLabel>
                         <Select value={selectedCurrencyName} onChange={handleCurrencyChange}>
                             {store.getState().subaccountBalance.subaccounts.map((accountCurrencyBalance) => (
-                                <MenuItem
+                                <MenuItem key={accountCurrencyBalance.currency}
                                     value={accountCurrencyBalance.currency}>{mapSelectedCurrencyToString(accountCurrencyBalance)}</MenuItem>
                             ))}
                         </Select>

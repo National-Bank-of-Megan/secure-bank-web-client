@@ -7,9 +7,9 @@ import ServerError from "../notifications/ServerError";
 import CurrencyExchangeHistory from "../../models/currencyExchangeHistory";
 
 const ExchangeList: React.FC<{ history: CurrencyExchangeHistory[], serverError: boolean }> = ({
-                                                                                                      history,
-                                                                                                      serverError
-                                                                                                  }) => {
+                                                                                                  history,
+                                                                                                  serverError
+                                                                                              }) => {
     const numberPerPage = 5;
     const length = history.length;
     const nPages: number = Math.ceil(length / numberPerPage);
@@ -19,7 +19,7 @@ const ExchangeList: React.FC<{ history: CurrencyExchangeHistory[], serverError: 
         endIndex: numberPerPage
     })
 
-    return (<Stack spacing={2} sx={{  marginTop: '50px'}}>
+    return (<Stack spacing={2} sx={{marginTop: '50px'}}>
 
             {
                 serverError && <ServerError/>

@@ -33,12 +33,13 @@ const AccountPage = () => {
 
     return (
         <>
-            {changedPasswordInfo && <AlertSnackBar alertState={{"state": passwordChangedAlertState, "setState": setPasswordChangedAlertState}}
-                                                   severity="success" />}
+            {changedPasswordInfo && <AlertSnackBar
+                alertState={{"state": passwordChangedAlertState, "setState": setPasswordChangedAlertState}}
+                severity="success"/>}
             <Stack spacing={5}>
-    
-                <AccountInfo />
-    
+
+                <AccountInfo/>
+
                 <Divider sx={{backgroundColor: 'primary.main'}}/>
                 <Stack spacing={3}>
                     <Typography
@@ -58,7 +59,7 @@ const AccountPage = () => {
                             Change password
                         </Button>
                     </Box>
-    
+
                 </Stack>
             </Stack>
         </>

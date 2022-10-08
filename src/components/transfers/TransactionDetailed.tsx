@@ -32,7 +32,13 @@ const TransactionDetailed: React.FC<{ item: DetailedTransaction }> = ({item}) =>
                     <Box>
                         <Typography variant="h5">{item.title}</Typography>
                         <Typography variant="body2" color="text.secondary">
-                            {item.requestDate.toLocaleDateString('en-us', {year: "numeric", day: "numeric", month: "short", hour : "numeric",minute :"numeric"})}
+                            {item.requestDate.toLocaleDateString('en-us', {
+                                year: "numeric",
+                                day: "numeric",
+                                month: "short",
+                                hour: "numeric",
+                                minute: "numeric"
+                            })}
                         </Typography>
                     </Box>
                     <Box
