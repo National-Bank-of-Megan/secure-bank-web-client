@@ -1,4 +1,4 @@
-import React, {SyntheticEvent, useEffect, useMemo, useState,} from "react";
+import React, {SyntheticEvent, useCallback, useEffect, useMemo, useState,} from "react";
 import {AppBar, Avatar, Badge, Box, Button, Paper, Popover, Stack, Tabs, Toolbar, Typography,} from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -15,8 +15,11 @@ import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice
 import buttonStyles from "../../styles/ButtonStyles";
 import storage from "redux-persist/es/storage";
 import useCredentialsValidation from "../../hook/use-credentials-validation";
+import {REST_PATH_TRANSFER} from "../../constants/Constants";
+import TransferNotificationClass from "../../models/TransferNotificationClass";
+import useRefresh from "../../hook/use-refresh";
 
-export type notificationType = {
+export type NotificationType = {
     wasViewed: boolean;
     contents: Object;
     notificationType: string;
@@ -24,7 +27,8 @@ export type notificationType = {
 
 export default function Navbar() {
 
-    const { isUserLoggedIn } = useCredentialsValidation();
+    const { isUserLoggedIn, isTokenValid, isAuthTokenValid, isRefreshTokenValid } = useCredentialsValidation();
+    const { requestAuthTokenWithRefreshToken } = useRefresh();
     const {pathname} = useLocation();
     const [currentPath, setCurrentPath] = useState<number>(0);
     const [notificationsPopover, setNotificationsPopover] =
@@ -36,10 +40,51 @@ export default function Navbar() {
         []
     );
 
-    const [notifications, setNotifications] = useState<notificationType[]>([]);
-    const [newNotificationsCounter, setNewNotificationsCounter] =
-        useState<number>(0);
+    const [notifications, setNotifications] = useState<NotificationType[]>([]);
+    const [newNotificationsCounter, setNewNotificationsCounter] = useState<number>(0);
     const dispatch = useAppDispatch();
+
+    const subscribeToNotifications = useCallback(async () => {
+        console.log("== SUBSCRIBING TO NOTIFICATIONS ==");
+        
+        let authToken = store.getState().userAuthentication.authToken;
+        if (!isTokenValid(authToken) && isRefreshTokenValid()) {
+            authToken = await requestAuthTokenWithRefreshToken();
+        }
+
+        console.log("Auth token sent with subscribe request is " + authToken);
+        
+        const eventSource = new EventSource(REST_PATH_TRANSFER + "/notification/subscribe?jwt=" + authToken);
+
+        eventSource.onmessage = (event: MessageEvent) => {
+            console.log("Notification received");
+
+            const data = JSON.parse(event.data);
+
+            const receivedTransferNotification = new TransferNotificationClass(data.title, data.senderFirstName,
+                data.senderLastName, data.amount, data.currency, new Date(data.arrivalDate));
+
+            setNotifications(previousNotifications => {
+                return [...previousNotifications, {
+                    wasViewed: false,
+                    notificationType: "TRANSFER",
+                    contents: receivedTransferNotification
+                }];
+            });
+
+            dispatch(subaccountBalanceActions.addToBalance({currency: data.currency, amount: data.amount}));
+            setNewNotificationsCounter((previousCounterValue) => previousCounterValue + 1);
+        }
+
+        eventSource.onopen = (event) => {
+            console.log("Connection to API notifications is open");
+        }
+
+        eventSource.onerror = (event: Event) => {
+            console.log("Error occurred while connecting to " + REST_PATH_TRANSFER + "/notification/subscribe. Closing connection");
+            eventSource.close();
+        }
+    }, [dispatch, isRefreshTokenValid, isTokenValid, requestAuthTokenWithRefreshToken]);
 
     // const subscribe = async () => {
     //     let req = ''
@@ -101,8 +146,13 @@ export default function Navbar() {
     useEffect(() => {
         const value = paths.indexOf(pathname);
         setCurrentPath(value);
-        // if (UserAuthenticationService.isUserLoggedIn()) subscribe();
     }, [pathname, paths, setCurrentPath]);
+
+    useEffect(() => {
+        if (isUserLoggedIn()) {
+            subscribeToNotifications();
+        }
+    }, [isUserLoggedIn, subscribeToNotifications]);
 
     const decrementNotificationCounter = () => {
         setNewNotificationsCounter(newNotificationsCounter - 1);

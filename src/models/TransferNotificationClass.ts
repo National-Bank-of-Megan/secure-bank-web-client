@@ -1,15 +1,15 @@
 class TransferNotificationClass {
     title: string;
-    senderFirstname: string;
-    senderLastname: string;
+    senderFirstName: string;
+    senderLastName: string;
     amount: number;
     currency: string;
     arrivalDate: Date;
 
-    constructor(title: string, senderFirstname: string, senderLastname: string, amount: number, currency: string, arrivalDate: Date) {
+    constructor(title: string, senderFirstName: string, senderLastName: string, amount: number, currency: string, arrivalDate: Date) {
         this.title = title;
-        this.senderFirstname = senderFirstname;
-        this.senderLastname = senderLastname;
+        this.senderFirstName = senderFirstName;
+        this.senderLastName = senderLastName;
         this.amount = amount;
         this.currency = currency;
         this.arrivalDate = arrivalDate;

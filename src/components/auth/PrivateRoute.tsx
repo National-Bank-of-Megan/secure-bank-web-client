@@ -37,7 +37,7 @@ const PrivateRoute: React.FC<Props> = ({children}) => {
         const loginPageUrl = '/login';
         const sessionExpiredAlertState: AlertState = {
             isOpen: true,
-            message: 'Your session has expired, please log in again'
+            message: 'Your session has expired, please log in again' // TODO: naprawić
         }
         navigate(loginPageUrl, { state: sessionExpiredAlertState });
     }

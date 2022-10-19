@@ -2,10 +2,10 @@ import {CompareArrows} from "@mui/icons-material";
 import {Typography} from "@mui/material";
 import {Box} from "@mui/system";
 import TransferNotificationClass from "../../../models/TransferNotificationClass";
-import {notificationType} from "../../layout/Navbar";
+import {NotificationType} from "../../layout/Navbar";
 
 const TransferNotification: React.FC<{
-    transferData: notificationType;
+    transferData: NotificationType;
     decrementNotificationCounter: () => void;
 }> = ({transferData, decrementNotificationCounter}) => {
     let data = transferData.contents as TransferNotificationClass;
@@ -35,9 +35,9 @@ const TransferNotification: React.FC<{
             >
                 <Typography color="primary">{data.title}</Typography>
                 <Typography>
-                    {data.senderFirstname +
+                    {data.senderFirstName +
                         " " +
-                        data.senderLastname +
+                        data.senderLastName +
                         " just ordered transfer for you."}
                 </Typography>
                 <Typography>

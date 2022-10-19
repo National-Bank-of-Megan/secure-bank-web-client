@@ -98,7 +98,6 @@ export const userAuthenticationSlice = createSlice({
         },
         setAuthToken: (state, action) => {
             console.log('USER AUTH SLICE SETTING ACCESS TOKEN')
-            console.log(action.payload)
             state.authToken = action.payload;
         },
         clearAuthentication: (state) => {

@@ -1,8 +1,8 @@
 import {Container} from "@mui/material";
-import {notificationType} from "../layout/Navbar";
+import {NotificationType} from "../layout/Navbar";
 import TransferNotification from "./transfer/TransferNotification";
 
-const NotificationsListPopover: React.FC<{ notifications: notificationType[], decrementNotificationCounter: () => void }> = ({
+const NotificationsListPopover: React.FC<{ notifications: NotificationType[], decrementNotificationCounter: () => void }> = ({
                                                                                                                                  decrementNotificationCounter,
                                                                                                                                  notifications
                                                                                                                              }) => {
