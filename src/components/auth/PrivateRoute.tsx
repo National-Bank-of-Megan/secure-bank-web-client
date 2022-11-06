@@ -2,6 +2,7 @@ import React from 'react'
 import {useLocation, useNavigate} from 'react-router-dom'
 import useCredentialsValidation from "../../hook/use-credentials-validation";
 import {AlertState} from "../notifications/AlertSnackBar";
+import {useAppSelector} from "../../hook/redux-hooks";
 
 
 type Props = {
@@ -9,35 +10,18 @@ type Props = {
 }
 
 const PrivateRoute: React.FC<Props> = ({children}) => {
-    const location = useLocation();
     const navigate = useNavigate();
     const { isUserLoggedIn } = useCredentialsValidation();
-    // const {requestAuthTokenWithRefreshToken} = useRefreshToken();
-    // const dispatch = useAppDispatch();
-    // const navigate = useNavigate();
-
-    // if (
-    //     !UserAuthenticationService.isTokenValid("refreshToken") &&
-    //     UserAuthenticationService.isTokenValid("accessToken")
-    // ) {
-    //     dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
-    //     dispatch(userAuthenticationActions.clearAuthentication());
-    //     storage.removeItem("persist: persist-key");
-    //     navigate("/login");
-    // }
-    // if (!UserAuthenticationService.isUserLoggedIn() && UserAuthenticationService.isTokenValid('refreshToken')) {
-    //     try {
-    //         requestAuthTokenWithRefreshToken();
-    //     } catch (error: any) {
-    //         console.log("Something went wrong - " + error.msg);
-    //     }
-    // }
+    const userAuth = useAppSelector((state) => state.userAuthentication);
 
     if (!isUserLoggedIn()) {
         const loginPageUrl = '/login';
-        const sessionExpiredAlertState: AlertState = {
-            isOpen: true,
-            message: 'Your session has expired, please log in again' // TODO: naprawić
+        let sessionExpiredAlertState: AlertState | null = null;
+        if (userAuth.refreshToken || userAuth.authToken) {
+            sessionExpiredAlertState = {
+                isOpen: true,
+                message: 'Your session has expired, please log in again' // TODO: check if works and check if clearAuthentication to be invoked here?
+            }
         }
         navigate(loginPageUrl, { state: sessionExpiredAlertState });
     }

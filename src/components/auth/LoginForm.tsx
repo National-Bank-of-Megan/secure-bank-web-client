@@ -18,7 +18,7 @@ const LoginForm = () => {
     const location = useLocation();
 
     useEffect(() => {
-        const sessionExpiredInfoAlertState = location.state as AlertState;
+        const sessionExpiredInfoAlertState = location.state as AlertState | null;
         if (sessionExpiredInfoAlertState) {
             setInfoAlertState(sessionExpiredInfoAlertState);
         }

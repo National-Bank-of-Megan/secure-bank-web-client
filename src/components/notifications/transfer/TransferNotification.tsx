@@ -35,10 +35,7 @@ const TransferNotification: React.FC<{
             >
                 <Typography color="primary">{data.title}</Typography>
                 <Typography>
-                    {data.senderFirstName +
-                        " " +
-                        data.senderLastName +
-                        " just ordered transfer for you."}
+                    {"You have received a new transfer from " + data.senderFirstName + " " + data.senderLastName + "."}
                 </Typography>
                 <Typography>
                     {"Transfered amount:  " +

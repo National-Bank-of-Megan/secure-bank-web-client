@@ -52,16 +52,20 @@ const useFetch = () => {
                     const fetchedAuthToken = await requestAuthTokenWithRefreshToken();
                     requestConfig.headers["Authorization"] = BEARER_PREFIX + fetchedAuthToken;
                 } else if (!requestConfig.url.startsWith(REST_PATH_AUTH)) {
-                    if (!refreshTokenValid) { // TODO: 99.99% redundant if
+                    let sessionExpiredAlertState: AlertState | null = null;
+
+                    if (userAuth.refreshToken || userAuth.authToken) {
                         dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
                         dispatch(userAuthenticationActions.clearAuthentication());
                         await storage.removeItem("persist: persist-key");
+
+                        sessionExpiredAlertState = {
+                            isOpen: true,
+                            message: 'Your session has expired, please log in again'
+                        }
                     }
+
                     const loginPageUrl = '/login';
-                    const sessionExpiredAlertState: AlertState = {
-                        isOpen: true,
-                        message: 'Your session has expired, please log in again'
-                    }
                     navigate(loginPageUrl, { state: sessionExpiredAlertState });
                 }
 
@@ -89,7 +93,7 @@ const useFetch = () => {
             }
             setIsLoading(false);
         },
-        [dispatch, isAuthTokenValid, isRefreshTokenValid, navigate, requestAuthTokenWithRefreshToken, userAuth.authToken]
+        [dispatch, isAuthTokenValid, isRefreshTokenValid, navigate, requestAuthTokenWithRefreshToken, userAuth.authToken, userAuth.refreshToken]
     );
 
     return {

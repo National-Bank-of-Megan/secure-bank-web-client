@@ -15,9 +15,10 @@ import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice
 import buttonStyles from "../../styles/ButtonStyles";
 import storage from "redux-persist/es/storage";
 import useCredentialsValidation from "../../hook/use-credentials-validation";
-import {REST_PATH_TRANSFER} from "../../constants/Constants";
+import {NOTIFICATION_EVENT_NAME, REST_PATH_TRANSFER} from "../../constants/Constants";
 import TransferNotificationClass from "../../models/TransferNotificationClass";
 import useRefresh from "../../hook/use-refresh";
+import {AlertState} from "../notifications/AlertSnackBar";
 
 export type NotificationType = {
     wasViewed: boolean;
@@ -56,7 +57,7 @@ export default function Navbar() {
         
         const eventSource = new EventSource(REST_PATH_TRANSFER + "/notification/subscribe?jwt=" + authToken);
 
-        eventSource.onmessage = (event: MessageEvent) => {
+        eventSource.addEventListener(NOTIFICATION_EVENT_NAME, (event: MessageEvent) => {
             console.log("Notification received");
 
             const data = JSON.parse(event.data);
@@ -65,83 +66,35 @@ export default function Navbar() {
                 data.senderLastName, data.amount, data.currency, new Date(data.arrivalDate));
 
             setNotifications(previousNotifications => {
-                return [...previousNotifications, {
+                return [{
                     wasViewed: false,
                     notificationType: "TRANSFER",
                     contents: receivedTransferNotification
-                }];
+                }, ...previousNotifications];
             });
 
             dispatch(subaccountBalanceActions.addToBalance({currency: data.currency, amount: data.amount}));
             setNewNotificationsCounter((previousCounterValue) => previousCounterValue + 1);
-        }
+        });
 
         eventSource.onopen = (event) => {
             console.log("Connection to API notifications is open");
+            if (!isUserLoggedIn()) {
+                const loginPageUrl = '/login';
+                const sessionExpiredAlertState: AlertState = {
+                    isOpen: true,
+                    message: 'Your session has expired, please log in again'
+                }
+                navigate(loginPageUrl, { state: sessionExpiredAlertState });
+            }
         }
 
         eventSource.onerror = (event: Event) => {
             console.log("Error occurred while connecting to " + REST_PATH_TRANSFER + "/notification/subscribe. Closing connection");
             eventSource.close();
+            // TODO: consider trying to reconnect (idk if retrying to connect a is built-in functionality or not)
         }
-    }, [dispatch, isRefreshTokenValid, isTokenValid, requestAuthTokenWithRefreshToken]);
-
-    // const subscribe = async () => {
-    //     let req = ''
-    //     let sse: EventSource | null = null;
-    //     console.log("== SUBSCRIBING TO NOTIFICATIONS ==");
-    //     let isAccessTokenValid =
-    //         UserAuthenticationService.isTokenValid("accessToken");
-    //     let isRefreshTokenValid =
-    //         UserAuthenticationService.isTokenValid("refreshToken");
-    //
-    //     if (isRefreshTokenValid && !isAccessTokenValid) {
-    //         let jwt = await requestAuthTokenWithRefreshToken();
-    //         req = REST_PATH_TRANSFER +
-    //             "/notification/subscribe?jwt=" + store.getState().userAuthentication.authTokens.accessToken;
-    //         sse = new EventSource(req);
-    //     } else {
-    //         req = REST_PATH_TRANSFER +
-    //             "/notification/subscribe?jwt=" +
-    //             store.getState().userAuthentication.authTokens.accessToken!
-    //         sse = new EventSource(req);
-    //     }
-    //
-    //     sse!.addEventListener("TRANSFER_NOTIFICATION", (event) => {
-    //         console.log("== NEW TRANSFER NOTIFICATION RECEIVED ==");
-    //         console.log(event);
-    //
-    //         let messageEvent = event as MessageEvent;
-    //         let data = JSON.parse(messageEvent.data);
-    //         notifications.push({
-    //             wasViewed: false,
-    //             notificationType: "TRANSFER",
-    //             contents: new TransferNotificationClass(
-    //                 data.title,
-    //                 data.senderFirstname,
-    //                 data.senderLastname,
-    //                 data.amount,
-    //                 data.currency,
-    //                 new Date()
-    //             ),
-    //         });
-    //         dispatch(subaccountBalanceActions.addToBalance({currency: data.currency, amount: data.amount}))
-    //         setNewNotificationsCounter(newNotificationsCounter + 1);
-    //
-    //     });
-    //
-    //     sse!.addEventListener("open", (event) => {
-    //         console.log("== CONNECTION OPENED ==");
-    //     });
-    //
-    //     sse!.onerror = function (event) {
-    //         console.log(event)
-    //         sse!.close()
-    //         if (UserAuthenticationService.isUserLoggedIn()) subscribe()
-    //     };
-    //
-    //
-    // };
+    }, [dispatch, isRefreshTokenValid, isTokenValid, isUserLoggedIn, navigate, requestAuthTokenWithRefreshToken]);
 
     useEffect(() => {
         const value = paths.indexOf(pathname);
