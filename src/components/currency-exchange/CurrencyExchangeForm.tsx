@@ -16,6 +16,7 @@ import {AccountCurrencyBalance} from "../transfers/TotalBalanceContent";
 import ServerError from "../notifications/ServerError";
 import {useAppDispatch} from "../../hook/redux-hooks";
 import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
+import {Decimal} from "decimal.js";
 
 
 export enum Action {
@@ -70,7 +71,7 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
 
         if (top.state.action === actionSettingNewAmount) {
             setCurrentTopAmount(newAmount);
-            let convertedNewAmount = newAmount * conversionRate;
+            const convertedNewAmount = Decimal.mul(newAmount, conversionRate).toDecimalPlaces(2).toNumber();
             setCurrentBottomAmount(convertedNewAmount);
             let balance = null;
             if (top.state.action === Action.sell) {
@@ -85,7 +86,7 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
                 checkIfExchangePossible(setErrorAlertState, bottom, convertedNewAmount, balance, newAmount, top.state.currency)
             }
         }
-    }, [top, bottom, setErrorAlertState, findCurrencyByName, checkIfExchangePossible, conversionRate])
+    }, [top, bottom, setErrorAlertState, checkIfExchangePossible, conversionRate])
 
     const returnArrow = () => {
         if (isArrowUp) return <ArrowUpwardIcon sx={{color: "primary.main"}}/>

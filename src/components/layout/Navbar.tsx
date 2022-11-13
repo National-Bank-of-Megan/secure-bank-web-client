@@ -31,7 +31,7 @@ export default function Navbar() {
     const { isUserLoggedIn, isTokenValid, isAuthTokenValid, isRefreshTokenValid } = useCredentialsValidation();
     const { requestAuthTokenWithRefreshToken } = useRefresh();
     const {pathname} = useLocation();
-    const [currentPath, setCurrentPath] = useState<number>(0);
+    const [currentPath, setCurrentPath] = useState<number | boolean>(0);
     const [notificationsPopover, setNotificationsPopover] =
         React.useState<HTMLButtonElement | null>(null);
 
@@ -52,8 +52,6 @@ export default function Navbar() {
         if (!isTokenValid(authToken) && isRefreshTokenValid()) {
             authToken = await requestAuthTokenWithRefreshToken();
         }
-
-        console.log("Auth token sent with subscribe request is " + authToken);
         
         const eventSource = new EventSource(REST_PATH_TRANSFER + "/notification/subscribe?jwt=" + authToken);
 
@@ -94,18 +92,32 @@ export default function Navbar() {
             eventSource.close();
             // TODO: consider trying to reconnect (idk if retrying to connect a is built-in functionality or not)
         }
+
     }, [dispatch, isRefreshTokenValid, isTokenValid, isUserLoggedIn, navigate, requestAuthTokenWithRefreshToken]);
 
     useEffect(() => {
-        const value = paths.indexOf(pathname);
+        let value: number | boolean = paths.indexOf(pathname);
+        if (value === -1) {
+            value = false;
+        }
         setCurrentPath(value);
     }, [pathname, paths, setCurrentPath]);
 
+    const refreshToken = store.getState().userAuthentication.refreshToken;
+
     useEffect(() => {
+        // const requestAuthToken = async () => {
+        //     let authToken = store.getState().userAuthentication.authToken;
+        //     if (!isTokenValid(authToken) && isRefreshTokenValid()) {
+        //         authToken = await requestAuthTokenWithRefreshToken();
+        //     }
+        //     return authToken;
+        // }
+
         if (isUserLoggedIn()) {
             subscribeToNotifications();
         }
-    }, [isUserLoggedIn, subscribeToNotifications]);
+    }, [refreshToken]);
 
     const decrementNotificationCounter = () => {
         setNewNotificationsCounter(newNotificationsCounter - 1);
@@ -158,7 +170,6 @@ export default function Navbar() {
                                 size="large"
                                 aria-label="show 4 new mails"
                                 color="inherit"
-                                // component={Link} to="/notifications"
                                 onClick={handleNotificationsClick}
                             >
                                 <Badge badgeContent={newNotificationsCounter} color="error">
@@ -191,7 +202,7 @@ export default function Navbar() {
                                         width: "0.4em",
                                     },
                                     "*::-webkit-scrollbar-track": {
-                                        "-webkit-box-shadow": "inset 0 0 6px rgba(0,0,0,0.00)",
+                                        WebkitBoxShadow: "inset 0 0 6px rgba(0,0,0,0.00)",
                                     },
                                     "*::-webkit-scrollbar-thumb": {
                                         backgroundColor: "rgba(0,0,0,.1)",

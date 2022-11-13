@@ -68,22 +68,10 @@ const TotalBalanceContent = () => {
         sendRequest: sendFavoriteTransferReceiversRequest
     } = useFetch();
 
-    const [isAddMoneyErrorMessageOpen, setIsAddMoneyErrorMessageOpen] = useState(false);
-    const [isAddMoneySuccessMessageOpen, setIsAddMoneySuccessMessageOpen] = useState(false);
-    const [isAddFriendErrorMessageOpen, setIsAddFriendErrorMessageOpen] = useState(false);
-    const [isAddFriendSuccessMessageOpen, setIsAddFriendSuccessMessageOpen] = useState(false);
-    const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("PLN");
+    const [selectedCurrencyName, setSelectedCurrencyName] = useState<string>("");
     const dispatch = useAppDispatch()
 
     const [accountCurrencyBalanceList, setAccountCurrencyBalanceList] = useState<AccountCurrencyBalance[]>([]);
-    const [selectedCurrency, setSelectedCurrency] = useState<AccountCurrencyBalance>({
-        currency: '',
-        symbol: '',
-        balance: new Decimal(0.00)
-    });
-    //default currency for transfer
-    const [dialogCurrency, setDialogCurrency] = useState(selectedCurrency.currency);
-
 
     const handleTransferDialogOpen = () => {
         setOpenTransferDialog(true);
@@ -109,7 +97,6 @@ const TotalBalanceContent = () => {
         setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
     }
 
-
     const handleCurrencyChange = (e: SelectChangeEvent) => {
         const selectedCurrencyName = e.target.value;
         setSelectedCurrencyName(selectedCurrencyName);
@@ -132,8 +119,9 @@ const TotalBalanceContent = () => {
                 });
             }
             setAccountCurrencyBalanceList(loadedCurrencyBalances);
-            setSubAccountsLoaded(true);
             dispatch(subaccountBalanceActions.setSubaccountsBalance(loadedCurrencyBalances))
+            setSubAccountsLoaded(true);
+            setSelectedCurrencyName("PLN");
         }
 
         const fetchSubAccountsRequest: RequestConfig = {
@@ -152,22 +140,19 @@ const TotalBalanceContent = () => {
         }
 
         sendFavoriteTransferReceiversRequest(fetchFavoriteReceiversRequest, transformFavorites)
-    }, [sendSubAccountsRequest, sendFavoriteTransferReceiversRequest])
+    }, [sendSubAccountsRequest, sendFavoriteTransferReceiversRequest, dispatch])
 
     useEffect(() => {
         setAccountCurrencyBalanceList(store.getState().subaccountBalance.subaccounts)
-    }, [store])
+    }, [])
 
 
     return (
         <>
-
-
             <AlertSnackBar alertState={{"state": errorAlertState, "setState": setErrorAlertState}}
                            severity="error"/>
             <AlertSnackBar alertState={{"state": successAlertState, "setState": setSuccessAlertState}}
                            severity="success"/>
-
 
             <Box sx={{
                 display: "flex",

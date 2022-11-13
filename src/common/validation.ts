@@ -14,8 +14,7 @@ export const shouldUpdateNumberInput = (value: string): boolean => {
     }
     const maxDecimalPlaces = 2;
     const userDecimalPlaces = countDecimals(parseFloat(value));
-    console.log((userDecimalPlaces <= maxDecimalPlaces) && new Decimal(value).greaterThan(0.0))
-    return (userDecimalPlaces <= maxDecimalPlaces) && new Decimal(value).greaterThan(0.0);
+    return (userDecimalPlaces <= maxDecimalPlaces) && new Decimal(value).greaterThanOrEqualTo(0.0);
 }
 
 export const shouldUpdateTransferInput = (value: string, userBalance: Decimal): boolean => {

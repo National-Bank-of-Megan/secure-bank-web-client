@@ -17,10 +17,11 @@ const NotificationsListPopover: React.FC<{ notifications: NotificationType[], de
         }}>
 
             {
-                notifications.map((n) => {
+                notifications.map((n, index) => {
                     switch (n.notificationType) {
                         case "TRANSFER": {
                             return <TransferNotification
+                                key={index}
                                 transferData={n}
                                 decrementNotificationCounter={decrementNotificationCounter}
                             />
