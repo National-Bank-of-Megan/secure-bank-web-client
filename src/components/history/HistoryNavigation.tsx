@@ -68,8 +68,8 @@ const HistoryNavigation: React.FC<{ currentlyBrowsing: string, handleBrowsingCha
                         }}
                     >
                         {
-                            sortingTypes.map((type) => {
-                                return <MenuItem value={type}>{type}</MenuItem>
+                            sortingTypes.map((type, index) => {
+                                return <MenuItem key={index} value={type}>{type}</MenuItem>
                             })
                         }
                     </Select>

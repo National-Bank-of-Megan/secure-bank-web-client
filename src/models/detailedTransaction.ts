@@ -11,9 +11,9 @@ class DetailedTransaction extends MoneyBalanceOperation {
     receiver: string;
     balanceAfterTransfer: Decimal;
 
-    constructor(transferType: string, requestDate: Date, title: string, amount: Decimal, currency: string, status: string,
-                sender: string, receiver: string, balanceAfterTransfer: Decimal) {
-        super(requestDate);
+    constructor(id: number, transferType: string, requestDate: Date, title: string, amount: Decimal, currency: string,
+                status: string, sender: string, receiver: string, balanceAfterTransfer: Decimal) {
+        super(id, requestDate);
         this.transferType = transferType;
         this.title = title;
         this.amount = amount;

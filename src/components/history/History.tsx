@@ -78,12 +78,12 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
             const history: CurrencyExchangeHistory[] = [];
             for (const key in currencyExchangeHistoryObj) {
                 history.push({
+                    id: currencyExchangeHistoryObj[key].id,
                     requestDate: new Date(currencyExchangeHistoryObj[key].requestDate),
                     bought: currencyExchangeHistoryObj[key].amountBought,
                     currencyBought: currencyExchangeHistoryObj[key].currencyBought,
                     sold: currencyExchangeHistoryObj[key].amountSold,
                     currencySold: currencyExchangeHistoryObj[key].currencySold
-
                 })
             }
             setCurrencyExchangeHistory(history);
@@ -101,6 +101,7 @@ const History: React.FC<{ currentlyBrowsing: string, handleBrowsingChange: (even
             for (const key in detailedTransactionTypeObj) {
                 //todo co zorbic requested date
                 history.push({
+                    id: detailedTransactionTypeObj[key].id,
                     transferType: detailedTransactionTypeObj[key].transferType,
                     requestDate: new Date(detailedTransactionTypeObj[key].doneDate),
                     title: detailedTransactionTypeObj[key].title,

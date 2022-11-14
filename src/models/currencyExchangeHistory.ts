@@ -7,8 +7,8 @@ class CurrencyExchangeHistory extends MoneyBalanceOperation {
     sold: Decimal;
     currencySold: string;
 
-    constructor(requestDate: Date, bought: Decimal, currencyBought: string, sold: Decimal, currencySold: string) {
-        super(requestDate);
+    constructor(id: number, requestDate: Date, bought: Decimal, currencyBought: string, sold: Decimal, currencySold: string) {
+        super(id, requestDate);
         this.bought = bought;
         this.currencyBought = currencyBought;
         this.sold = sold;

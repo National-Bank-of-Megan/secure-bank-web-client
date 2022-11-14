@@ -29,7 +29,7 @@ const ExchangeList: React.FC<{ history: CurrencyExchangeHistory[], serverError: 
                 !serverError && <>
                     {
                         history.slice(pagination.startIndex, pagination.endIndex).map(i => {
-                            return <CurrencyExchangeHistoryCard item={i}/>
+                            return <CurrencyExchangeHistoryCard key={i.id} item={i}/>
                         })
                     }
                     <PaginationController

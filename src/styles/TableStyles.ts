@@ -1,10 +1,10 @@
 const TableStyles = {
 
     '& .MuiDataGrid-cell:hover': {
-        color: 'primary.main',
+        color: 'primary.main'
     },
     '.MuiDataGrid-columnSeparator': {
-        visibility: 'hidden',
+        visibility: 'hidden'
     }
 }
 export default TableStyles;

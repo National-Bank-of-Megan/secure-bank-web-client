@@ -36,7 +36,7 @@ const OperationsList: React.FC<{ history: DetailedTransaction[], serverError: bo
                 !serverError && <>
                     {
                         history.slice(pagination.startIndex, pagination.endIndex).map(item => {
-                            return <TransactionDetailed item={item}/>
+                            return <TransactionDetailed key={item.id} item={item}/>
                         })
                     }
                     <PaginationController

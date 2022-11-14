@@ -7,8 +7,8 @@ class TransactionSummary extends MoneyBalanceOperation {
     amount: Decimal;
     currency: string;
 
-    constructor(transferType: string, title: string, requestDate: Date, amount: Decimal, currency: string) {
-        super(requestDate);
+    constructor(id: number, transferType: string, title: string, requestDate: Date, amount: Decimal, currency: string) {
+        super(id, requestDate);
         this.transferType = transferType;
         this.title = title;
         this.amount = amount;
