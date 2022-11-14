@@ -10,7 +10,6 @@ export const subaccountBalanceSlice = createSlice({
 
     reducers: {
         setSubaccountsBalance: (state, action: PayloadAction<AccountCurrencyBalance[]>) => {
-            // console.log('setting subaccounts balance -> ' + action.payload)
             state.subaccounts = action.payload;
         },
         setBalance: (state, action) => {

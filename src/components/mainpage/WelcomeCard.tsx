@@ -48,7 +48,6 @@ export default function WelcomeCard() {
                 maxWidth: 750,
                 minHeight: 160,
                 margin: "auto",
-                // todo znalezc jakis ladnieszy sposob na ustawienie karty
                 marginTop: '10%'
             }}
         >

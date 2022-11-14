@@ -8,11 +8,6 @@ export const darkTheme = createTheme({
         mode: "dark",
         primary: {
             main: "#007AFF",
-        },
-        // info: {
-        //     main: "#e3f2fd"
-        // }
-
-        // }
-    },
+        }
+    }
 });
