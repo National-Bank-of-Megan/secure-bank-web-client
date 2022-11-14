@@ -9,6 +9,7 @@ import {subaccountBalanceActions} from "../store/slice/subaccountBalanceSlice";
 import storage from "redux-persist/es/storage";
 import useCredentialsValidation from "./use-credentials-validation";
 import {AlertState} from "../components/notifications/AlertSnackBar";
+import {ClientJS} from "clientjs";
 
 export type Headers = {
     [key: string]: any;
@@ -26,12 +27,19 @@ const useFetch = () => {
     const [isLoadedSuccessfully, setIsLoadedSuccessfully] = useState(false);
     const [error, setError] = useState<FetchError | null>(null);
     const navigate = useNavigate();
+    const clientjs = new ClientJS();
 
-    const { isAuthTokenValid, isRefreshTokenValid } = useCredentialsValidation();
-    const { requestAuthTokenWithRefreshToken } = useRefreshToken();
+    const {isAuthTokenValid, isRefreshTokenValid} = useCredentialsValidation();
+    const {requestAuthTokenWithRefreshToken} = useRefreshToken();
 
     const userAuth = useAppSelector((state) => state.userAuthentication);
     const dispatch = useAppDispatch();
+
+    async function logout() {
+        dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
+        dispatch(userAuthenticationActions.clearAuthentication());
+        await storage.removeItem("persist: persist-key");
+    }
 
     const sendRequest = useCallback(
         async <T, >(requestConfig: RequestConfig, applyData: (data: T, responseStatus: number) => void) => {
@@ -44,6 +52,8 @@ const useFetch = () => {
 
             const authTokenValid = isAuthTokenValid();
             const refreshTokenValid = isRefreshTokenValid();
+            requestConfig.headers['Device-Fingerprint'] = clientjs.getFingerprint();
+
 
             try {
                 if (authTokenValid) {
@@ -55,10 +65,7 @@ const useFetch = () => {
                     let sessionExpiredAlertState: AlertState | null = null;
 
                     if (userAuth.refreshToken || userAuth.authToken) {
-                        dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
-                        dispatch(userAuthenticationActions.clearAuthentication());
-                        await storage.removeItem("persist: persist-key");
-
+                        await logout()
                         sessionExpiredAlertState = {
                             isOpen: true,
                             message: 'Your session has expired, please log in again'
@@ -66,7 +73,7 @@ const useFetch = () => {
                     }
 
                     const loginPageUrl = '/login';
-                    navigate(loginPageUrl, { state: sessionExpiredAlertState });
+                    navigate(loginPageUrl, {state: sessionExpiredAlertState});
                 }
 
                 const APIAddress = requestConfig.url;
@@ -77,6 +84,7 @@ const useFetch = () => {
                 });
 
                 if (!response.ok) {
+                    if (response.status === 511) await logout()
                     const errorBody = await response.json();
                     const errorMessage = await errorBody.message;
                     throw new FetchError(response.status, errorMessage);

@@ -3,6 +3,8 @@ import FetchError from "../models/fetchError";
 import {REST_PATH_AUTH} from "../constants/Constants";
 import {useAppDispatch, useAppSelector} from "./redux-hooks";
 import {userAuthenticationActions} from "../store/slice/userAuthenticationSlice";
+import {subaccountBalanceActions} from "../store/slice/subaccountBalanceSlice";
+import storage from "redux-persist/es/storage";
 
 const useRefreshToken = () => {
     const dispatch = useAppDispatch()
@@ -19,6 +21,13 @@ const useRefreshToken = () => {
         });
 
         if (!response.ok) {
+            if (response.status === 511) {
+                dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
+                dispatch(userAuthenticationActions.clearAuthentication());
+                await storage.removeItem("persist: persist-key");
+            }
+
+
             const errorBody = await response.json();
             const errorMessage = await errorBody.message;
             throw new FetchError(response.status, errorMessage);

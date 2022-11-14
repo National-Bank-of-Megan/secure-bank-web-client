@@ -27,7 +27,7 @@ const useCredentialsValidation = () => {
     const isRefreshTokenValid = useCallback(() => {
         return isTokenValid(userAuthenticationState.refreshToken);
     }, [isTokenValid, userAuthenticationState.refreshToken])
-    
+
     const isUserLoggedIn = useCallback(() => {
         return isAuthTokenValid() || isRefreshTokenValid();
     }, [isAuthTokenValid, isRefreshTokenValid]);
