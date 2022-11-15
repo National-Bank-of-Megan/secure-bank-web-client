@@ -2,47 +2,49 @@ import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {AccountCurrencyBalance} from "../../components/transfers/TotalBalanceContent";
 import {Decimal} from "decimal.js";
 
+export type AccountCurrencyBalanceOperation = {
+    currency: string;
+    amount: Decimal;
+};
+
 export const subaccountBalanceSlice = createSlice({
     name: 'subaccountBalance',
     initialState: {
         subaccounts: [] as AccountCurrencyBalance[]
     },
-
     reducers: {
+
         setSubaccountsBalance: (state, action: PayloadAction<AccountCurrencyBalance[]>) => {
             state.subaccounts = action.payload;
         },
+
         setBalance: (state, action) => {
-            let newBalanceList = state.subaccounts.map(a => {
+            state.subaccounts = state.subaccounts.map(a => {
                 if (a.currency === action.payload.currency) {
                     a.balance = action.payload.amount
                 }
                 return a;
-            })
-            console.log(newBalanceList)
-            state.subaccounts = newBalanceList;
+            });
+        },
 
-        },
-        addToBalance: (state, action) => {
-            let newBalanceList = state.subaccounts.map(a => {
+        addToBalance: (state, action: PayloadAction<AccountCurrencyBalanceOperation>) => {
+            state.subaccounts = state.subaccounts.map(a => {
                 if (a.currency === action.payload.currency) {
-                    let x = Decimal.add(action.payload.amount, a.balance as Decimal)
-                    a.balance = x
+                    a.balance = Decimal.add(action.payload.amount, a.balance as Decimal)
                 }
                 return a;
-            })
-            state.subaccounts = newBalanceList;
+            });
         },
-        subtractFromBalance: (state, action) => {
-            let newBalanceList = state.subaccounts.map(a => {
+
+        subtractFromBalance: (state, action: PayloadAction<AccountCurrencyBalanceOperation>) => {
+            state.subaccounts = state.subaccounts.map(a => {
                 if (a.currency === action.payload.currency) {
-                    let x = Decimal.sub(a.balance as Decimal, action.payload.amount)
-                    a.balance = x
+                    a.balance = Decimal.sub(a.balance as Decimal, action.payload.amount)
                 }
                 return a;
-            })
-            state.subaccounts = newBalanceList;
+            });
         }
+
     }
 })
 

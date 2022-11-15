@@ -29,7 +29,7 @@ import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from "decimal.js";
 import store from "../../../store/store";
-import {useAppDispatch} from "../../../hook/redux-hooks";
+import {useAppDispatch, useAppSelector} from "../../../hook/redux-hooks";
 import DecodedJWT from "../../../models/decodedJWT";
 import jwt_decode from "jwt-decode";
 
@@ -38,17 +38,17 @@ const TransferDialog: React.FC<{
     setOpenTransferDialog: (isOpen: boolean) => void;
     selectedCurrencyName: string;
     setSelectedCurrencyName: (currencyName: string) => void;
-    currencies: AccountCurrencyBalance[]
     favoriteReceivers: FavoriteReceiverResponse[];
     setErrorAlertState: (alertState: AlertState) => void;
     setSuccessAlertState: (alertState: AlertState) => void;
     updateCurrencyBalance: (currencyName: string, amountToCharge: Decimal) => void;
 }> = (props) => {
 
+    const subaccountsState = useAppSelector((state) => state.subaccountBalance);
+    const dispatch = useAppDispatch();
 
     const appTheme = useTheme();
     const {isLoading, error, sendRequest: makeTransferRequest} = useFetch();
-    const dispatch = useAppDispatch()
 
     const [friendsDrawerOpen, setFriendsDrawerOpen] = useState(false);
     const {
@@ -78,7 +78,7 @@ const TransferDialog: React.FC<{
         valueChangeHandler: amountChangeHandler,
         inputBlurHandler: amountBlurHandler,
         clearInput: clearAmountValue
-    } = useTransferInput(isValidAmount, findCurrencyByName(props.selectedCurrencyName, props.currencies)!.balance, shouldUpdateTransferInput);
+    } = useTransferInput(isValidAmount, findCurrencyByName(props.selectedCurrencyName, subaccountsState.subaccounts)!.balance, shouldUpdateTransferInput);
 
     useEffect(() => {
         if (!!error) {
@@ -159,7 +159,7 @@ const TransferDialog: React.FC<{
         setFriendsDrawerOpen(!friendsDrawerOpen);
     };
 
-    const foundCurrency = findCurrencyByName(props.selectedCurrencyName, props.currencies)!;
+    const foundCurrency = findCurrencyByName(props.selectedCurrencyName, subaccountsState.subaccounts)!;
 
     return (
         // TODO: currency input component
@@ -298,7 +298,7 @@ const TransferDialog: React.FC<{
                                             },
                                         }}
                                     >
-                                        {props.currencies.map((currencyBalance) => (
+                                        {subaccountsState.subaccounts.map((currencyBalance) => (
                                             <MenuItem key={currencyBalance.currency} value={currencyBalance.currency}>
                                                 {currencyBalance.symbol}
                                             </MenuItem>

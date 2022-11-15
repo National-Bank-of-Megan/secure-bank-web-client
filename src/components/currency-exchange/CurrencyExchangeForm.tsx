@@ -14,7 +14,7 @@ import store from "../../store/store";
 import {findCurrencyByName} from "../../common/transfer";
 import {AccountCurrencyBalance} from "../transfers/TotalBalanceContent";
 import ServerError from "../notifications/ServerError";
-import {useAppDispatch} from "../../hook/redux-hooks";
+import {useAppDispatch, useAppSelector} from "../../hook/redux-hooks";
 import {subaccountBalanceActions} from "../../store/slice/subaccountBalanceSlice";
 import {Decimal} from "decimal.js";
 
@@ -30,6 +30,7 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
                                                                                                                                                           bottom,
                                                                                                                                                           rates
                                                                                                                                                       }) => {
+    const subaccountsState = useAppSelector((state) => state.subaccountBalance);
     const dispatch = useAppDispatch();
     const {isLoading, error, sendRequest: sendExchangeCurrencyRequest} = useFetch();
     const [serverError, setServerError] = useState<boolean>(false);
@@ -48,7 +49,7 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
 
     const getSubAccountBalance = (currency: string) => {
         let x = null;
-        let subAccounts: AccountCurrencyBalance[] = store.getState().subaccountBalance.subaccounts;
+        let subAccounts: AccountCurrencyBalance[] = subaccountsState.subaccounts;
         subAccounts.forEach((sub) => {
             if (sub['currency'] === currency) x = sub['balance']
         })
@@ -118,10 +119,10 @@ const CurrencyExchangeForm: React.FC<{ top: UseStateType<IExchangeData>, bottom:
             top.setState({...top.state, "amount": 0.00})
             // dispatch(subaccountBalanceActions.setBalance({currency : top.state.currency, amount : getSubAccountBalance(top.state.currency)!+currentTopAmount}))
             // dispatch(subaccountBalanceActions.setBalance({currency : bottom.state.currency, amount : getSubAccountBalance(bottom.state.currency)!-currentBottomAmount}))
-            dispatch(subaccountBalanceActions.addToBalance({currency: top.state.currency, amount: currentTopAmount}))
+            dispatch(subaccountBalanceActions.addToBalance({currency: top.state.currency, amount: new Decimal(currentTopAmount)}))
             dispatch(subaccountBalanceActions.subtractFromBalance({
                 currency: bottom.state.currency,
-                amount: currentBottomAmount
+                amount: new Decimal(currentBottomAmount)
             }))
             setCurrentBottomAmount(0.00)
             setCurrentTopAmount(0.00)

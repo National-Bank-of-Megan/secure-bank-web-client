@@ -1,10 +1,8 @@
-import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {UserAuthenticationSliceType} from "../slice-types/UserAuthenticationSliceType";
-import {ClientJS} from "clientjs";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 export type Tokens = {
-    authToken: string;
-    refreshToken: string;
+    authToken: string | null;
+    refreshToken: string | null;
 };
 
 export const userAuthenticationSlice = createSlice({
@@ -12,7 +10,7 @@ export const userAuthenticationSlice = createSlice({
     initialState: {
         authToken: null,
         refreshToken: null
-    } as UserAuthenticationSliceType,
+    } as Tokens,
 
     reducers: {
         loginHandler: (state, action: PayloadAction<Tokens>) => {
@@ -20,7 +18,6 @@ export const userAuthenticationSlice = createSlice({
             state.refreshToken = action.payload.refreshToken;
         },
         setAuthToken: (state, action) => {
-            console.log('USER AUTH SLICE SETTING ACCESS TOKEN')
             state.authToken = action.payload;
         },
         clearAuthentication: (state) => {

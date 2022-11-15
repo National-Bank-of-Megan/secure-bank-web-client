@@ -21,23 +21,25 @@ import {isValidAmount} from "../../../common/validation";
 import {AlertState} from "../../notifications/AlertSnackBar";
 import {findCurrencyByName} from "../../../common/transfer";
 import {Decimal} from 'decimal.js';
-import {useAppDispatch} from "../../../hook/redux-hooks";
+import {useAppDispatch, useAppSelector} from "../../../hook/redux-hooks";
+import store from "../../../store/store";
 
 const AddMoneyDialog: React.FC<{
     openAddMoneyDialog: boolean;
     setOpenAddMoneyDialog: (isOpen: boolean) => void;
     selectedCurrencyName: string;
     setSelectedCurrencyName: (currencyName: string) => void;
-    currencies: AccountCurrencyBalance[]
     setErrorAlertState: (alertState: AlertState) => void;
     setSuccessAlertState: (alertState: AlertState) => void;
     updateCurrencyBalance: (currencyName: string, amountToAdd: string) => void;
 }> = (props) => {
     const appTheme = useTheme();
 
+    const subaccountsState = useAppSelector((state) => state.subaccountBalance);
+    const dispatch = useAppDispatch();
+
     const {isLoading, error, sendRequest: addBalanceRequest} = useFetch();
     const [isProcessingAddingMoneyRequest, setIsProcessingAddingMoneyRequest] = useState<boolean>(false);
-    const dispatch = useAppDispatch()
 
     const countDecimals = (value: number) => {
         if ((value % 1) !== 0)
@@ -125,7 +127,7 @@ const AddMoneyDialog: React.FC<{
         props.setSelectedCurrencyName(event.target.value);
     };
 
-    const foundCurrency = findCurrencyByName(props.selectedCurrencyName, props.currencies)!;
+    const foundCurrency = findCurrencyByName(props.selectedCurrencyName, subaccountsState.subaccounts)!;
 
     return (
         <>
@@ -206,7 +208,7 @@ const AddMoneyDialog: React.FC<{
                                             },
                                         }}
                                     >
-                                        {props.currencies.map((currencyBalance) => (
+                                        {subaccountsState.subaccounts.map((currencyBalance) => (
                                             <MenuItem key={currencyBalance.currency} value={currencyBalance.currency}>
                                                 {currencyBalance.symbol}
                                             </MenuItem>
