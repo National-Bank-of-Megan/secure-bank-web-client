@@ -42,6 +42,7 @@ const CurrencyExchangePage = () => {
         if (rates !== null) {
             return <ExchangeRatesTable isLoading={isLoading}
                                        currentCurrency={top.currency}
+                                        // @ts-ignore
                                        data={CURRENCIES.map((currency) => {
                                                if (currency !== top.currency) {
                                                    return {id: currency, col1: currency, col2: rates[currency]}
