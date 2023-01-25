@@ -84,7 +84,7 @@ const useFetch = () => {
                 });
 
                 if (!response.ok) {
-                    if (response.status === 511) await logout()
+                    if (response.status === 407) await logout()
                     const errorBody = await response.json();
                     const errorMessage = await errorBody.message;
                     throw new FetchError(response.status, errorMessage);

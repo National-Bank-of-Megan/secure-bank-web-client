@@ -21,7 +21,7 @@ const useRefreshToken = () => {
         });
 
         if (!response.ok) {
-            if (response.status === 511) {
+            if (response.status === 407) {
                 dispatch(subaccountBalanceActions.setSubaccountsBalance([]));
                 dispatch(userAuthenticationActions.clearAuthentication());
                 await storage.removeItem("persist: persist-key");
