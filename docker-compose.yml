@@ -1,0 +1,8 @@
+version: '3.1'
+services:
+  secure-bank-web-client:
+    build: .
+    restart: always
+    container_name: secure-bank-web-client
+    ports:
+      - '8080:80'
