@@ -39,7 +39,7 @@ const CurrencyExchangePage = () => {
 
     const getCurrencyRatesTable = () => {
         console.log(rates)
-        if (rates !== null) {
+        if (!!rates) {
             return <ExchangeRatesTable isLoading={isLoading}
                                        currentCurrency={top.currency}
                                         // @ts-ignore
@@ -54,7 +54,7 @@ const CurrencyExchangePage = () => {
     }
 
     const getExchangeForm = () => {
-        if (rates !== null) {
+        if (!!rates) {
             return <CurrencyExchangeForm
                 top={{"state": top, "setState": setTop}}
                 bottom={{"state": bottom, "setState": setBottom}}
